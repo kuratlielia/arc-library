@@ -1,0 +1,61 @@
+.root { --card-height: 19rem; --stack-peek: 24px; display: grid; width: 100%; justify-items: center; gap: var(--space-5); font-family: var(--font-body); letter-spacing: var(--tracking-body); }
+
+/* The stage reserves the top card plus the edges peeking out below it, so nothing reflows as cards come and go. */
+.stage { position: relative; isolation: isolate; width: min(100%, 20rem); height: calc(var(--card-height) + var(--stack-peek)); outline: none; }
+/* Each slot scales from its bottom edge, so the cards behind show a thin, even edge below the one in front. */
+.slot { position: absolute; top: 0; right: 0; left: 0; height: var(--card-height); pointer-events: none; transform-origin: 50% 100%; }
+.card { position: absolute; inset: 0; border-radius: var(--radius-surface); pointer-events: auto; touch-action: pan-y; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+.card[data-top] { cursor: grab; }
+.card[data-dragging] { cursor: grabbing; }
+.card:not([data-top]) { pointer-events: none; }
+/* Resting cards sit flat on their borders; a card in the hand or in flight floats and casts a shadow. */
+.card::before { position: absolute; inset: 0; border-radius: inherit; box-shadow: var(--shadow-floating); content: ""; opacity: 0; pointer-events: none; transition: opacity var(--duration-fast) var(--ease-standard); }
+.card[data-dragging]::before, .card[data-flying]::before { opacity: 1; }
+.face { position: relative; height: 100%; overflow: hidden; border: 1px solid var(--border); border-radius: inherit; background: var(--surface); color: var(--foreground); }
+.shade { position: absolute; inset: 0; background: oklch(0% 0 0 / .035); pointer-events: none; }
+:global(:root[data-theme="dark"]) .shade { background: oklch(0% 0 0 / .22); }
+
+.stamp { position: absolute; top: var(--space-4); display: inline-flex; height: 2rem; align-items: center; gap: 6px; padding: 0 var(--space-3) 0 10px; border: 1px solid var(--border); border-radius: var(--radius-pill); background: var(--surface-raised); color: var(--foreground); font-size: var(--text-sm); font-weight: 500; white-space: nowrap; pointer-events: none; }
+.stamp[data-side="right"] { left: var(--space-4); border-color: color-mix(in oklch, var(--success) 32%, var(--border)); background: color-mix(in oklch, var(--success) 9%, var(--surface-raised)); }
+.stamp[data-side="right"] svg { color: var(--success); }
+.stamp[data-side="left"] { right: var(--space-4); }
+.stamp[data-side="left"] svg { color: var(--text-secondary); }
+/* Cards returning to the back of the stack carry no verdict. */
+.card:not([data-top]):not([data-flying]) .stamp { visibility: hidden; }
+
+.stage:focus-visible .card[data-top], .stage:focus-visible .empty { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
+
+.empty { position: absolute; top: 0; right: 0; left: 0; display: grid; height: var(--card-height); place-content: center; justify-items: center; gap: var(--space-3); padding: var(--space-6); border: 1px solid var(--border); border-radius: var(--radius-surface); background: var(--surface); text-align: center; }
+.emptyTitle { margin: 0; font-size: var(--text-base); font-weight: 500; }
+
+.controls { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-2); }
+.control { display: inline-flex; min-height: var(--control-height-md); align-items: center; justify-content: center; gap: var(--space-2); padding: 0 var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--surface); color: var(--foreground); font: inherit; font-size: var(--text-sm); font-weight: 500; line-height: var(--leading-body); white-space: nowrap; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: background-color var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard), opacity var(--duration-fast) var(--ease-standard); }
+.control svg { flex: none; }
+.control[data-tone="primary"] { border-color: var(--foreground); background: var(--foreground); color: var(--background); }
+.control[data-tone="quiet"] { border-color: transparent; background: transparent; color: var(--text-secondary); }
+@media (hover: hover) and (pointer: fine) {
+  .control:not([aria-disabled]):hover { background: var(--surface-muted); }
+  .control[data-tone="primary"]:not([aria-disabled]):hover { background: var(--foreground); opacity: .9; }
+  .control[data-tone="quiet"]:not([aria-disabled]):hover { color: var(--foreground); }
+}
+.control:not([aria-disabled]):active { background: var(--surface-muted); }
+.control[data-tone="primary"]:not([aria-disabled]):active { background: var(--foreground); opacity: .84; }
+.control[aria-disabled] { cursor: default; opacity: .42; }
+.control:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+.srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+@media (max-width: 26rem) {
+  .root { --card-height: 17.5rem; gap: var(--space-4); }
+  .controls { flex-wrap: nowrap; }
+  .control { padding-inline: var(--space-3); }
+}
+/* On the narrowest screens Undo keeps its icon and its accessible name, so all three controls stay on one row. */
+@media (max-width: 22.5rem) {
+  .control[data-tone="quiet"] { width: var(--control-height-md); padding: 0; }
+  .control[data-tone="quiet"] .controlLabel { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card::before, .control { transition: none; }
+}

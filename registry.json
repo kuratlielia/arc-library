@@ -2906,6 +2906,46 @@
       }
     },
     {
+      "name": "card-stack",
+      "type": "registry:ui",
+      "title": "Card stack",
+      "description": "Review a deck one card at a time, with a throw and an undo.",
+      "categories": [
+        "data"
+      ],
+      "dependencies": [
+        "lucide-react",
+        "motion"
+      ],
+      "registryDependencies": [
+        "https://uiarc.dev/r/arc-foundation.json"
+      ],
+      "files": [
+        {
+          "path": "registry/components/card-stack/card-stack.tsx",
+          "type": "registry:component",
+          "target": "@components/arc/card-stack/card-stack.tsx"
+        },
+        {
+          "path": "registry/components/card-stack/card-stack.module.css",
+          "type": "registry:component",
+          "target": "@components/arc/card-stack/card-stack.module.css"
+        }
+      ],
+      "docs": "Docs and live preview: https://uiarc.dev/components/card-stack",
+      "meta": {
+        "tier": "free",
+        "kind": "component",
+        "docs": "https://uiarc.dev/components/card-stack",
+        "markdown": "https://uiarc.dev/components/card-stack/markdown",
+        "tags": [
+          "gesture",
+          "motion",
+          "triage"
+        ]
+      }
+    },
+    {
       "name": "bar-chart",
       "type": "registry:ui",
       "title": "Bar chart",

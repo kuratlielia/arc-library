@@ -2,6 +2,12 @@
 
 New free components and blocks ship regularly. Every entry links to its live preview on uiarc.dev.
 
+## 2026-10-01
+
+### Added
+
+- [Card stack](https://uiarc.dev/components/card-stack) (component): Review a deck one card at a time, with a throw and an undo.
+
 ## 2026-09-30
 
 ### Added
