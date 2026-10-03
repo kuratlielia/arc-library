@@ -13,8 +13,6 @@
 /* Controls line up with the edges of the centered slide. */
 .controls { display: flex; min-width: 0; align-items: center; gap: var(--space-2); padding-inline: calc((100cqw - var(--carousel-slide)) / 2); }
 .tabs { display: flex; min-width: 0; align-items: center; }
-/* On phone widths the row tightens so play, indicators, and arrows still fit the width of a narrow slide. */
-@container (max-width: 340px) { .controls { gap: var(--space-1); } }
 .tab { display: grid; height: var(--control-height-sm); flex: none; place-items: center; border: 0; border-radius: var(--radius-pill); padding: 0 5px; background: transparent; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 /* Resting dots use the strong border color; the fill fades in as the pill forms, and the drain covers it from the right while rotation runs. */
 .dot { position: relative; display: block; width: 6px; height: 6px; overflow: hidden; border-radius: var(--radius-pill); background: var(--border-strong); transition: background-color var(--duration-fast) var(--ease-standard); }
@@ -32,6 +30,12 @@
 .control:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .iconSlot { display: grid; width: 16px; height: 16px; place-items: center; }
 .icon { grid-area: 1 / 1; display: grid; place-items: center; }
+/* On phone widths the row tightens so play, indicators, and arrows still fit beside a narrow slide. */
+@container (max-width: 340px) {
+  .controls { gap: var(--space-1); padding-inline: max(0px, calc((100cqw - var(--carousel-slide)) / 2 - var(--space-2))); }
+  .arrows { gap: var(--space-1); }
+  .tab { padding: 0 4px; }
+}
 .visuallyHidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 @media (prefers-reduced-motion: reduce) {

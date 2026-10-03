@@ -9,7 +9,7 @@
 .name, .role { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .name { color: var(--foreground); font-size: var(--text-base); font-weight: 500; line-height: var(--leading-body); }
 .role { color: var(--text-secondary); font-size: var(--text-sm); line-height: var(--leading-body); }
-.bio { margin: 0; color: var(--text-secondary); font-size: var(--text-sm); line-height: 1.5; }
+.bio { margin: 0; color: var(--text-secondary); font-size: var(--text-sm); line-height: var(--leading-body); }
 /* Numbers lead and labels follow, while the markup keeps label then value for screen readers. */
 .stats { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-6); margin: 0; padding-top: var(--space-3); border-top: 1px solid var(--border-subtle); }
 .stat { display: flex; flex-direction: column-reverse; }

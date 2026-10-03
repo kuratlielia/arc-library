@@ -99,10 +99,10 @@ const COLLAPSE_BELOW = 760;
 /** Panel content slides in from the side of the newly opened item; opening from closed drops in from the bar. */
 const faceVariants: Variants = {
   hidden: (direction: number) => ({ opacity: 0, x: direction * TRAVEL, y: direction ? 0 : -6, filter: `blur(${motionTokens.blur.subtle}px)` }),
-  shown: { opacity: 1, x: 0, y: 0, filter: "blur(0px)", transition: { x: SLIDE, y: SLIDE, opacity: { duration: .2, ease: enter, delay: .02 }, filter: { duration: .24, ease: enter } } },
-  gone: (direction: number) => ({ opacity: 0, x: direction * -TRAVEL * .6, filter: `blur(${motionTokens.blur.subtle}px)`, transition: { x: SLIDE, opacity: { duration: .12, ease: standard }, filter: { duration: .12, ease: standard } } }),
+  shown: { opacity: 1, x: 0, y: 0, filter: "blur(0px)", transition: { x: SLIDE, y: SLIDE, opacity: { duration: motionTokens.duration.fast, ease: enter, delay: .02 }, filter: { duration: motionTokens.duration.standard, ease: enter } } },
+  gone: (direction: number) => ({ opacity: 0, x: direction * -TRAVEL * .6, filter: `blur(${motionTokens.blur.subtle}px)`, transition: { x: SLIDE, opacity: { duration: motionTokens.duration.instant, ease: standard }, filter: { duration: motionTokens.duration.instant, ease: standard } } }),
 };
-const fadeVariants: Variants = { hidden: { opacity: 0 }, shown: { opacity: 1, transition: { duration: .14 } }, gone: { opacity: 0, transition: { duration: .08 } } };
+const fadeVariants: Variants = { hidden: { opacity: 0 }, shown: { opacity: 1, transition: { duration: motionTokens.duration.fast } }, gone: { opacity: 0, transition: { duration: motionTokens.duration.instant } } };
 
 export function ArcMark(props: { className?: string }) {
   return <svg className={props.className} viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="5.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -112,7 +112,7 @@ export function ArcMark(props: { className?: string }) {
   </svg>;
 }
 
-const ICON = { size: 18, strokeWidth: 1.75, "aria-hidden": true } as const;
+const ICON = { size: 16, strokeWidth: 1.75, "aria-hidden": true } as const;
 const curvedFacade = photo("curved-facade");
 
 export const siteHeaderExampleItems: SiteHeaderItem[] = [
@@ -376,8 +376,8 @@ export const SiteHeader = forwardRef<HTMLElement, SiteHeaderProps>(function Site
                   onFocus: () => setHovered(null),
                 };
                 const decorations = <>
-                  {hovered === item.value && variant !== "centered" && <motion.span layoutId="hover" className={styles.hover} transition={reduced ? { duration: 0 } : GLIDE} aria-hidden="true" />}
-                  {isCurrent && <motion.span layoutId="current" className={styles.indicator} transition={reduced ? { duration: 0 } : motionTokens.spring.morph} aria-hidden="true" />}
+                  {hovered === item.value && variant !== "centered" && <motion.span key={`hover-${variant}`} layoutId={`hover-${variant}`} className={styles.hover} transition={reduced ? { duration: 0 } : GLIDE} aria-hidden="true" />}
+                  {isCurrent && <motion.span key={`current-${variant}`} layoutId={`current-${variant}`} className={styles.indicator} transition={reduced ? { duration: 0 } : motionTokens.spring.morph} aria-hidden="true" />}
                 </>;
                 return <li key={item.value} className={styles.navCell}>
                   {withPanel
@@ -413,7 +413,7 @@ export const SiteHeader = forwardRef<HTMLElement, SiteHeaderProps>(function Site
           {primaryAction && actionNode(primaryAction, "primary")}
           <button ref={menuButtonRef} type="button" className={styles.menuButton} aria-expanded={menuOpen} aria-controls={`${id}-sheet`} aria-label={menuOpen ? "Close menu" : "Open menu"} onClick={() => { if (menuOpen) closeMenu(); else setMenuOpen(true); }}>
             <AnimatePresence initial={false} mode="popLayout">
-              <motion.span key={menuOpen ? "close" : "open"} className={styles.menuIcon} initial={reduced ? { opacity: 0 } : { opacity: 0, rotate: menuOpen ? -45 : 45, scale: .8 }} animate={{ opacity: 1, rotate: 0, scale: 1 }} exit={reduced ? { opacity: 0 } : { opacity: 0, rotate: menuOpen ? 45 : -45, scale: .8 }} transition={reduced ? { duration: 0 } : { ...motionTokens.spring.snappy, opacity: { duration: .12 } }}>
+              <motion.span key={menuOpen ? "close" : "open"} className={styles.menuIcon} initial={reduced ? { opacity: 0 } : { opacity: 0, rotate: menuOpen ? -45 : 45, scale: .8 }} animate={{ opacity: 1, rotate: 0, scale: 1 }} exit={reduced ? { opacity: 0 } : { opacity: 0, rotate: menuOpen ? 45 : -45, scale: .8 }} transition={reduced ? { duration: 0 } : { ...motionTokens.spring.snappy, opacity: { duration: motionTokens.duration.instant } }}>
                 {menuOpen ? <X size={20} strokeWidth={1.75} aria-hidden="true" /> : <Menu size={20} strokeWidth={1.75} aria-hidden="true" />}
               </motion.span>
             </AnimatePresence>
@@ -432,8 +432,8 @@ export const SiteHeader = forwardRef<HTMLElement, SiteHeaderProps>(function Site
           onKeyDown={onPanelKeyDown}
           initial={reduced ? { opacity: 0 } : { opacity: 0, y: -6, scale: .985 }}
           animate={{ opacity: 1, y: 0, scale: 1, height: panel.height ?? "auto" }}
-          exit={reduced ? { opacity: 0, transition: { duration: .1 } } : { opacity: 0, y: -4, scale: .99, transition: { duration: .14, ease: standard } }}
-          transition={reduced ? { duration: 0 } : { height: panel.grow ? GROW : SHRINK, y: GROW, scale: GROW, opacity: { duration: .16, ease: enter } }}
+          exit={reduced ? { opacity: 0, transition: { duration: motionTokens.duration.instant } } : { opacity: 0, y: -4, scale: .99, transition: { duration: motionTokens.duration.exit, ease: standard } }}
+          transition={reduced ? { duration: 0 } : { height: panel.grow ? GROW : SHRINK, y: GROW, scale: GROW, opacity: { duration: motionTokens.duration.fast, ease: enter } }}
         >
           <AnimatePresence initial={false} custom={open?.direction ?? 0}>
             <Face key={openItem.value} direction={open?.direction ?? 0} reduced={reduced} onHeight={onHeight}>
@@ -460,7 +460,7 @@ export const SiteHeader = forwardRef<HTMLElement, SiteHeaderProps>(function Site
 
     <AnimatePresence>
       {menuOpen && <>
-        <motion.div key="scrim" className={styles.scrim} onClick={() => closeMenu()} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reduced ? 0 : .2, ease: standard }} aria-hidden="true" />
+        <motion.div key="scrim" className={styles.scrim} onClick={() => closeMenu()} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reduced ? 0 : motionTokens.duration.standard, ease: standard }} aria-hidden="true" />
         <motion.div
           key="sheet"
           id={`${id}-sheet`}
@@ -476,14 +476,14 @@ export const SiteHeader = forwardRef<HTMLElement, SiteHeaderProps>(function Site
                 const isCurrent = current === item.value;
                 const group = !!item.links?.length && variant === "mega";
                 const isExpanded = expanded === item.value;
-                const rowMotion = { initial: reduced ? false : { opacity: 0, y: -6 }, animate: { opacity: 1, y: 0 }, transition: { duration: .26, ease: enter, delay: reduced ? 0 : .04 + index * motionTokens.stagger.item } } as const;
+                const rowMotion = { initial: reduced ? false : { opacity: 0, y: -6 }, animate: { opacity: 1, y: 0 }, transition: { duration: motionTokens.duration.standard, ease: enter, delay: reduced ? 0 : .04 + index * motionTokens.stagger.item } } as const;
                 return <motion.li key={item.value} className={styles.sheetItem} {...rowMotion}>
                   {group ? <>
                     <button type="button" className={styles.sheetRow} data-current={isCurrent ? "" : undefined} aria-expanded={isExpanded} aria-controls={`${id}-group-${item.value}`} onClick={() => setExpanded(isExpanded ? null : item.value)}>
                       <span>{item.label}</span><ChevronDown className={styles.sheetChevron} size={18} strokeWidth={1.75} aria-hidden="true" />
                     </button>
                     <AnimatePresence initial={false}>
-                      {isExpanded && <motion.div key="group" id={`${id}-group-${item.value}`} className={styles.sheetGroup} initial={reduced ? { opacity: 0 } : { height: 0, opacity: 0 }} animate={reduced ? { opacity: 1 } : { height: "auto", opacity: 1 }} exit={reduced ? { opacity: 0 } : { height: 0, opacity: 0 }} transition={reduced ? { duration: 0 } : { height: motionTokens.spring.smooth, opacity: { duration: .16 } }}>
+                      {isExpanded && <motion.div key="group" id={`${id}-group-${item.value}`} className={styles.sheetGroup} initial={reduced ? { opacity: 0 } : { height: 0, opacity: 0 }} animate={reduced ? { opacity: 1 } : { height: "auto", opacity: 1 }} exit={reduced ? { opacity: 0 } : { height: 0, opacity: 0 }} transition={reduced ? { duration: 0 } : { height: motionTokens.spring.smooth, opacity: { duration: motionTokens.duration.fast } }}>
                         <ul>{item.links!.map(link => <li key={link.label}>
                           <Destination link={link} className={styles.sheetLink} onChoose={() => choose({ label: link.label, href: link.href, section: item.value }, item.value)}>
                             {link.icon}<span>{link.label}</span>
@@ -497,7 +497,7 @@ export const SiteHeader = forwardRef<HTMLElement, SiteHeaderProps>(function Site
                 </motion.li>;
               })}
             </ul>
-            {(secondaryAction || primaryAction) && <motion.div className={styles.sheetActions} initial={reduced ? false : { opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .26, ease: enter, delay: reduced ? 0 : .04 + items.length * motionTokens.stagger.item }}>
+            {(secondaryAction || primaryAction) && <motion.div className={styles.sheetActions} initial={reduced ? false : { opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: motionTokens.duration.standard, ease: enter, delay: reduced ? 0 : .04 + items.length * motionTokens.stagger.item }}>
               {secondaryAction && actionNode(secondaryAction, "secondary")}
               {primaryAction && actionNode(primaryAction, "primary")}
             </motion.div>}

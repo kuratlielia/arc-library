@@ -37,7 +37,7 @@
   margin: 0 0 3px;
   color: var(--text-secondary);
   font-size: var(--text-base);
-  line-height: 1.5;
+  line-height: var(--leading-body);
   text-wrap: pretty;
 }
 
@@ -108,7 +108,7 @@ img.brandMark { background: none; object-fit: contain; }
 .brandName {
   font-size: var(--text-lg);
   font-weight: 500;
-  letter-spacing: -.02em;
+  letter-spacing: var(--tracking-body);
 }
 
 .footer {
@@ -144,17 +144,10 @@ img.brandMark { background: none; object-fit: contain; }
   .intro p { font-size: var(--text-sm); }
   .marquee { padding-block: 24px; }
   .brandList { gap: 40px; padding-right: 40px; }
-  img.brandMark { background: none; object-fit: contain; }
-
-/* In color tone the marks carry the brand color and the names read at full contrast; black and white marks follow the text. */
-.section[data-tone="color"] .brand { color: var(--foreground); }
-
-.brandName { font-size: var(--text-base); }
+  .brandName { font-size: var(--text-base); }
   .brandMark { width: 20px; height: 20px; }
   .footer { padding-inline: 12px; }
 }
-
-
 
 @media (prefers-reduced-motion: reduce) {
   .track {

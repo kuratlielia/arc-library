@@ -46,7 +46,6 @@
 }
 /* Quick press, spring release. */
 .action:active, .close:active { scale: .96; transition-duration: var(--duration-instant); transition-timing-function: var(--ease-standard); }
-.action:focus-visible, .close:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 /* A narrow toast keeps its copy wide: the action drops under the copy instead of squeezing it. */
 @container (max-width: 21rem) {
   .content { flex-wrap: wrap; row-gap: var(--space-2); }

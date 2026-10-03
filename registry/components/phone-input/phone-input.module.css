@@ -24,13 +24,14 @@
 
 .lid { position: absolute; z-index: 1; top: 0; right: 0; left: 0; height: calc(var(--pi-h) - 2px); }
 
-.trigger { box-sizing: border-box; display: flex; height: calc(var(--pi-h) - 2px); align-items: center; padding: 0 32px 0 12px; font-size: var(--text-sm); font-weight: 500; white-space: nowrap; }
-.lid .trigger { position: absolute; inset: 3px auto 3px 3px; width: calc(100% - 6px); height: auto; margin: 0; padding: 0 29px 0 9px; border: 0; border-radius: calc(var(--radius-control) - 4px); background: transparent; color: var(--foreground); cursor: pointer; font-family: inherit; letter-spacing: inherit; text-align: left; -webkit-tap-highlight-color: transparent; touch-action: manipulation; transition: background-color var(--duration-fast) var(--ease-standard); }
+.trigger { box-sizing: border-box; display: flex; height: calc(var(--pi-h) - 2px); align-items: center; padding: 0 36px 0 12px; font-size: var(--text-sm); font-weight: 500; white-space: nowrap; }
+.lid .trigger { position: absolute; inset: 3px auto 3px 3px; width: calc(100% - 6px); height: auto; margin: 0; padding: 0 33px 0 9px; border: 0; border-radius: calc(var(--radius-control) - 4px); background: transparent; color: var(--foreground); cursor: pointer; font-family: inherit; letter-spacing: inherit; text-align: left; -webkit-tap-highlight-color: transparent; touch-action: manipulation; transition: background-color var(--duration-fast) var(--ease-standard); }
 @media (hover: hover) and (pointer: fine) { .field:not([data-open], [data-disabled]) .lid .trigger:hover { background: var(--surface-muted); } }
 .lid .trigger:active:not(:disabled) { background: var(--surface-muted); }
 .lid .trigger:disabled { cursor: not-allowed; }
-.lid .trigger:focus-visible { background: var(--surface-muted); outline: 2px solid var(--foreground); outline-offset: -2px; }
-.clear:focus-visible, .closeHit:focus-visible { outline: 2px solid var(--foreground); outline-offset: 1px; }
+/* No focus rings (product decision): keyboard focus reads as the same quiet fill as hover. */
+.lid .trigger:focus-visible { background: var(--surface-muted); }
+.clear:focus-visible, .closeHit:focus-visible { background: color-mix(in oklab, var(--foreground) 8%, transparent); }
 /* An invisible copy that says how wide the closed button wants to be. */
 .measure { visibility: hidden; pointer-events: none; width: max-content; }
 
@@ -48,11 +49,11 @@
 .searchIcon { flex: none; color: var(--text-muted); }
 .search { min-width: 0; height: 100%; flex: 1; padding: 0; border: 0; background: transparent; color: var(--foreground); font: inherit; font-size: var(--text-sm); letter-spacing: var(--tracking-body); outline: none; }
 .search::placeholder { color: var(--text-muted); }
-.clear { display: grid; width: 24px; height: 24px; flex: none; place-items: center; padding: 0; border: 0; border-radius: var(--radius-pill); background: color-mix(in oklch, var(--foreground) 8%, transparent); color: var(--text-secondary); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.clear { display: grid; width: 24px; height: 24px; flex: none; place-items: center; padding: 0; border: 0; border-radius: var(--radius-pill); background: color-mix(in oklab, var(--foreground) 8%, transparent); color: var(--text-secondary); cursor: pointer; -webkit-tap-highlight-color: transparent; }
 /* Sits over the shared chevron, so the chevron closes the list. */
 .closeHit { width: 36px; height: 36px; flex: none; padding: 0; border: 0; border-radius: var(--radius-pill); background: transparent; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: background-color var(--duration-fast) var(--ease-standard); }
 @media (hover: hover) and (pointer: fine) {
-  .closeHit:hover, .clear:hover { background: color-mix(in oklch, var(--foreground) 8%, transparent); }
+  .closeHit:hover, .clear:hover { background: color-mix(in oklab, var(--foreground) 8%, transparent); }
   .clear:hover { color: var(--foreground); }
 }
 
@@ -62,11 +63,11 @@
 .listFace[inert] { pointer-events: none; }
 .scroll { max-height: 280px; overflow-y: auto; overscroll-behavior: contain; padding-top: 6px; scrollbar-width: thin; }
 .options { position: relative; display: grid; gap: 2px; }
-.highlight { position: absolute; top: 0; right: 0; left: 0; border-radius: 14px; background: color-mix(in oklch, var(--foreground) 6.5%, transparent); pointer-events: none; }
+.highlight { position: absolute; top: 0; right: 0; left: 0; border-radius: 16px; background: color-mix(in oklab, var(--foreground) 6.5%, transparent); pointer-events: none; }
 .group { display: grid; gap: 2px; }
 .group + .group { margin-top: 4px; }
 .groupLabel { padding: 8px 10px 4px; color: var(--text-muted); font-size: var(--text-xs); }
-.option { position: relative; display: flex; min-height: 36px; box-sizing: border-box; align-items: center; gap: 10px; padding: 0 10px; border-radius: 14px; color: var(--text-secondary); cursor: pointer; font-size: var(--text-sm); user-select: none; -webkit-user-select: none; transition: color var(--duration-fast) var(--ease-standard); }
+.option { position: relative; display: flex; min-height: 36px; box-sizing: border-box; align-items: center; gap: 10px; padding: 0 10px; border-radius: 16px; color: var(--text-secondary); cursor: pointer; font-size: var(--text-sm); user-select: none; -webkit-user-select: none; transition: color var(--duration-fast) var(--ease-standard); }
 .option[data-active], .option[aria-selected="true"] { color: var(--foreground); }
 .name { min-width: 0; flex: 1; overflow: hidden; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
 .meta { flex: none; color: var(--text-muted); font-size: var(--text-xs); font-variant-numeric: tabular-nums; }
@@ -79,7 +80,7 @@
 .number, .guide { box-sizing: border-box; padding: 0 36px 0 12px; font-family: inherit; font-size: var(--text-sm); font-variant-numeric: tabular-nums; letter-spacing: var(--tracking-body); line-height: var(--leading-body); }
 .number { position: relative; z-index: 1; width: 100%; height: 100%; min-width: 0; margin: 0; border: 0; border-radius: 0 var(--radius-control) var(--radius-control) 0; background: transparent; color: var(--foreground); outline: none; }
 .number:disabled { cursor: not-allowed; }
-.guide { position: absolute; inset: 0; display: flex; align-items: center; overflow: hidden; color: color-mix(in oklch, var(--text-muted) 72%, transparent); pointer-events: none; white-space: pre; }
+.guide { position: absolute; inset: 0; display: flex; align-items: center; overflow: hidden; color: color-mix(in oklab, var(--text-muted) 72%, transparent); pointer-events: none; white-space: pre; }
 .guideTyped { visibility: hidden; }
 .valid { position: absolute; z-index: 1; top: 50%; right: 12px; display: grid; width: 18px; height: 18px; margin-top: -9px; place-items: center; color: var(--success); pointer-events: none; }
 

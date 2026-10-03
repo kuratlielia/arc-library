@@ -53,15 +53,15 @@ function useReduced() {
 /** Text rises in from a soft blur. A rollback runs the other way, dropping the old words down and the saved ones in from above. */
 const textMotion: Variants = {
   enter: (direction: number) => ({ opacity: 0, y: `${direction * .3}em`, filter: blur(motionTokens.blur.soft) }),
-  rest: { opacity: 1, y: "0em", filter: blur(0), transition: { duration: .22, ease: enter } },
-  exit: (direction: number) => ({ opacity: 0, y: `${direction * -.3}em`, filter: blur(motionTokens.blur.subtle), transition: { duration: .15, ease: standard } }),
+  rest: { opacity: 1, y: "0em", filter: blur(0), transition: { duration: motionTokens.duration.standard, ease: enter } },
+  exit: (direction: number) => ({ opacity: 0, y: `${direction * -.3}em`, filter: blur(motionTokens.blur.subtle), transition: { duration: motionTokens.duration.fast, ease: standard } }),
 };
-const textFade: Variants = { enter: { opacity: 0 }, rest: { opacity: 1, transition: { duration: .15 } }, exit: { opacity: 0, transition: { duration: .1 } } };
+const textFade: Variants = { enter: { opacity: 0 }, rest: { opacity: 1, transition: { duration: motionTokens.duration.fast } }, exit: { opacity: 0, transition: { duration: motionTokens.duration.instant } } };
 const rest: TargetAndTransition = { opacity: 1, scale: 1, filter: blur(0) };
 const iconIn: TargetAndTransition = { opacity: 0, scale: .6, filter: blur(motionTokens.blur.subtle) };
-const iconOut: TargetAndTransition = { ...iconIn, transition: { duration: .15, ease: standard } };
+const iconOut: TargetAndTransition = { ...iconIn, transition: { duration: motionTokens.duration.fast, ease: standard } };
 const fadeIn: TargetAndTransition = { opacity: 0 };
-const fadeOut: TargetAndTransition = { opacity: 0, transition: { duration: .1 } };
+const fadeOut: TargetAndTransition = { opacity: 0, transition: { duration: motionTokens.duration.instant } };
 /** Scale rides the spring; opacity and blur tween so the blur never overshoots below zero. */
 const iconEnter = { ...motionTokens.spring.snappy, opacity: { duration: motionTokens.duration.fast, ease: enter }, filter: { duration: motionTokens.duration.fast, ease: enter } };
 
@@ -334,7 +334,7 @@ export function InlineEdit({ value, onSave, label, validate, placeholder = "", m
         <motion.span ref={frame} className={styles.frame} style={multiline ? undefined : { width: frameWidth }}>
           <span className={styles.slot}>
             <AnimatePresence initial={false}>
-              <motion.span key={slot} className={styles.slotItem} initial={reduced ? fadeIn : iconIn} animate={rest} exit={reduced ? fadeOut : iconOut} transition={reduced ? { duration: .15 } : iconEnter}>
+              <motion.span key={slot} className={styles.slotItem} initial={reduced ? fadeIn : iconIn} animate={rest} exit={reduced ? fadeOut : iconOut} transition={reduced ? { duration: motionTokens.duration.fast } : iconEnter}>
                 {slot === "edit" ? <span className={styles.actions}>
                   <button type="button" className={styles.save} aria-label={`Save ${noun}`} onPointerDown={event => event.preventDefault()} onClick={() => submit("button")}><Check size={15} strokeWidth={2} aria-hidden="true" /></button>
                   <button type="button" className={styles.cancel} aria-label="Cancel editing" onPointerDown={event => event.preventDefault()} onClick={cancel}><X size={15} strokeWidth={2} aria-hidden="true" /></button>

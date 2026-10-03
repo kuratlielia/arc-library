@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useSyncExternalStore } from "react";
+import { useEffect, useLayoutEffect, useRef, useSyncExternalStore } from "react";
 import { AnimatePresence, animate, motion, useInView, useMotionValue, usePageInView, useReducedMotion, useTransform } from "motion/react";
 import type { AnimationPlaybackControls } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
@@ -22,7 +22,7 @@ function shimmerImage(t: number, settle: number) {
 /**
  * A calm light sweep across a short status line, such as "Thinking" or "Generating summary", to show that work is ongoing.
  * The band uses the current text color over a muted base. When `active` turns false the band glides off and the text settles to solid.
- * A changed label rises in place. The component sets `aria-busy`; announce completion from your own live region.
+ * A changed label rises in place while the line springs to its new width. The component sets `aria-busy`; announce completion from your own live region.
  */
 export interface TextShimmerProps {
   /** The status text. Keep it to one short line. */
@@ -46,6 +46,7 @@ export function TextShimmer({ children, active = true, duration = 1.8, as = "spa
   const settle = useMotionValue(active ? 0 : 1);
   const backgroundImage = useTransform(() => shimmerImage(sweep.get(), settle.get()));
   const running = active && !reduced && inView && pageVisible;
+  const restWidth = useRef(0);
   const Tag = as;
 
   // Loop the sweep only while work is ongoing, visible, and motion is allowed. A paused band resumes where it stopped.
@@ -72,6 +73,31 @@ export function TextShimmer({ children, active = true, duration = 1.8, as = "spa
     const solid = animate(settle, 1, { duration: reduced ? motionTokens.duration.instant : .36, ease: [...motionTokens.ease.standard] });
     return () => { glide?.stop(); solid.stop(); };
   }, [active, reduced, duration, sweep, settle]);
+
+  // A new label springs the line to its width instead of resizing in one frame, so text after it never jumps.
+  useLayoutEffect(() => {
+    const stage = ref.current;
+    if (!stage) return;
+    const sizing = Boolean(stage.style.width);
+    const current = stage.getBoundingClientRect().width;
+    stage.style.width = "";
+    const next = stage.getBoundingClientRect().width;
+    const from = sizing ? current : restWidth.current;
+    restWidth.current = next;
+    if (reduced || !from || Math.abs(from - next) < .5) { delete stage.dataset.sizing; return; }
+    stage.dataset.sizing = "";
+    const controls = animate(stage, { width: [from, next] }, { ...motionTokens.spring.morph, onComplete: () => { stage.style.width = ""; delete stage.dataset.sizing; } });
+    return () => controls.stop();
+  }, [children, reduced]);
+
+  // Keep the resting width current when fonts load or the container resizes.
+  useEffect(() => {
+    const stage = ref.current;
+    if (!stage || typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(() => { if (!stage.style.width) restWidth.current = stage.getBoundingClientRect().width; });
+    observer.observe(stage);
+    return () => observer.disconnect();
+  }, []);
 
   return <Tag id={id} className={[styles.shimmer, className].filter(Boolean).join(" ")} data-state={active ? "active" : "idle"} aria-busy={active || undefined}>
     <span ref={ref} className={styles.stage}>

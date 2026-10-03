@@ -1,9 +1,9 @@
 "use client";
 /* eslint-disable @next/next/no-img-element -- plain images keep the block portable outside Next.js. */
 
-import { useId, useRef, useState } from "react";
-import type { MouseEvent } from "react";
-import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from "motion/react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
+import type { MouseEvent, ReactNode } from "react";
+import { AnimatePresence, LayoutGroup, animate, motion, useMotionValue, useReducedMotion } from "motion/react";
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
 import { blogCategories, blogPosts } from "./blog-grid-data";
@@ -50,6 +50,36 @@ function useControllable<T>(value: T | undefined, initial: T, onChange?: (next: 
   return [current, set] as const;
 }
 
+/** Springs its height when the page or filter changes, so the pagination below glides instead of jumping. Other resizes (a late font, a narrower window) apply at once. */
+function AutoHeight({ changeKey, reduced, className, children }: { changeKey: string; reduced: boolean; className?: string; children: ReactNode }) {
+  const clipRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const height = useMotionValue<number | "auto">("auto");
+  const lastKey = useRef(changeKey), armedUntil = useRef(0);
+  useLayoutEffect(() => {
+    if (lastKey.current === changeKey) return;
+    lastKey.current = changeKey;
+    armedUntil.current = performance.now() + 900;
+  }, [changeKey]);
+  useEffect(() => {
+    const clip = clipRef.current, content = contentRef.current;
+    if (!clip || !content || typeof ResizeObserver === "undefined") return;
+    let controls: ReturnType<typeof animate> | undefined;
+    const observer = new ResizeObserver(() => {
+      const next = content.offsetHeight;
+      controls?.stop();
+      if (!next || reduced || height.get() === "auto" || performance.now() > armedUntil.current) { height.jump(next || "auto"); delete clip.dataset.clip; return; }
+      clip.dataset.clip = "";
+      controls = animate(height, next, { ...smooth, onComplete: () => { delete clip.dataset.clip; } });
+    });
+    observer.observe(content);
+    return () => { observer.disconnect(); controls?.stop(); };
+  }, [height, reduced]);
+  return <motion.div ref={clipRef} className={styles.clip} style={{ height }}>
+    <div ref={contentRef} className={className}>{children}</div>
+  </motion.div>;
+}
+
 function Meta({ post }: { post: BlogPost }) {
   return <p className={styles.meta}><span>{post.category}</span><span aria-hidden="true">·</span><time dateTime={post.date}>{formatDate(post.date)}</time></p>;
 }
@@ -86,6 +116,8 @@ export function BlogGrid({
   const [page, setPageState] = useControllable(pageProp, defaultPage, onPageChange);
   const [direction, setDirection] = useState(0);
   const [reading, setReading] = useState<BlogPost | null>(null);
+  /** The post the reader just closed. Its image morphs back into its card while the rest of the index fades in around it. */
+  const [returning, setReturning] = useState<string | null>(null);
   const lastOpened = useRef<string | null>(null);
 
   const sorted = [...posts].sort((a, b) => b.date.localeCompare(a.date));
@@ -103,12 +135,14 @@ export function BlogGrid({
   function setCategory(next: string) {
     if (next === category) return;
     setDirection(0);
+    setReturning(null);
     setCategoryState(next);
     setPageState(1);
   }
   function setPage(next: number) {
     if (next === safePage || next < 1 || next > pageCount) return;
     setDirection(next > safePage ? 1 : -1);
+    setReturning(null);
     setPageState(next);
     scrollToTop();
   }
@@ -121,6 +155,7 @@ export function BlogGrid({
     scrollToTop();
   }
   function close() {
+    setReturning(lastOpened.current);
     setReading(null);
     requestAnimationFrame(() => {
       const card = rootRef.current?.querySelector<HTMLElement>(`[data-post="${lastOpened.current}"]`);
@@ -143,9 +178,13 @@ export function BlogGrid({
       </div>
     </>;
     const className = isFeatured ? styles.featured : styles.card;
-    return <a key={post.id} className={className} href={href ?? `#${post.id}`} data-post={post.id} onClick={event => open(post, event)}>{inner}</a>;
+    const fades = returning !== null && (reduced || post.id !== returning);
+    return <motion.a key={post.id} className={className} href={href ?? `#${post.id}`} data-post={post.id} onClick={event => open(post, event)} {...enterFade(fades)}>{inner}</motion.a>;
   };
 
+  /** Fades a piece of the index or reader in on its own, so the shared image is never dimmed by a fading parent mid morph. */
+  const enterFade = (on: boolean) => ({ initial: on ? { opacity: 0 } : false as const, animate: { opacity: 1 }, transition: { duration: motionTokens.duration.standard, ease: standard } });
+  const back = returning !== null;
   const tabs = ["All", ...categories];
   const pageKey = `${category}-${safePage}`;
 
@@ -153,33 +192,34 @@ export function BlogGrid({
     <LayoutGroup id={uid}>
       <div className={styles.inner}>
         <AnimatePresence mode="popLayout" initial={false}>
-          {reading ? <motion.article key="reader" className={styles.reader} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: motionTokens.duration.exit } }} transition={{ duration: motionTokens.duration.standard, ease: standard }} aria-labelledby={`${uid}-reader-title`}>
-            <button type="button" className={styles.back} onClick={close} autoFocus><ArrowLeft size={16} aria-hidden="true" />All posts</button>
-            <header className={styles.readerHead}>
+          {reading ? <motion.article key="reader" className={styles.reader} exit={{ opacity: 0, transition: { duration: motionTokens.duration.exit, ease: standard } }} aria-labelledby={`${uid}-reader-title`}>
+            <motion.button type="button" className={styles.back} onClick={close} autoFocus {...enterFade(true)}><ArrowLeft size={16} aria-hidden="true" />All posts</motion.button>
+            <motion.header className={styles.readerHead} {...enterFade(true)}>
               <Meta post={reading} />
               <h2 id={`${uid}-reader-title`} className={styles.readerTitle}>{reading.title}</h2>
               <Byline post={reading} />
-            </header>
-            {reading.image && <motion.div layoutId={reduced ? undefined : `${uid}-image-${reading.id}`} transition={morph} className={styles.readerImage}>
+            </motion.header>
+            {reading.image && <motion.div layoutId={reduced ? undefined : `${uid}-image-${reading.id}`} transition={morph} className={styles.readerImage} {...(reduced ? enterFade(true) : {})}>
               <img className={styles.image} src={reading.image.src} alt={reading.image.alt} />
             </motion.div>}
             <motion.div className={styles.readerBody} initial={{ opacity: 0, y: reduced ? 0 : 12 }} animate={{ opacity: 1, y: 0 }} transition={{ ...smooth, delay: reduced ? 0 : .12 }}>
               <p className={styles.lead}>{reading.excerpt}</p>
               {(reading.body ?? []).map(paragraph => <p key={paragraph}>{paragraph}</p>)}
             </motion.div>
-          </motion.article> : <motion.div key="index" className={styles.index} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: motionTokens.duration.exit } }} transition={{ duration: motionTokens.duration.standard, ease: standard }}>
-            <header className={styles.header}>
+          </motion.article> : <motion.div key="index" className={styles.index} exit={{ opacity: 0, transition: { duration: motionTokens.duration.exit, ease: standard } }}>
+            <motion.header className={styles.header} {...enterFade(back)}>
               <h2 className={styles.title}>{title}</h2>
               {description && <p className={styles.description}>{description}</p>}
-            </header>
+            </motion.header>
 
-            <div className={styles.filters} role="group" aria-label="Filter by category">
+            <motion.div className={styles.filters} role="group" aria-label="Filter by category" {...enterFade(back)}>
               {tabs.map(tab => <button key={tab} type="button" className={styles.filter} aria-pressed={tab === category} onClick={() => setCategory(tab)}>
                 {tab === category && <motion.span layoutId={`${uid}-filter`} className={styles.filterHighlight} transition={reduced ? { duration: 0 } : morph} />}
                 <span>{tab}</span>
               </button>)}
-            </div>
+            </motion.div>
 
+            <AutoHeight changeKey={`${pageKey}-${pageCount}`} reduced={Boolean(reduced)} className={styles.stack}>
             <AnimatePresence mode="wait" initial={false} custom={direction}>
               <motion.div
                 key={pageKey}
@@ -195,7 +235,8 @@ export function BlogGrid({
               </motion.div>
             </AnimatePresence>
 
-            {pageCount > 1 && <nav className={styles.pagination} aria-label="Pagination">
+            <AnimatePresence initial={back}>
+            {pageCount > 1 && <motion.nav key="pagination" className={styles.pagination} aria-label="Pagination" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: motionTokens.duration.exit, ease: standard } }} transition={{ duration: motionTokens.duration.standard, ease: standard }}>
               <button type="button" className={styles.pageStep} onClick={() => setPage(safePage - 1)} disabled={safePage === 1} aria-label="Previous page"><ChevronLeft size={16} aria-hidden="true" /><span>Previous</span></button>
               <div className={styles.pageNumbers}>
                 {Array.from({ length: pageCount }, (_, index) => index + 1).map(number => <button key={number} type="button" className={styles.pageNumber} aria-current={number === safePage ? "page" : undefined} aria-label={`Page ${number}`} onClick={() => setPage(number)}>
@@ -204,7 +245,9 @@ export function BlogGrid({
                 </button>)}
               </div>
               <button type="button" className={styles.pageStep} onClick={() => setPage(safePage + 1)} disabled={safePage === pageCount} aria-label="Next page"><span>Next</span><ChevronRight size={16} aria-hidden="true" /></button>
-            </nav>}
+            </motion.nav>}
+            </AnimatePresence>
+            </AutoHeight>
           </motion.div>}
         </AnimatePresence>
       </div>

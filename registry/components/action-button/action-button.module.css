@@ -1,7 +1,6 @@
 /* The button hugs its label: text morphs in place and the width follows on a spring, so no state ever snaps the layout. */
 .button { position: relative; display: inline-flex; min-height: var(--control-height-md); align-items: center; justify-content: center; overflow: hidden; padding: 0 var(--space-5); border: 1px solid var(--foreground); border-radius: var(--radius-control); background: var(--foreground); color: var(--background); font: inherit; font-size: var(--text-sm); font-weight: 500; line-height: var(--leading-body); cursor: pointer; -webkit-tap-highlight-color: transparent; transition: background var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard), opacity var(--duration-fast) var(--ease-standard); }
 @media (hover: hover) and (pointer: fine) { .button:hover:not(:disabled) { box-shadow: var(--shadow-resting); } }
-.button:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
 .button:disabled { cursor: not-allowed; }
 .button:disabled:not([data-state="pending"]) { opacity: .7; }
 .button[data-state="pending"] { cursor: progress; }

@@ -1,6 +1,6 @@
 .newsletter {
   --paper: var(--surface-raised);
-  --paper-back: color-mix(in oklch, var(--surface-raised), var(--surface-muted) 55%);
+  --paper-back: color-mix(in oklab, var(--surface-raised), var(--surface-muted) 55%);
   --paper-far: var(--surface-muted);
   --paper-shadow: 0 1px 1px oklch(0% 0 0 / .03), 0 10px 28px -6px oklch(0% 0 0 / .09);
   container: newsletter / inline-size;
@@ -25,8 +25,8 @@
 /* Without the stack or readers the section is the copy and form alone. */
 .newsletter[data-variant="inline"]:not([data-aside]) .inline { max-width: 720px; }
 .intro { display: grid; max-width: 540px; }
-.title { margin: 0; font-family: var(--font-display); font-size: clamp(2rem, 1.1rem + 3.2cqi, var(--text-4xl)); font-weight: 500; letter-spacing: var(--tracking-display); line-height: 1.04; text-wrap: balance; }
-.description { margin: var(--space-4) 0 0; color: var(--text-secondary); font-size: var(--text-lg); line-height: 1.5; text-wrap: pretty; }
+.title { margin: 0; font-family: var(--font-display); font-size: clamp(2rem, 1.1rem + 3.2cqi, var(--text-4xl)); font-weight: 500; letter-spacing: var(--tracking-display); line-height: var(--leading-display); text-wrap: balance; }
+.description { margin: var(--space-4) 0 0; color: var(--text-secondary); font-size: var(--text-lg); line-height: var(--leading-body); text-wrap: pretty; }
 .intro .form { margin-top: var(--space-10); }
 .aside { display: grid; justify-items: center; gap: var(--space-6); min-width: 0; }
 
@@ -49,18 +49,18 @@
 .issue[data-depth="1"] { background: var(--paper-back); box-shadow: none; }
 .issue[data-depth="2"] { background: var(--paper-far); box-shadow: none; }
 .issueHead { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
-.masthead { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 500; letter-spacing: -.02em; line-height: 1.2; }
-.issueNumber, .issueMeta { color: var(--text-muted); font-size: 13px; line-height: var(--leading-body); font-variant-numeric: tabular-nums; }
+.masthead { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 500; letter-spacing: var(--tracking-display); line-height: var(--leading-display); }
+.issueNumber, .issueMeta { color: var(--text-muted); font-size: var(--text-xs); line-height: var(--leading-body); font-variant-numeric: tabular-nums; }
 .issueMeta { display: flex; min-width: 0; gap: 6px; margin: 2px 0 0; white-space: nowrap; }
 .issueMeta > span:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .recipient { color: var(--text-secondary); }
 .recipientEmail { color: var(--foreground); }
-.subject { min-height: calc(2em * 1.12); margin: var(--space-5) 0 var(--space-4); border-top: 1px solid var(--border); padding-top: var(--space-5); font-family: var(--font-display); font-size: 1.625rem; font-weight: 500; letter-spacing: -.03em; line-height: 1.12; text-wrap: balance; box-sizing: content-box; }
+.subject { min-height: calc(2em * var(--leading-display)); margin: var(--space-5) 0 var(--space-4); border-top: 1px solid var(--border); padding-top: var(--space-5); font-family: var(--font-display); font-size: var(--text-2xl); font-weight: 500; letter-spacing: var(--tracking-display); line-height: var(--leading-display); text-wrap: balance; box-sizing: content-box; }
 .stack[data-compact] .subject { font-size: var(--text-xl); }
 .stories { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
 .story { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: center; gap: 12px; min-height: 44px; }
 .thumb { display: block; width: 44px; height: 44px; border-radius: 10px; object-fit: cover; background: var(--surface-muted); }
-.storyTitle { display: -webkit-box; overflow: hidden; color: var(--text-secondary); font-size: var(--text-sm); line-height: 1.35; -webkit-box-orient: vertical; -webkit-line-clamp: 2; text-wrap: pretty; }
+.storyTitle { display: -webkit-box; overflow: hidden; color: var(--text-secondary); font-size: var(--text-sm); line-height: var(--leading-body); -webkit-box-orient: vertical; -webkit-line-clamp: 2; text-wrap: pretty; }
 .minutes { color: var(--text-muted); font-size: var(--text-xs); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
 /* Readers: faces and a count that ticks up by one. */
@@ -71,7 +71,7 @@
 .readerLine { min-width: 0; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .count { display: inline-block; color: var(--foreground); }
 .count > span { color: inherit; font-family: inherit; font-size: inherit; font-weight: 500; letter-spacing: inherit; line-height: inherit; vertical-align: bottom; }
-.you { color: var(--text-secondary); }
+.you { display: inline-block; overflow: hidden; color: var(--text-secondary); vertical-align: bottom; white-space: nowrap; }
 
 /* Card: a self-contained card whose top is a tray holding the stack, cropped where the card body begins. */
 .newsletter[data-variant="card"] { padding: var(--space-20) var(--space-6); }
@@ -90,23 +90,23 @@
 /* The pill: one field that holds the input and the button. */
 .form { container: signup / inline-size; display: grid; gap: var(--space-3); min-width: 0; }
 .pill { position: relative; display: flex; height: 58px; align-items: center; gap: 6px; border: 1px solid var(--border-strong); border-radius: 999px; padding: 5px 5px 5px 22px; background: var(--surface); transition: border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-standard) var(--ease-standard); }
-@media (hover: hover) and (pointer: fine) { .pill:not([data-done]):hover { border-color: color-mix(in oklch, var(--foreground) 32%, var(--border-strong)); } }
+@media (hover: hover) and (pointer: fine) { .pill:not([data-done]):hover { border-color: color-mix(in oklab, var(--foreground) 32%, var(--border-strong)); } }
 .pill:focus-within { border-color: var(--foreground); }
 .pill.pill[data-invalid] { border-color: var(--danger); }
-.pill.pill[data-done] { border-color: color-mix(in oklch, var(--success) 45%, var(--border)); }
+.pill.pill[data-done] { border-color: color-mix(in oklab, var(--success) 45%, var(--border)); }
 .input { width: 100%; min-width: 0; height: 100%; flex: 1; border: 0; padding: 0; background: none; color: var(--foreground); font: inherit; font-size: var(--text-base); letter-spacing: inherit; outline: none; transition: color var(--duration-standard) var(--ease-standard); }
 .input::placeholder { color: var(--text-muted); }
 .pill[data-done] .input { color: var(--text-secondary); }
 
 .submit { position: relative; display: inline-flex; height: 100%; min-height: 44px; flex: none; align-items: center; justify-content: center; border: 0; border-radius: 999px; padding: 0 20px; background: var(--foreground); color: var(--background); font: inherit; font-size: var(--text-sm); font-weight: 500; cursor: pointer; white-space: nowrap; -webkit-tap-highlight-color: transparent; transition: background-color var(--duration-standard) var(--ease-standard), color var(--duration-standard) var(--ease-standard); }
-@media (hover: hover) and (pointer: fine) { .submit[data-state="idle"]:hover, .submit[data-state="retry"]:hover { background: color-mix(in oklch, var(--foreground) 84%, var(--background)); } }
+@media (hover: hover) and (pointer: fine) { .submit[data-state="idle"]:hover, .submit[data-state="retry"]:hover { background: color-mix(in oklab, var(--foreground) 84%, var(--background)); } }
 .submit[data-state="sending"] { cursor: progress; }
-.submit[data-state="done"] { background: color-mix(in oklch, var(--success) 13%, var(--surface)); color: var(--success); cursor: default; }
+.submit[data-state="done"] { background: color-mix(in oklab, var(--success) 13%, var(--surface)); color: var(--success); cursor: default; }
 .labels { display: inline-grid; place-items: center; }
 .sizer, .label { display: inline-flex; grid-area: 1 / 1; align-items: center; gap: 8px; }
 .sizer { visibility: hidden; }
 .note.sizer { display: block; }
-.spinner { width: 14px; height: 14px; border: 2px solid color-mix(in oklch, currentColor 30%, transparent); border-top-color: currentColor; border-radius: 50%; animation: spin 700ms linear infinite; }
+.spinner { width: 14px; height: 14px; border: 2px solid color-mix(in oklab, currentColor 30%, transparent); border-top-color: currentColor; border-radius: 50%; animation: spin 700ms linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .check { display: inline-flex; width: 16px; height: 16px; }
 .check svg { width: 16px; height: 16px; }
@@ -156,7 +156,7 @@
   .input { height: 52px; flex: none; border: 1px solid var(--border-strong); border-radius: 999px; padding: 0 20px; background: var(--surface); transition: border-color var(--duration-fast) var(--ease-standard), color var(--duration-standard) var(--ease-standard); }
   .input:focus { border-color: var(--foreground); }
   .pill.pill[data-invalid] .input { border-color: var(--danger); }
-  .pill.pill[data-done] .input { border-color: color-mix(in oklch, var(--success) 45%, var(--border)); }
+  .pill.pill[data-done] .input { border-color: color-mix(in oklab, var(--success) 45%, var(--border)); }
   .submit { height: 48px; }
   .note { padding-left: 4px; }
 }

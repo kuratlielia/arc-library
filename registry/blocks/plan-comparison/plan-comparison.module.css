@@ -19,8 +19,10 @@
 /* Matrix */
 .matrix { border-top: 1px solid var(--border); }
 .planHeader, .featureRow { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 1fr); }
-.featureHeader { display: flex; align-items: end; padding: 0 16px 20px 32px; color: var(--text-muted); font-size: var(--text-xs); }
-.planCell { position: relative; display: grid; min-width: 0; align-content: start; border-left: 1px solid var(--border); padding: 20px 20px 20px; transition: background-color var(--duration-standard) var(--ease-standard); }
+/* Plan cells share three row tracks (name, price, button), so a description that wraps in one column keeps prices and buttons level. */
+.planHeader { grid-template-rows: auto auto auto; }
+.featureHeader { grid-row: 1 / span 3; display: flex; align-items: end; padding: 0 16px 20px 32px; color: var(--text-muted); font-size: var(--text-xs); }
+.planCell { position: relative; display: grid; grid-row: span 3; grid-template-rows: subgrid; min-width: 0; align-content: start; border-left: 1px solid var(--border); padding: 20px; transition: background-color var(--duration-standard) var(--ease-standard); }
 .planCell.planSelected, .featureValue.valueSelected { background: var(--surface-muted); }
 .planTop h3 { margin: 0; font-size: var(--text-base); font-weight: 500; letter-spacing: -.01em; }
 .planTop > span { display: block; margin-top: 2px; color: var(--text-muted); font-size: var(--text-xs); }
@@ -71,7 +73,9 @@
 .comparison:is([data-size="sm"], [data-size="xs"]) .featureValue { min-height: 0; border-left: 0; padding: 4px 14px 10px; }
 .comparison:is([data-size="sm"], [data-size="xs"]) .featureValue:nth-child(2) { padding-left: 20px; }
 .comparison:is([data-size="sm"], [data-size="xs"]) .featureValue + .featureValue { border-left: 1px solid var(--border-subtle); }
+.comparison:is([data-size="sm"], [data-size="xs"]) .planCell:nth-child(2) { padding-left: 20px; }
 .comparison[data-size="xs"] .planCell { padding-inline: 12px; }
+.comparison[data-size="xs"] .planCell:nth-child(2) { padding-left: 16px; }
 .comparison[data-size="xs"] .featureValue { padding-inline: 12px; }
 .comparison[data-size="xs"] .featureValue:nth-child(2) { padding-left: 16px; }
 .comparison[data-size="xs"] .featureName { padding-inline: 16px; }

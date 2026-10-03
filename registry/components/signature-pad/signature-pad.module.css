@@ -38,7 +38,7 @@
 }
 .sweep::after {
   content: ""; position: absolute; top: 0; bottom: 0; left: -28px; width: 28px;
-  background: linear-gradient(to right, transparent, color-mix(in oklch, var(--foreground) 5%, transparent));
+  background: linear-gradient(to right, transparent, color-mix(in oklab, var(--foreground) 5%, transparent));
 }
 
 .toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
@@ -47,7 +47,7 @@
 
 .choice { display: flex; align-items: center; gap: 2px; }
 .option {
-  position: relative; display: grid; place-items: center; width: 34px; height: 34px; padding: 0; border: 0; border-radius: var(--radius-pill);
+  position: relative; display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 0; border-radius: var(--radius-pill);
   background: transparent; color: var(--foreground); cursor: pointer; -webkit-tap-highlight-color: transparent;
 }
 .selected { position: absolute; inset: 0; border-radius: inherit; background: var(--surface-muted); box-shadow: inset 0 0 0 1px var(--border); }

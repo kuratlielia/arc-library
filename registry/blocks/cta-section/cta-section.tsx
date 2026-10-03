@@ -1,8 +1,8 @@
 "use client";
 
-import { forwardRef, useEffect, useId, useRef, useState } from "react";
+import { forwardRef, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
-import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
+import { AnimatePresence, animate, motion, useInView, useMotionValue, useReducedMotion } from "motion/react";
 import { ArrowRight, Check, X } from "lucide-react";
 import { Button } from "@/registry/components/button/button";
 import SegmentedControl from "@/registry/components/segmented-control/segmented-control";
@@ -141,7 +141,7 @@ export const CtaSection = forwardRef<HTMLElement, CtaSectionProps>(function CtaS
         {open && <motion.div
           key="banner"
           className={styles.bannerWrap}
-          exit={reduced ? { opacity: 0, transition: { duration: .12 } } : { opacity: 0, height: 0, scale: .98, transition: { height: motionTokens.spring.smooth, scale: { duration: .2, ease: standard }, opacity: { duration: .16, ease: standard } } }}
+          exit={reduced ? { opacity: 0, transition: { duration: motionTokens.duration.instant } } : { opacity: 0, height: 0, transition: { height: motionTokens.spring.smooth, opacity: { duration: motionTokens.duration.fast, ease: standard } } }}
         >
           <div className={styles.bannerPad}><div className={styles.banner}>
             <p className={styles.bannerText}>
@@ -180,7 +180,7 @@ export const CtaSection = forwardRef<HTMLElement, CtaSectionProps>(function CtaS
           initial={reduced ? false : { opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: .35 }}
-          transition={{ duration: .7, ease: enter }}
+          transition={{ duration: motionTokens.duration.considered, ease: enter }}
         >
           {visual ?? <SetupVisual reduced={reduced} />}
         </motion.div>
@@ -208,17 +208,53 @@ CtaSection.displayName = "CtaSection";
 
 const variantOptions = [{ value: "centered", label: "Centered" }, { value: "split", label: "Split" }, { value: "banner", label: "Banner" }];
 
+/** Springs the frame to its content's height after a discrete change (a new layout, a dismissed banner), so the preview never snaps.
+ *  Other resizes, such as the banner's own collapse or a parent reflow, follow at once so nothing lags. */
+function useFrameHeight(key: string, reduced: boolean) {
+  const content = useRef<HTMLDivElement>(null);
+  const height = useMotionValue<number | "auto">("auto");
+  const lastKey = useRef(key), armedUntil = useRef(0);
+  useLayoutEffect(() => {
+    if (lastKey.current === key) return;
+    lastKey.current = key;
+    armedUntil.current = performance.now() + 700;
+  }, [key]);
+  useEffect(() => {
+    const node = content.current;
+    if (!node || typeof ResizeObserver === "undefined") return;
+    let measured = false;
+    const observer = new ResizeObserver(() => {
+      const next = node.offsetHeight;
+      if (!measured || reduced || performance.now() > armedUntil.current) { measured = next > 0; height.jump(next || "auto"); return; }
+      animate(height, next, motionTokens.spring.smooth);
+    });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [height, reduced]);
+  return { content, height };
+}
+
 /** Preview: all three shapes. Buttons confirm in place; nothing is sent. */
 export function CtaSectionBlock() {
+  const reduced = !!useReducedMotion();
   const [variant, setVariant] = useState<CtaVariant>("centered");
   const [dismissed, setDismissed] = useState(false);
+  const showRestore = variant === "banner" && dismissed;
+  const view = showRestore ? "restore" : variant;
+  const { content, height } = useFrameHeight(view, reduced);
+  // The first layout appears as is; later layouts fade in while the frame springs to their height.
+  const [changed, setChanged] = useState(false);
   return <div className={styles.preview}>
-    <SegmentedControl label="Call to action layout" options={variantOptions} value={variant} onValueChange={next => { setVariant(next as CtaVariant); setDismissed(false); }} />
-    <div className={styles.frame}>
-      {variant === "banner" && dismissed
-        ? <div className={styles.restore}><Button variant="secondary" size="sm" onClick={() => setDismissed(false)}>Show the banner again</Button></div>
-        : <CtaSection key={variant} variant={variant} onDismiss={variant === "banner" ? () => setDismissed(true) : undefined} />}
-    </div>
+    <SegmentedControl label="Call to action layout" options={variantOptions} value={variant} onValueChange={next => { setChanged(true); setVariant(next as CtaVariant); setDismissed(false); }} />
+    <motion.div className={styles.frame} style={{ height }}>
+      <div ref={content}>
+        <motion.div key={view} initial={reduced || !changed ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: motionTokens.duration.standard, ease: standard }}>
+          {showRestore
+            ? <div className={styles.restore}><Button variant="secondary" size="sm" onClick={() => setDismissed(false)}>Show the banner again</Button></div>
+            : <CtaSection variant={variant} onDismiss={variant === "banner" ? () => { setChanged(true); setDismissed(true); } : undefined} />}
+        </motion.div>
+      </div>
+    </motion.div>
   </div>;
 }
 

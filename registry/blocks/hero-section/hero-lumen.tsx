@@ -110,9 +110,11 @@ export function HeroLumen({ primaryAction = { label: "Start free trial", doneLab
           animate={{ rotateX: 0, scale: 1 }}
           transition={{ duration: 1.5, ease: [...motionTokens.ease.enter], delay: .36 }}
         >
-          <div className={styles.scaler} style={{ width: box.width, height, transform: `scale(${box.scale})` }}>
+          {/* The scale is a Motion value rather than a CSS transform, so layout animations inside (the date range highlight)
+              are projected through it and slide exactly between options at any screen width. */}
+          <motion.div className={styles.scaler} style={{ width: box.width, height, scale: box.scale, originX: 0, originY: 0 }}>
             <LumenDashboard narrow={narrow} />
-          </div>
+          </motion.div>
         </motion.div>
       </div>
     </motion.div>

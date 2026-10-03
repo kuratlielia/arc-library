@@ -2,11 +2,11 @@
 .root { position: relative; display: block; width: 100%; overflow: clip; container-type: size; isolation: isolate; border-radius: var(--radius-panel); background: var(--surface-muted); cursor: ew-resize; touch-action: pan-y; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
 .root[data-orientation="vertical"] { cursor: ns-resize; touch-action: pan-x; }
 /* A hairline keeps light photos from bleeding into the page. */
-.root::after { content: ""; position: absolute; z-index: 3; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--foreground) 8%, transparent); pointer-events: none; }
+.root::after { content: ""; position: absolute; z-index: 3; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--foreground) 8%, transparent); pointer-events: none; }
 .layer { position: absolute; inset: 0; }
 .layer :where(img, picture, video) { display: block; width: 100%; height: 100%; object-fit: cover; pointer-events: none; -webkit-user-drag: none; }
 /* Captions sit on a frosted chip so they read over any photo, below the divider. */
-.chip { position: absolute; z-index: 1; top: var(--space-3); left: var(--space-3); padding: 3px 10px; border-radius: var(--radius-pill); background: color-mix(in oklch, var(--background) 74%, transparent); color: var(--foreground); font-size: var(--text-xs); font-weight: 500; line-height: var(--leading-body); letter-spacing: var(--tracking-body); pointer-events: none; -webkit-backdrop-filter: blur(12px) saturate(1.4); backdrop-filter: blur(12px) saturate(1.4); }
+.chip { position: absolute; z-index: 1; top: var(--space-3); left: var(--space-3); padding: 3px 10px; border-radius: var(--radius-pill); background: color-mix(in oklab, var(--background) 74%, transparent); color: var(--foreground); font-size: var(--text-xs); font-weight: 500; line-height: var(--leading-body); letter-spacing: var(--tracking-body); pointer-events: none; -webkit-backdrop-filter: blur(12px) saturate(1.4); backdrop-filter: blur(12px) saturate(1.4); }
 .chip[data-place="end"] { right: var(--space-3); left: auto; }
 .chip[data-place="bottom"] { top: auto; bottom: var(--space-3); }
 /* The pivot is a frame-sized layer moved by a percentage of itself; its top-left corner is the divider's center. */
@@ -20,8 +20,6 @@
 .handle { position: absolute; top: 0; left: 0; display: grid; box-sizing: border-box; width: 40px; height: 40px; place-items: center; translate: -50% -50%; border: 1px solid var(--border); border-radius: var(--radius-pill); background: var(--surface-raised); box-shadow: var(--shadow-raised); color: var(--foreground); pointer-events: auto; outline: 0 solid transparent; transition: border-color var(--duration-fast) var(--ease-standard); }
 .handle::after { content: ""; position: absolute; inset: -8px; border-radius: inherit; }
 @media (hover: hover) and (pointer: fine) { .root:hover .handle { border-color: var(--border-strong); } }
-/* Two rings, light inside dark, so focus reads over any photo. A handle focused by a press stays quiet until a key is used. */
-.handle:focus-visible:not([data-quiet]) { outline: 2px solid var(--foreground); outline-offset: 2px; box-shadow: var(--shadow-raised), 0 0 0 2px var(--background); }
 .chevrons { display: flex; align-items: center; }
 .chevron { display: grid; margin-inline: -2.5px; place-items: center; }
 @media (prefers-reduced-motion: reduce) { .handle { transition: none; } }

@@ -19,7 +19,7 @@
 .autoHeight { overflow: hidden; }
 .listbox { max-height: min(300px, 40vh); overflow-y: auto; overscroll-behavior: contain; }
 /* Arrow keys move the highlight often, so it changes almost instantly. */
-.option { display: flex; min-height: 36px; align-items: center; justify-content: space-between; gap: var(--space-3); border-radius: calc(var(--radius-control) - 6px); padding: 0 12px; color: var(--foreground); font-size: var(--text-sm); cursor: pointer; outline: none; user-select: none; transition: background-color 80ms var(--ease-standard), color 80ms var(--ease-standard); }
+.option { display: flex; min-height: 36px; align-items: center; justify-content: space-between; gap: var(--space-3); border-radius: calc(var(--radius-panel) - 5px); padding: 0 12px; color: var(--foreground); font-size: var(--text-sm); cursor: pointer; outline: none; user-select: none; transition: background-color 80ms var(--ease-standard), color 80ms var(--ease-standard); }
 .option > span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .option[data-active="true"] { background: var(--surface-muted); }
 .option[data-disabled="true"] { opacity: .42; cursor: not-allowed; }

@@ -58,7 +58,7 @@ function Mark({ value, own, index, reduced }: { value: ComparisonValue | undefin
   if (v === true) return <span className={styles.markWrap}>
     <svg className={styles.check} data-own={own || undefined} width="22" height="22" viewBox="0 0 22 22" aria-hidden="true">
       <circle cx="11" cy="11" r="10" />
-      <motion.path d="M6.6 11.3l3 3 5.9-6.4" initial={reduced ? false : { pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true, amount: 1 }} transition={{ duration: .32, ease: [...motionTokens.ease.enter], delay: own ? .06 + Math.min(index, 12) * .035 : 0 }} />
+      <motion.path d="M6.6 11.3l3 3 5.9-6.4" initial={reduced ? false : { pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true, amount: 1 }} transition={{ duration: motionTokens.duration.considered, ease: [...motionTokens.ease.enter], delay: own ? .06 + Math.min(index, 12) * .035 : 0 }} />
     </svg>
     <span className={styles.srOnly}>Included</span>
   </span>;
@@ -179,18 +179,18 @@ export function ComparisonTable({
               <div role="cell" className={styles.legend}>
                 <span><svg className={styles.check} width="16" height="16" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="10" /><path d="M6.6 11.3l3 3 5.9-6.4" /></svg>Included</span>
                 <span><svg className={styles.partial} width="16" height="16" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="9.25" /><path d="M11 1.75a9.25 9.25 0 0 1 0 18.5z" /></svg>Partial</span>
-                <span><Minus className={styles.cross} size={14} aria-hidden="true" />Not included</span>
+                <span><Minus className={styles.cross} size={14} strokeWidth={1.75} aria-hidden="true" />Not included</span>
               </div>
               {visible.map(column => <div key={column.id} role="cell" className={styles.footCell} data-own={column === own || undefined}>
                 {column === own && cta && (cta.href && !cta.onClick
                   ? <a className={styles.cta} href={cta.href}>{cta.label}</a>
-                  : <button type="button" className={styles.cta} data-done={ctaDone || undefined} onClick={() => { cta.onClick?.(); if (cta.doneLabel) setCtaDone(true); }}>
+                  : <motion.button type="button" layout={!reduced} className={styles.cta} style={{ borderRadius: 9999 }} data-done={ctaDone || undefined} whileTap={reduced ? undefined : { scale: .97 }} transition={morph} onClick={() => { cta.onClick?.(); if (cta.doneLabel) setCtaDone(true); }}>
                     <AnimatePresence mode="popLayout" initial={false}>
-                      <motion.span key={ctaDone ? "done" : "idle"} className={styles.ctaLabel} initial={reduced ? { opacity: 0 } : { opacity: 0, y: 8, filter: "blur(2px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} exit={reduced ? { opacity: 0 } : { opacity: 0, y: -8, filter: "blur(2px)" }} transition={{ duration: motionTokens.duration.standard, ease: [...motionTokens.ease.standard] }}>
-                        {ctaDone ? <><Check size={14} strokeWidth={2.25} aria-hidden="true" />{cta.doneLabel}</> : cta.label}
+                      <motion.span key={ctaDone ? "done" : "idle"} layout={reduced ? false : "position"} className={styles.ctaLabel} initial={reduced ? { opacity: 0 } : { opacity: 0, y: 8, filter: "blur(2px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} exit={reduced ? { opacity: 0 } : { opacity: 0, y: -8, filter: "blur(2px)" }} transition={{ duration: motionTokens.duration.standard, ease: [...motionTokens.ease.standard] }}>
+                        {ctaDone ? <><Check size={14} strokeWidth={2} aria-hidden="true" />{cta.doneLabel}</> : cta.label}
                       </motion.span>
                     </AnimatePresence>
-                  </button>)}
+                  </motion.button>)}
               </div>)}
             </div>
           </div>

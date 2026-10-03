@@ -7,17 +7,17 @@
 
 /* Ridges are opaque, so each one hides the valleys of the row behind it. */
 .ridge { transition: opacity var(--duration-standard) var(--ease-standard); }
-.fill { fill: color-mix(in oklch, var(--ridge) 34%, var(--surface)); stroke: none; transition: fill var(--duration-considered) var(--ease-standard); }
+.fill { fill: color-mix(in oklab, var(--ridge) 34%, var(--surface)); stroke: none; transition: fill var(--duration-considered) var(--ease-standard); }
 .line { fill: none; stroke: var(--ridge); stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; transition: stroke var(--duration-considered) var(--ease-standard); }
-.median { stroke: color-mix(in oklch, var(--ridge) 55%, var(--surface)); stroke-width: 1; transition: stroke var(--duration-considered) var(--ease-standard); }
+.median { stroke: color-mix(in oklab, var(--ridge) 55%, var(--surface)); stroke-width: 1; transition: stroke var(--duration-considered) var(--ease-standard); }
 .plot[data-active] .ridge[data-dim] { opacity: .38; }
 .ridge[data-lifted] { opacity: 0; transition-duration: var(--duration-instant); }
 
 /* The lifted ridge is a copy drawn above the rest, so it can rise over its neighbours. */
 .lens { opacity: 0; pointer-events: none; transform: translateY(0); transition: opacity var(--duration-fast) var(--ease-standard), transform var(--duration-spring) var(--ease-spring); }
 .lens[data-on] { opacity: 1; transform: translateY(-6px); }
-.lensFill { fill: color-mix(in oklch, var(--ridge) 18%, var(--surface)); stroke: none; }
-.lensBand { fill: color-mix(in oklch, var(--ridge) 48%, var(--surface)); stroke: none; }
+.lensFill { fill: color-mix(in oklab, var(--ridge) 18%, var(--surface)); stroke: none; }
+.lensBand { fill: color-mix(in oklab, var(--ridge) 48%, var(--surface)); stroke: none; }
 .lensMedian { stroke: var(--foreground); stroke-width: 1.5; stroke-linecap: round; }
 .lensLine { fill: none; stroke: var(--ridge); stroke-width: 2.25; stroke-linejoin: round; stroke-linecap: round; }
 
@@ -42,6 +42,7 @@
 .tipValue { color: var(--foreground); font-size: var(--text-sm); font-weight: 500; line-height: 1.4; }
 .tipRow { color: var(--foreground); font-size: var(--text-xs); line-height: var(--leading-body); }
 .tipKey { color: var(--text-muted); font-weight: 400; }
+.tipValue .tipKey { font-size: var(--text-xs); }
 .tipNote { margin: 4px 0 0; color: var(--text-muted); font-size: var(--text-xs); line-height: var(--leading-body); font-variant-numeric: tabular-nums; }
 
 .scale { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; margin-top: var(--space-3); color: var(--text-muted); font-size: var(--text-xs); line-height: var(--leading-body); font-variant-numeric: tabular-nums; }

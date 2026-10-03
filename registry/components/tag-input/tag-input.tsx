@@ -23,7 +23,7 @@ function MotionText({ text }: { text: string }) {
   const words = text.split(" ");
   return <><span className={styles.srOnly}>{text}</span><span className={styles.words} aria-hidden="true"><AnimatePresence initial={false} mode="popLayout">{words.map((word, index) => <motion.span key={`${index}:${word}`} className={styles.word}
     initial={reduced ? { opacity: 0 } : { opacity: 0, y: "0.35em", filter: `blur(${motionTokens.blur.soft}px)` }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-    exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: "-0.35em", filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: .14, ease: [...motionTokens.ease.standard] } }}
+    exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: "-0.35em", filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: motionTokens.duration.instant, ease: [...motionTokens.ease.standard] } }}
     transition={reduced ? { duration: motionTokens.duration.instant } : { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] }}>{index < words.length - 1 ? `${word} ` : word}</motion.span>)}</AnimatePresence></span></>;
 }
 
@@ -102,7 +102,7 @@ export function TagInput({ label, value, defaultValue = [], onValueChange, place
     const tag = draft.trim(); if (!tag) return;
     const existing = tags.find(item => item.toLowerCase() === tag.toLowerCase());
     // A duplicate pulses the tag that already exists, so the ignored Enter still gets an answer.
-    if (existing) { const node = scope.current?.querySelector(`[data-tag="${CSS.escape(existing)}"]`); if (node && !reduced) animate(node, { scale: [1, 1.06, 1] }, { duration: .32, ease: [...motionTokens.ease.standard] }); say(`${existing} is already added`); return; }
+    if (existing) { const node = scope.current?.querySelector(`[data-tag="${CSS.escape(existing)}"]`); if (node && !reduced) animate(node, { scale: [1, 1.06, 1] }, { duration: motionTokens.duration.standard + motionTokens.duration.instant, ease: [...motionTokens.ease.inOut] }); say(`${existing} is already added`); return; }
     update([...tags, tag]); setDraft(""); setPicked(null); say(`Added ${tag}`);
   }
   function remove(tag: string) { update(tags.filter(item => item !== tag)); setPicked(null); say(`Removed ${tag}`); inputRef.current?.focus(); }
@@ -135,12 +135,12 @@ export function TagInput({ label, value, defaultValue = [], onValueChange, place
         <span ref={ringRef} className={styles.ring} aria-hidden="true" />
         <AnimatePresence initial={false}>{!draft && !tags.length && <motion.span key="placeholder" className={styles.placeholder} aria-hidden="true"
           initial={reduced ? { opacity: 0 } : { opacity: 0, y: "0.3em", filter: `blur(${motionTokens.blur.soft}px)` }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} exit={{ opacity: 0, transition: { duration: 0 } }}
-          transition={reduced ? { duration: motionTokens.duration.instant } : { duration: .22, ease: [...motionTokens.ease.enter] }}>{placeholder}</motion.span>}</AnimatePresence>
+          transition={reduced ? { duration: motionTokens.duration.instant } : { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] }}>{placeholder}</motion.span>}</AnimatePresence>
         <AnimatePresence initial={false} mode="popLayout">{tags.map(tag => <motion.span layout={reduced ? false : "position"} className={styles.tag} key={tag} data-tag={tag} data-picked={tag === active || undefined}
           onMouseDown={event => onTagPointer(event)} onClick={event => onTagPointer(event, tag)}
           initial={reduced ? { opacity: 0 } : { opacity: 0, scale: .9, filter: `blur(${motionTokens.blur.soft}px)` }} animate={{ opacity: 1, scale: 1, filter: "blur(0px)", transitionEnd: { filter: "none" } }}
           exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, scale: .9, filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: motionTokens.duration.instant, ease: [...motionTokens.ease.standard] } }}
-          transition={reduced ? { duration: motionTokens.duration.instant } : { ...motionTokens.spring.morph, layout: move, opacity: { duration: motionTokens.duration.fast, ease: [...motionTokens.ease.enter] }, filter: { duration: .22, ease: [...motionTokens.ease.enter] } }}><span className={styles.tagLabel}>{tag}</span><button type="button" onClick={() => remove(tag)} aria-label={`Remove ${tag}`}><Xmark width={14} height={14} aria-hidden="true" /></button></motion.span>)}</AnimatePresence>
+          transition={reduced ? { duration: motionTokens.duration.instant } : { ...motionTokens.spring.morph, layout: move, opacity: { duration: motionTokens.duration.fast, ease: [...motionTokens.ease.enter] }, filter: { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] } }}><span className={styles.tagLabel}>{tag}</span><button type="button" onClick={() => remove(tag)} aria-label={`Remove ${tag}`}><Xmark width={14} height={14} aria-hidden="true" /></button></motion.span>)}</AnimatePresence>
         <motion.input layout={reduced ? false : "position"} transition={{ layout: move }} ref={inputRef} id={inputId} value={draft} onChange={event => { setDraft(event.currentTarget.value); setPicked(null); }} onKeyDown={onKeyDown} onBlur={() => { add(); setPicked(null); }} placeholder={tags.length ? "" : placeholder} aria-describedby={hintId} />
       </div>
     </motion.div>

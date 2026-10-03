@@ -97,7 +97,7 @@ function useReducedMotionSafe() {
 const tipText = (reduced: boolean): Variants => ({
   from: (change: Change) => change === "instant" ? { opacity: 1, y: "0em", filter: "blur(0px)" } : reduced ? { opacity: 0 } : { opacity: 0, y: `${.3 * (change || 1)}em`, filter: `blur(${change ? motionTokens.blur.soft : motionTokens.blur.subtle}px)` },
   to: { opacity: 1, y: "0em", filter: "blur(0px)" },
-  gone: (change: Change) => change === "instant" || reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: `${-.3 * (change || 1)}em`, filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: .12, ease: standard } },
+  gone: (change: Change) => change === "instant" || reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: `${-.3 * (change || 1)}em`, filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: motionTokens.duration.instant, ease: standard } },
 });
 
 /** A total that rolls digit by digit in the direction it moved. Places keep their identity, so only changed digits turn,
@@ -128,7 +128,7 @@ function RollingNumber({ value, locale, reduced }: { value: number; locale: stri
   const variants: Variants = {
     from: (direction: number) => reduced ? { opacity: 0 } : { opacity: 0, y: `${.3 * direction}em`, filter: `blur(${motionTokens.blur.soft}px)` },
     to: { opacity: 1, y: "0em", filter: "blur(0px)" },
-    gone: (direction: number) => reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: `${-.3 * direction}em`, filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: .14, ease: standard } },
+    gone: (direction: number) => reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: `${-.3 * direction}em`, filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: motionTokens.duration.instant, ease: standard } },
   };
   return <motion.span className={styles.rollingFrame} style={{ width }} aria-hidden="true"><span ref={inner} className={styles.rolling}>
     {chars.map((char, index) => {
@@ -136,7 +136,7 @@ function RollingNumber({ value, locale, reduced }: { value: number; locale: stri
       return <span key={place} className={styles.place}>
         <AnimatePresence mode="popLayout" initial={false} custom={state.direction}>
           <motion.span key={char} className={styles.placeChar} custom={state.direction} variants={variants} initial="from" animate="to" exit="gone"
-            transition={reduced ? { duration: .15 } : { duration: .22, ease: enter, delay: Math.min(place * .018, .09) }}>{char}</motion.span>
+            transition={reduced ? { duration: motionTokens.duration.fast } : { duration: motionTokens.duration.standard, ease: enter, delay: Math.min(place * .018, .09) }}>{char}</motion.span>
         </AnimatePresence>
       </span>;
     })}
@@ -148,8 +148,8 @@ function RiseText({ text, reduced, children }: { text: string; reduced: boolean;
   return <span className={styles.rise} aria-hidden="true">
     <AnimatePresence mode="popLayout" initial={false}>
       <motion.span key={text} className={styles.riseLine} initial={reduced ? { opacity: 0 } : { opacity: 0, y: "0.3em", filter: `blur(${motionTokens.blur.soft}px)` }} animate={{ opacity: 1, y: "0em", filter: "blur(0px)" }}
-        exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: "-0.3em", filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: .14, ease: standard } }}
-        transition={{ duration: reduced ? .15 : .22, ease: enter }}>{children ?? text}</motion.span>
+        exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: "-0.3em", filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: motionTokens.duration.instant, ease: standard } }}
+        transition={{ duration: reduced ? motionTokens.duration.fast : motionTokens.duration.standard, ease: enter }}>{children ?? text}</motion.span>
     </AnimatePresence>
   </span>;
 }
@@ -398,11 +398,11 @@ export function ActivityHeatmap({ days, label, period, unit: unitProp = CONTRIBU
 
     <motion.div className={styles.tip} style={{ x: tipX, y: tipY }} aria-hidden="true">
       <motion.div className={styles.bubble} style={{ x: "-50%" }} initial={false} animate={open && tip ? { opacity: 1, scale: 1 } : { opacity: 0, scale: reduced ? 1 : .96 }}
-        transition={reduced ? { duration: open ? .15 : .1 } : open ? { ...motionTokens.spring.snappy, opacity: { duration: motionTokens.duration.fast, ease: enter } } : { duration: .12, ease: standard }}>
+        transition={reduced ? { duration: open ? motionTokens.duration.fast : motionTokens.duration.instant } : open ? { ...motionTokens.spring.snappy, opacity: { duration: motionTokens.duration.fast, ease: enter } } : { duration: motionTokens.duration.instant, ease: standard }}>
         <motion.span className={styles.tipBody} style={{ width: tipWidth }}>
           <span ref={measureRef} className={styles.tipMeasure}><span className={styles.tipPrimary}>{tip?.primary}</span><span className={styles.tipSecondary}>{tip?.secondary}</span></span>
           <AnimatePresence mode="popLayout" initial={false} custom={change}>
-            {tip && <motion.span key={tip.key} className={styles.tipLines} custom={change} variants={tipText(reduced)} initial="from" animate="to" exit="gone" transition={{ duration: reduced ? .15 : .22, ease: enter }}>
+            {tip && <motion.span key={tip.key} className={styles.tipLines} custom={change} variants={tipText(reduced)} initial="from" animate="to" exit="gone" transition={{ duration: reduced ? motionTokens.duration.fast : motionTokens.duration.standard, ease: enter }}>
               <span className={styles.tipPrimary}>{tip.primary}</span>
               <span className={styles.tipSecondary}>{tip.secondary}</span>
             </motion.span>}

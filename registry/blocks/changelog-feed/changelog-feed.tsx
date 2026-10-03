@@ -131,7 +131,7 @@ function SubscribeControl({ reduce }: { reduce: boolean }) {
     event.preventDefault();
     if (!emailPattern.test(email.trim())) {
       setError(true);
-      if (!reduce && shakeScope.current) animate(shakeScope.current, { x: [0, -6, 5, -3, 2, 0] }, { duration: 0.4, ease: "easeOut" });
+      if (!reduce && shakeScope.current) animate(shakeScope.current, { x: [0, -6, 5, -3, 2, 0] }, { duration: motionTokens.duration.considered, ease: [...motionTokens.ease.standard] });
       inputRef.current?.focus();
       return;
     }
@@ -142,7 +142,7 @@ function SubscribeControl({ reduce }: { reduce: boolean }) {
   function onBlur(event: FocusEvent<HTMLFormElement>) { if (!event.currentTarget.contains(event.relatedTarget) && !email.trim()) { setError(false); go("idle", false); } }
   function undo() { setEmail(""); go("idle"); }
 
-  const swap: Transition = reduce ? { duration: motionTokens.duration.instant } : { opacity: { duration: 0.2, delay: 0.05 }, filter: { duration: 0.2, delay: 0.05 }, scale: { ...motionTokens.spring.morph, delay: 0.03 } };
+  const swap: Transition = reduce ? { duration: motionTokens.duration.instant } : { opacity: { duration: motionTokens.duration.fast, delay: 0.05 }, filter: { duration: motionTokens.duration.fast, delay: 0.05 }, scale: { ...motionTokens.spring.morph, delay: 0.03 } };
   const leave = { opacity: 0, scale: 0.96, filter: blurSubtle, transition: { duration: motionTokens.duration.instant } };
   const note = error ? "Enter a valid email address" : state === "done" ? "Subscribed." : "";
 
@@ -201,10 +201,10 @@ function EntryRow({ entry, open, onToggle, reduce }: { entry: Entry; open: boole
     layout="position"
     className={styles.entry}
     data-open={open || undefined}
-    initial={{ opacity: 0, y: 10 }}
-    animate={{ opacity: 1, y: 0 }}
+    initial={reduce ? { opacity: 0 } : { opacity: 0, filter: blurSubtle }}
+    animate={{ opacity: 1, filter: none }}
     exit={reduce ? { opacity: 0, transition: { duration: motionTokens.duration.instant } } : { opacity: 0, scale: 0.98, filter: blurSubtle, transition: { duration: motionTokens.duration.exit, ease: [...motionTokens.ease.standard] } }}
-    transition={reduce ? { duration: 0, opacity: { duration: motionTokens.duration.instant } } : { ...motionTokens.spring.smooth, layout }}
+    transition={reduce ? { duration: 0, opacity: { duration: motionTokens.duration.instant } } : { opacity: { duration: motionTokens.duration.standard }, filter: { duration: motionTokens.duration.standard }, layout }}
   >
     <button type="button" className={styles.row} aria-expanded={open} aria-controls={panelId} onClick={onToggle}>
       <span className={styles.meta}>
@@ -225,7 +225,7 @@ function EntryRow({ entry, open, onToggle, reduce }: { entry: Entry; open: boole
           initial={{ opacity: 0, y: 8, filter: blurSoft }}
           animate={{ opacity: 1, y: 0, filter: none }}
           exit={{ opacity: 0, transition: { duration: motionTokens.duration.instant } }}
-          transition={reduce ? { duration: 0, opacity: { duration: motionTokens.duration.instant } } : { y: { ...motionTokens.spring.smooth, delay: 0.06 }, opacity: { duration: 0.28, delay: 0.06 }, filter: { duration: 0.28, delay: 0.06 } }}
+          transition={reduce ? { duration: 0, opacity: { duration: motionTokens.duration.instant } } : { y: { ...motionTokens.spring.smooth, delay: 0.06 }, opacity: { duration: motionTokens.duration.standard, delay: 0.06 }, filter: { duration: motionTokens.duration.standard, delay: 0.06 } }}
         >
           <ul className={styles.details}>{entry.details.map((detail) => <li key={detail}>{detail}</li>)}</ul>
           {entry.media && <EntryMedia media={entry.media} />}
@@ -342,7 +342,7 @@ export function ChangelogFeed({
         </AnimatePresence>
       </div>
       <p className={styles.shown} aria-hidden="true">
-        <RollingNumber value={visible.length} reduce={reduce} />
+        <motion.span className={styles.shownCount} layout="position" transition={layout}><RollingNumber value={visible.length} reduce={reduce} /></motion.span>
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.span key={filters.length === 0 ? "all" : "some"} initial={{ opacity: 0, filter: blurSubtle }} animate={{ opacity: 1, filter: none }} exit={{ opacity: 0, transition: { duration: motionTokens.duration.instant } }} transition={reduce ? instant : { duration: motionTokens.duration.standard }}>{filters.length === 0 ? "updates" : `of ${totalCount} updates`}</motion.span>
         </AnimatePresence>
@@ -357,7 +357,7 @@ export function ChangelogFeed({
             <motion.span key={current?.key ?? "none"} custom={active.direction} variants={rise} initial="enter" animate="center" exit="exit" transition={reduce ? instant : motionTokens.spring.morph}>{current ? <>{current.label.split(" ")[0]}<span className={styles.monthYear}> {current.label.split(" ")[1]}</span></> : "No updates"}</motion.span>
           </AnimatePresence>
         </span>
-        <span className={styles.monthCount}><RollingNumber value={current?.items.length ?? 0} reduce={reduce} />{current?.items.length === 1 ? "update" : "updates"}</span>
+        <motion.span className={styles.monthCount} layout="position" transition={layout}><RollingNumber value={current?.items.length ?? 0} reduce={reduce} />{current?.items.length === 1 ? "update" : "updates"}</motion.span>
       </div>
       <nav className={styles.monthNav} aria-label="Jump to month">
         {groups.map((group) => {

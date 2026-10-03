@@ -1,4 +1,4 @@
-.root { --mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace; --indent: 16px; display: grid; min-width: 0; overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-panel); background: var(--surface); color: var(--foreground); font-family: var(--font-body); letter-spacing: var(--tracking-body); }
+.root { --mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace; --indent: 16px; display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-panel); background: var(--surface); color: var(--foreground); font-family: var(--font-body); letter-spacing: var(--tracking-body); }
 
 /* Toolbar: search with a match counter, then expand and collapse all. */
 .toolbar { display: flex; align-items: center; gap: 2px; padding: 6px; border-bottom: 1px solid var(--border-subtle); }
@@ -11,14 +11,14 @@
 .count { min-width: 3.5ch; padding-inline: 4px; color: var(--text-muted); font-size: var(--text-xs); font-variant-numeric: tabular-nums; text-align: right; }
 .grow { flex: 1; }
 .divider { width: 1px; height: 18px; margin-inline: 4px; background: var(--border-subtle); }
-.tool { display: inline-grid; width: 30px; height: 30px; flex: none; place-items: center; padding: 0; border: 0; border-radius: 11px; background: transparent; color: var(--text-secondary); cursor: pointer; -webkit-tap-highlight-color: transparent; transition: color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), opacity var(--duration-fast) var(--ease-standard); }
+.tool { display: inline-grid; width: 34px; height: 34px; flex: none; place-items: center; padding: 0; border: 0; border-radius: 14px; background: transparent; color: var(--text-secondary); cursor: pointer; -webkit-tap-highlight-color: transparent; transition: color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), opacity var(--duration-fast) var(--ease-standard); }
 .tool:disabled { cursor: default; opacity: .4; }
 .tool:active:not(:disabled) { background: var(--surface-muted); color: var(--foreground); }
 .search .tool { width: 26px; height: 26px; border-radius: 9px; }
 .search .tool:active:not(:disabled) { background: var(--surface); }
 
 /* Tree. Rows are one fixed height, so scrolling can aim at where a row will settle. */
-.tree { position: relative; max-height: var(--json-max-height, 420px); padding: 6px; overflow: auto; overscroll-behavior: contain; font-family: var(--mono); font-size: 13px; font-variant-ligatures: none; letter-spacing: 0; scrollbar-width: thin; }
+.tree { position: relative; max-height: var(--json-max-height, 420px); padding: 6px; overflow: auto; overflow-anchor: none; overscroll-behavior: contain; font-family: var(--mono); font-size: 13px; font-variant-ligatures: none; letter-spacing: 0; scrollbar-width: thin; }
 .row { position: relative; border-radius: 10px; cursor: default; outline: none; -webkit-tap-highlight-color: transparent; }
 .highlight { position: absolute; inset: 1px 0; border-radius: 9px; background: var(--surface-muted); }
 .line { position: relative; display: flex; height: 30px; min-width: 0; align-items: center; gap: 6px; padding-right: 6px; padding-left: calc(4px + var(--level, 0) * var(--indent)); white-space: nowrap; }
@@ -42,8 +42,8 @@
 .value[data-type="boolean"] { color: var(--warning); }
 .value[data-type="null"], .value[data-type="other"] { color: var(--text-muted); }
 
-.mark { border-radius: 3px; background: color-mix(in oklch, var(--warning) 22%, transparent); color: inherit; box-shadow: 0 0 0 1px color-mix(in oklch, var(--warning) 22%, transparent); transition: background-color var(--duration-fast) var(--ease-standard); }
-.mark[data-current] { background: color-mix(in oklch, var(--warning) 48%, transparent); }
+.mark { border-radius: 3px; background: color-mix(in oklab, var(--warning) 22%, transparent); color: inherit; box-shadow: 0 0 0 1px color-mix(in oklab, var(--warning) 22%, transparent); transition: background-color var(--duration-fast) var(--ease-standard); }
+.mark[data-current] { background: color-mix(in oklab, var(--warning) 48%, transparent); }
 
 .more { display: inline-flex; align-items: baseline; gap: 10px; padding-left: 20px; font-family: var(--font-body); font-size: var(--text-sm); }
 .moreLabel { color: var(--foreground); font-weight: 500; }
@@ -51,18 +51,19 @@
 .muted { color: var(--text-muted); font-size: var(--text-xs); font-variant-numeric: tabular-nums; }
 
 /* Copy actions appear at the row's end over a soft fade, on hover or on the current row. */
-.actions { position: absolute; top: 0; right: 2px; bottom: 0; display: flex; align-items: center; gap: 0; padding-left: 24px; background: linear-gradient(to right, transparent, var(--surface) 22px); opacity: 0; pointer-events: none; transition: opacity var(--duration-fast) var(--ease-standard); }
+/* Inset like the highlight, with its right corners, so the fade never shows a square edge past the row's rounded end. */
+.actions { position: absolute; top: 1px; right: 0; bottom: 1px; display: flex; align-items: center; gap: 0; padding-right: 1px; padding-left: 24px; border-radius: 0 9px 9px 0; background: linear-gradient(to right, transparent, var(--surface) 22px); opacity: 0; pointer-events: none; transition: opacity var(--duration-fast) var(--ease-standard); }
 .row[data-active] .actions { background: linear-gradient(to right, transparent, var(--surface-muted) 22px); }
 .action { position: relative; display: inline-grid; width: 26px; height: 26px; place-items: center; padding: 0; border: 0; border-radius: 8px; background: transparent; color: var(--text-secondary); cursor: pointer; -webkit-tap-highlight-color: transparent; transition: color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard); }
 .action[data-state="done"] { color: var(--success); }
 .action[data-state="error"] { color: var(--danger); }
-.action:active { background: color-mix(in oklch, var(--foreground) 8%, transparent); }
+.action:active { background: color-mix(in oklab, var(--foreground) 8%, transparent); }
 .actionGlyph { display: grid; place-items: center; }
 .row[data-active] .actions, .row:focus-within .actions { opacity: 1; pointer-events: auto; }
 
 /* The current path, always readable in full through its copy action. */
 .pathBar { display: flex; min-width: 0; align-items: center; gap: 10px; padding: 6px 6px 6px 14px; border-top: 1px solid var(--border-subtle); }
-.path { min-width: 0; flex: 1; overflow: hidden; color: var(--text-secondary); font-family: var(--mono); font-size: 12px; letter-spacing: 0; text-overflow: ellipsis; white-space: nowrap; }
+.path { min-width: 0; flex: 1; overflow: hidden; color: var(--text-secondary); font-family: var(--mono); font-size: var(--text-xs); letter-spacing: 0; text-overflow: ellipsis; white-space: nowrap; }
 .pathType { flex: none; color: var(--text-muted); font-size: var(--text-xs); }
 .pathCopy { width: 30px; height: 30px; border-radius: 10px; }
 
@@ -70,7 +71,10 @@
 
 @media (hover: hover) and (pointer: fine) {
   .row:hover .actions { opacity: 1; pointer-events: auto; }
-  .row:not([data-active]):hover .line { border-radius: 9px; background: color-mix(in oklch, var(--foreground) 3.5%, transparent); }
+  /* Same inset and corner as the current-row highlight, so hover and selection share one shape. */
+  .row:not([data-active]):hover { --row-hover: color-mix(in oklab, var(--foreground) 3.5%, var(--surface)); }
+  .row:not([data-active]):hover::before { content: ""; position: absolute; inset: 1px 0; border-radius: 9px; background: var(--row-hover); pointer-events: none; }
+  .row:not([data-active]):hover .actions { background: linear-gradient(to right, transparent, var(--row-hover) 22px); }
   .row:hover .chevron[data-branch] { color: var(--foreground); }
   .tool:hover:not(:disabled), .action:hover { background: var(--surface-muted); color: var(--foreground); }
   .search .tool:hover:not(:disabled) { background: var(--surface); }

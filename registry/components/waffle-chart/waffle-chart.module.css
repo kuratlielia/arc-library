@@ -12,14 +12,14 @@
 /* Each cell is one unit. Its colour changes mid-flight with the same stagger as its travel. */
 .cell { --inner: 0 0 0 0 transparent; --outer: 0 0 0 0 transparent; position: absolute; top: 0; left: 0; border-radius: 22%; background: var(--cell); box-shadow: var(--inner), var(--outer); will-change: transform; transition: background-color var(--duration-considered) var(--ease-standard) var(--delay, 0s), border-radius var(--duration-considered) var(--ease-standard) var(--delay, 0s), box-shadow var(--duration-considered) var(--ease-standard) var(--delay, 0s), opacity var(--duration-fast) var(--ease-standard); }
 .grid[data-active] .cell:not([data-on]) { opacity: .26 !important; transition: background-color var(--duration-considered) var(--ease-standard) var(--delay, 0s), border-radius var(--duration-considered) var(--ease-standard) var(--delay, 0s), opacity var(--duration-standard) var(--ease-standard); }
-.cell[data-cursor] { --outer: 0 0 0 2px var(--surface), 0 0 0 3.5px color-mix(in oklch, var(--foreground) 55%, transparent); }
+.cell[data-cursor] { --outer: 0 0 0 2px var(--surface), 0 0 0 3.5px color-mix(in oklab, var(--foreground) 55%, transparent); }
 
 /* Shape is the colour-free second channel: a cell morphs between these as it changes category. */
 .cell[data-shape="round"], .swatch[data-shape="round"], .tipSwatch[data-shape="round"] { border-radius: 50%; }
 .cell[data-shape="framed"] { --inner: inset 0 0 0 2.5px var(--cell), inset 0 0 0 3.25px var(--surface); }
 .swatch[data-shape="framed"], .tipSwatch[data-shape="framed"] { box-shadow: inset 0 0 0 2px var(--cell), inset 0 0 0 3px var(--surface); }
 
-.tooltip { position: absolute; top: 0; left: 0; z-index: 2; display: grid; min-width: 150px; max-width: min(240px, 100%); gap: 2px; padding: 9px 12px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface-raised); box-shadow: var(--shadow-floating); opacity: 0; pointer-events: none; scale: .96; transition: opacity var(--duration-fast) var(--ease-standard), scale var(--duration-fast) var(--ease-standard); }
+.tooltip { position: absolute; top: 0; left: 0; z-index: 2; display: grid; min-width: 150px; max-width: min(240px, 100%); gap: 2px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface-raised); box-shadow: var(--shadow-floating); opacity: 0; pointer-events: none; scale: .96; transition: opacity var(--duration-fast) var(--ease-standard), scale var(--duration-fast) var(--ease-standard); }
 .tooltip[data-shown] { opacity: 1; scale: 1; }
 .tipRow { display: flex; min-width: 0; align-items: center; gap: 8px; margin: 0; font-size: var(--text-sm); line-height: 1.3; }
 .tipSwatch { width: 10px; height: 10px; flex: none; border-radius: 3px; background: var(--cell); transition: background-color var(--duration-fast) var(--ease-standard); }
@@ -33,10 +33,11 @@
 .legend { display: grid; min-width: 0; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 2px var(--space-2); margin: 0; padding: 0; list-style: none; }
 @container (min-width: 420px) { .figure[data-legend] .legend { grid-template-columns: minmax(0, 1fr); } }
 /* Below the side-by-side layout two columns would clip names like "Wind and solar", so the legend reads as one list. */
-@container (max-width: 419px) { .legend { grid-template-columns: minmax(0, 1fr); } }
+/* Stacked, the legend shares the grid's measure and its row padding hangs outside, so swatches and shares line up with the cell edges. */
+@container (max-width: 419px) { .legend { grid-template-columns: minmax(0, 1fr); margin-inline: max(-10px, calc((100% - 320px) / 2)); } }
 .item { display: grid; width: 100%; min-height: 36px; grid-template-columns: 10px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 4px 10px; border: 0; border-radius: 12px; background: transparent; color: var(--text-secondary); cursor: pointer; font: inherit; font-size: var(--text-sm); line-height: var(--leading-body); text-align: left; -webkit-tap-highlight-color: transparent; transition: color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), opacity var(--duration-fast) var(--ease-standard), transform var(--duration-instant) var(--ease-standard); }
 .item:active { transform: scale(.98); }
-.item[data-on] { color: var(--foreground); background: color-mix(in oklch, var(--foreground) 5%, transparent); }
+.item[data-on] { color: var(--foreground); background: color-mix(in oklab, var(--foreground) 5%, transparent); }
 .item[data-dim] { opacity: .5; }
 .item[aria-pressed="true"] { color: var(--foreground); }
 @media (hover: hover) and (pointer: fine) { .item:hover { color: var(--foreground); } }

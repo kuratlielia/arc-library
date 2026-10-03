@@ -71,10 +71,10 @@ const MAX_MESSAGE = 500;
 /** Faces slide along one axis in the direction of travel and settle out of a soft blur. */
 const faceVariants: Variants = {
   hidden: ({ direction, axis }: { direction: number; axis: "x" | "y" }) => ({ opacity: 0, x: axis === "x" ? direction * 18 : 0, y: axis === "y" ? direction * 18 : 0, filter: `blur(${motionTokens.blur.soft}px)` }),
-  shown: { opacity: 1, x: 0, y: 0, filter: "blur(0px)", transition: { x: motionTokens.spring.smooth, y: motionTokens.spring.smooth, opacity: { duration: .24, ease: enter, delay: .04 }, filter: { duration: .28, ease: enter, delay: .04 } } },
-  gone: ({ direction, axis }: { direction: number; axis: "x" | "y" }) => ({ opacity: 0, x: axis === "x" ? direction * -12 : 0, y: axis === "y" ? direction * -12 : 0, filter: `blur(${motionTokens.blur.soft}px)`, transition: { duration: .14, ease: standard } }),
+  shown: { opacity: 1, x: 0, y: 0, filter: "blur(0px)", transition: { x: motionTokens.spring.smooth, y: motionTokens.spring.smooth, opacity: { duration: motionTokens.duration.standard, ease: enter, delay: .04 }, filter: { duration: motionTokens.duration.standard, ease: enter, delay: .04 } } },
+  gone: ({ direction, axis }: { direction: number; axis: "x" | "y" }) => ({ opacity: 0, x: axis === "x" ? direction * -12 : 0, y: axis === "y" ? direction * -12 : 0, filter: `blur(${motionTokens.blur.soft}px)`, transition: { duration: motionTokens.duration.fast, ease: standard } }),
 };
-const fadeVariants: Variants = { hidden: { opacity: 0 }, shown: { opacity: 1, transition: { duration: .16 } }, gone: { opacity: 0, transition: { duration: .08 } } };
+const fadeVariants: Variants = { hidden: { opacity: 0 }, shown: { opacity: 1, transition: { duration: motionTokens.duration.fast } }, gone: { opacity: 0, transition: { duration: motionTokens.duration.instant } } };
 
 function Face({ children, custom, reduced, className }: { children: ReactNode; custom: { direction: number; axis: "x" | "y" }; reduced: boolean; className?: string }) {
   const present = useIsPresent();
@@ -228,7 +228,7 @@ function ContactForm({ topics, onSubmit, reduced }: { topics: string[]; onSubmit
           <TopicPicker topics={topics} value={topic} onChange={setTopic} reduced={reduced} />
           <Textarea ref={messageRef} label="Message" name="message" rows={4} maxLength={MAX_MESSAGE} placeholder="What are you building?" value={values.message} onChange={update("message")} error={errors.message} description={`${left} characters left`} readOnly={phase === "sending"} />
           <AnimatePresence initial={false}>
-            {failure && <motion.p key="failure" role="alert" className={styles.failure} initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={reduced ? { duration: 0 } : { height: motionTokens.spring.smooth, opacity: { duration: .16 } }}>{failure}</motion.p>}
+            {failure && <motion.p key="failure" role="alert" className={styles.failure} initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={reduced ? { duration: 0 } : { height: motionTokens.spring.smooth, opacity: { duration: motionTokens.duration.fast, ease: standard } }}>{failure}</motion.p>}
           </AnimatePresence>
           <div className={styles.submitRow}>
             <p className={styles.fine}>We reply within one business day.</p>
@@ -256,7 +256,7 @@ function ConfirmAction({ idle, busy, done, note }: { idle: string; busy?: boolea
     </Button>
     <div aria-live="polite">
       <AnimatePresence initial={false}>
-        {state === "done" && note && <motion.div key="note" className={styles.confirmNote} initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={reduced ? { duration: 0 } : { height: motionTokens.spring.smooth, opacity: { duration: .18 } }}>{note}</motion.div>}
+        {state === "done" && note && <motion.div key="note" className={styles.confirmNote} initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={reduced ? { duration: 0 } : { height: motionTokens.spring.smooth, opacity: { duration: motionTokens.duration.fast, ease: standard } }}>{note}</motion.div>}
       </AnimatePresence>
     </div>
   </div>;

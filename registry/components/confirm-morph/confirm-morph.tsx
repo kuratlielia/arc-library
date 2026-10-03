@@ -34,7 +34,7 @@ export interface ConfirmMorphProps {
   undoLabel?: string;
   /** Shown beside the spinner while `onUndo` resolves. */
   undoingLabel?: string;
-  /** `danger` colours the resting label and the confirm button red. `neutral` uses the foreground for important, reversible actions. */
+  /** `danger` colours the resting label red and gives the pill a faint red edge; the confirm button always follows the accent. `neutral` keeps the resting label on the foreground for important, reversible actions. */
   tone?: "danger" | "neutral";
   /** Runs on confirm. Return a promise to show the pending face; a rejection shows the error face with Retry. */
   onConfirm?: () => void | Promise<unknown>;

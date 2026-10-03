@@ -2,7 +2,7 @@
 .cta *, .cta *::before, .cta *::after { box-sizing: border-box; }
 
 .title { margin: 0; font-family: var(--font-display); font-size: clamp(1.875rem, 1rem + 3.4cqi, var(--text-4xl)); font-weight: 500; letter-spacing: var(--tracking-display); line-height: var(--leading-display); text-wrap: balance; }
-.description { margin: 0; color: var(--text-secondary); font-size: var(--text-lg); line-height: 1.5; text-wrap: pretty; }
+.description { margin: 0; color: var(--text-secondary); font-size: var(--text-lg); line-height: var(--leading-body); text-wrap: pretty; }
 .actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 
 /* Actions: the arrow leans forward on hover; links match the button shapes. */
@@ -16,7 +16,7 @@
 
 /* Centered: a closing section on one quiet surface. */
 .centeredWrap { max-width: 1120px; margin: 0 auto; padding: var(--space-16) var(--space-8); }
-.centered { display: grid; justify-items: center; gap: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-surface); padding: var(--space-24) var(--space-8); background: color-mix(in oklch, var(--surface-muted) 45%, var(--surface)); text-align: center; }
+.centered { display: grid; justify-items: center; gap: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-surface); padding: var(--space-24) var(--space-8); background: color-mix(in oklab, var(--surface-muted) 45%, var(--surface)); text-align: center; }
 .centered .title { max-width: 18ch; }
 .centered .description { max-width: 34rem; }
 .centered .actions { justify-content: center; margin-top: var(--space-4); }
@@ -31,34 +31,34 @@
 .points { display: grid; gap: var(--space-2); margin: var(--space-2) 0 0; padding: 0; list-style: none; }
 .points li { display: flex; align-items: center; gap: var(--space-3); color: var(--text-secondary); font-size: var(--text-sm); }
 .points svg { flex: none; color: var(--success); }
-.stage { display: grid; min-height: 380px; place-items: center; border: 1px solid var(--border); border-radius: var(--radius-surface); padding: var(--space-8); background: color-mix(in oklch, var(--surface-muted) 55%, var(--surface)); }
+.stage { display: grid; min-height: 380px; place-items: center; border: 1px solid var(--border); border-radius: var(--radius-surface); padding: var(--space-8); background: color-mix(in oklab, var(--surface-muted) 55%, var(--surface)); }
 
 .setup { width: min(100%, 360px); border: 1px solid var(--border); border-radius: var(--radius-panel); background: var(--surface-raised); box-shadow: var(--shadow-raised); overflow: hidden; }
 .setupHead { display: flex; align-items: center; gap: 10px; padding: 16px 18px 14px; }
 .workspaceMark { display: grid; width: 28px; height: 28px; flex: none; place-items: center; border-radius: 8px; background: var(--foreground); color: var(--background); font-size: var(--text-sm); font-weight: 500; }
 .setupTitle { font-size: var(--text-sm); font-weight: 500; }
 .setupStatus { display: inline-grid; margin-left: auto; color: var(--text-muted); font-size: var(--text-xs); justify-items: end; }
-.setupStatus > span { grid-area: 1 / 1; opacity: 0; transform: translateY(4px); filter: blur(2px); transition: opacity 180ms var(--ease-standard), transform 240ms var(--ease-enter), filter 180ms var(--ease-standard); }
+.setupStatus > span { grid-area: 1 / 1; opacity: 0; transform: translateY(4px); filter: blur(2px); transition: opacity var(--duration-fast) var(--ease-standard), transform var(--duration-standard) var(--ease-enter), filter var(--duration-fast) var(--ease-standard); }
 .setupStatus > span[data-shown] { opacity: 1; transform: none; filter: blur(0); }
 .setup[data-done] .setupStatus > span:last-child { color: var(--success); font-weight: 500; }
 .progress { height: 2px; margin: 0 18px; border-radius: 1px; background: var(--border); overflow: hidden; }
-.progress > span { display: block; height: 100%; background: var(--success); transform-origin: left; transition: transform 520ms var(--ease-in-out); }
+.progress > span { display: block; height: 100%; background: var(--success); transform-origin: left; transition: transform var(--duration-considered) var(--ease-in-out); }
 .steps { display: grid; gap: 2px; margin: 0; padding: 10px 8px 12px; list-style: none; }
-.step { display: flex; min-height: 44px; align-items: center; gap: 12px; border-radius: 14px; padding: 0 10px; color: var(--text-muted); font-size: var(--text-sm); transition: color 200ms var(--ease-standard), background-color 200ms var(--ease-standard); }
+.step { display: flex; min-height: 44px; align-items: center; gap: 12px; border-radius: 14px; padding: 0 10px; color: var(--text-muted); font-size: var(--text-sm); transition: color var(--duration-standard) var(--ease-standard), background-color var(--duration-standard) var(--ease-standard); }
 .step[data-active] { background: var(--surface-muted); color: var(--foreground); }
 .step[data-done] { color: var(--foreground); }
-.stepMark { position: relative; display: grid; width: 20px; height: 20px; flex: none; place-items: center; border: 1.5px dashed var(--border-strong); border-radius: 50%; color: transparent; transition: border-color 200ms var(--ease-standard), background-color 200ms var(--ease-standard), color 200ms var(--ease-standard); }
-.stepMark svg { transform: scale(.5); opacity: 0; transition: transform var(--duration-spring) var(--ease-spring), opacity 160ms var(--ease-standard); }
+.stepMark { position: relative; display: grid; width: 20px; height: 20px; flex: none; place-items: center; border: 1.5px dashed var(--border-strong); border-radius: 50%; color: transparent; transition: border-color var(--duration-standard) var(--ease-standard), background-color var(--duration-standard) var(--ease-standard), color var(--duration-standard) var(--ease-standard); }
+.stepMark svg { transform: scale(.5); opacity: 0; transition: transform var(--duration-spring) var(--ease-spring), opacity var(--duration-fast) var(--ease-standard); }
 .step[data-active] .stepMark { border-style: solid; border-color: var(--text-muted); }
 .step[data-done] .stepMark { border-style: solid; border-color: var(--success); background: var(--success); color: var(--background); }
 .step[data-done] .stepMark svg { transform: scale(1); opacity: 1; }
 .stepLabel { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .stepFaces { display: flex; margin-left: auto; padding-left: 6px; }
-.stepFaces img { display: block; width: 22px; height: 22px; margin-left: -6px; border: 2px solid var(--surface-raised); border-radius: 50%; object-fit: cover; opacity: 0; transform: translateX(-6px) scale(.9); transition: opacity 200ms var(--ease-standard), transform var(--duration-spring) var(--ease-spring); }
+.stepFaces img { display: block; width: 22px; height: 22px; margin-left: -6px; border: 2px solid var(--surface-raised); border-radius: 50%; object-fit: cover; opacity: 0; transform: translateX(-6px) scale(.9); transition: opacity var(--duration-standard) var(--ease-standard), transform var(--duration-spring) var(--ease-spring); }
 .step[data-done] .stepFaces img, .step[data-active] .stepFaces img { opacity: 1; transform: none; }
 
 /* Banner: one line that closes its gap when dismissed. */
-.bannerWrap { overflow: hidden; transform-origin: top center; }
+.bannerWrap { overflow: hidden; }
 .bannerPad { max-width: calc(1120px + 2 * var(--space-8)); margin: 0 auto; padding: var(--space-6) var(--space-8); }
 .banner { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); border: 1px solid var(--border); border-radius: 20px; padding: 10px 10px 10px 20px; background: var(--surface); }
 .bannerText { display: flex; min-width: 0; flex-wrap: wrap; align-items: baseline; gap: 2px var(--space-2); margin: 0; font-size: var(--text-sm); line-height: var(--leading-body); }

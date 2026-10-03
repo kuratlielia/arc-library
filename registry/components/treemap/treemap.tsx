@@ -43,7 +43,7 @@ type Rect = { x: number; y: number; w: number; h: number };
 type Flat = { id: string; label: string; value: number; color: number | null; depth: number; parent: string | null; children: string[]; path: string[] };
 type Drawn = Rect & { o: number };
 
-const { spring, ease, blur } = motionTokens;
+const { spring, ease, blur, duration } = motionTokens;
 const physical = ({ visualDuration, bounce }: { visualDuration: number; bounce: number }, restDelta = .0005) => { const root = (2 * Math.PI) / (visualDuration * 1.2); return { type: "spring" as const, stiffness: root * root, damping: 2 * (1 - bounce) * root, restDelta, restSpeed: restDelta * 2 }; };
 const zoom = physical({ visualDuration: .62, bounce: .06 });
 const reveal = physical({ visualDuration: .9, bounce: 0 });
@@ -284,7 +284,7 @@ export function Treemap({ data, label, formatValue = value => grouped.format(val
       <nav className={styles.crumbs} aria-label={`${label} path`}>
         <ol className={styles.crumbList}>
           <AnimatePresence initial={false} mode="popLayout">
-            {trail.map((node, index) => <motion.li key={node.id} className={styles.crumb} layout={reduced ? false : "position"} initial={{ opacity: 0, x: reduced ? 0 : -6, filter: reduced ? "none" : `blur(${blur.subtle}px)` }} animate={{ opacity: 1, x: 0, filter: "blur(0px)" }} exit={{ opacity: 0, x: reduced ? 0 : -6, transition: { duration: .12 } }} transition={{ ...spring.smooth }}>
+            {trail.map((node, index) => <motion.li key={node.id} className={styles.crumb} layout={reduced ? false : "position"} initial={{ opacity: 0, x: reduced ? 0 : -6, filter: reduced ? "none" : `blur(${blur.subtle}px)` }} animate={{ opacity: 1, x: 0, filter: "blur(0px)" }} exit={{ opacity: 0, x: reduced ? 0 : -6, transition: { duration: duration.instant, ease: [...ease.exit] } }} transition={{ ...spring.smooth }}>
               {index > 0 && <span className={styles.crumbSep} aria-hidden="true">/</span>}
               {index < trail.length - 1 ? <button type="button" className={styles.crumbButton} onClick={() => { zoomTo(node.id); setActive(null); }}>{node.label}</button> : <span className={styles.crumbCurrent} aria-current="location">{node.label}</span>}
             </motion.li>)}
@@ -292,7 +292,7 @@ export function Treemap({ data, label, formatValue = value => grouped.format(val
         </ol>
       </nav>
       <p className={styles.total}><AnimatePresence mode="popLayout" initial={false}>
-        <motion.span key={formatValue(center.value)} className={styles.totalValue} initial={{ opacity: 0, y: reduced ? 0 : 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: reduced ? 0 : -6 }} transition={{ duration: .24, ease: [...ease.enter] }}>{formatValue(center.value)}</motion.span>
+        <motion.span key={formatValue(center.value)} className={styles.totalValue} initial={{ opacity: 0, y: reduced ? 0 : 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: reduced ? 0 : -6 }} transition={{ duration: duration.standard, ease: [...ease.enter] }}>{formatValue(center.value)}</motion.span>
       </AnimatePresence></p>
     </div>
     <div ref={stage} className={styles.stage} style={{ height }} data-active={activeNode ? true : undefined} role="group" tabIndex={empty ? -1 : 0} aria-roledescription="treemap"
@@ -300,7 +300,7 @@ export function Treemap({ data, label, formatValue = value => grouped.format(val
       onKeyDown={onKeyDown} onBlur={() => setActive(null)} onPointerLeave={() => { setActive(null); setPointer(null); }}>
       {nodes.map(node => { const top = topOf(node); return <div key={node.id} ref={element => { if (element) tiles.current.set(node.id, element); else tiles.current.delete(node.id); }} className={styles.tile}
         data-branch={node.children.length > 0 || undefined} data-active={active === node.id || undefined} data-lineage={focusTop?.id === node.id && active !== node.id || undefined} data-dim={focusTop !== null && top !== null && focusTop.id !== top.id || undefined}
-        style={{ "--hue": hueOf(branchOf.get(node.id) ?? -1), "--fill": `color-mix(in oklch, ${hueOf(branchOf.get(node.id) ?? -1)} ${shade(node.color)}%, var(--surface))`, zIndex: node.depth } as CSSProperties}
+        style={{ "--hue": hueOf(branchOf.get(node.id) ?? -1), "--fill": `color-mix(in oklab, ${hueOf(branchOf.get(node.id) ?? -1)} ${shade(node.color)}%, var(--surface))`, zIndex: node.depth } as CSSProperties}
         onPointerMove={event => { event.stopPropagation(); onPointerMove(event, node.id); }} onClick={event => { event.stopPropagation(); onTileClick(node); }}>
         <span className={styles.tileLabel}>{node.label}</span>
         <span className={styles.tileValue}>{formatValue(node.value)}</span>
@@ -318,7 +318,7 @@ export function Treemap({ data, label, formatValue = value => grouped.format(val
     {colored && <div className={styles.scale} aria-hidden="true">
       <span className={styles.scaleLabel}>{colorLabel}</span>
       <span className={styles.scaleEnd}>{formatColor(lo)}</span>
-      <span className={styles.steps}>{Array.from({ length: STEPS }, (_, i) => <span key={i} className={styles.step} style={{ "--fill": `color-mix(in oklch, ${center.depth === 0 ? "var(--foreground)" : hueOf(branchOf.get(center.id) ?? -1)} ${Math.round(14 + (i / (STEPS - 1)) * 44)}%, var(--surface))` } as CSSProperties} />)}</span>
+      <span className={styles.steps}>{Array.from({ length: STEPS }, (_, i) => <span key={i} className={styles.step} style={{ "--fill": `color-mix(in oklab, ${center.depth === 0 ? "var(--foreground)" : hueOf(branchOf.get(center.id) ?? -1)} ${Math.round(14 + (i / (STEPS - 1)) * 44)}%, var(--surface))` } as CSSProperties} />)}</span>
       <span className={styles.scaleEnd}>{formatColor(hi)}</span>
     </div>}
     <p className={styles.srOnly} aria-live="polite" aria-atomic="true">{activeNode ? describe(activeNode) : `${center.label}, ${formatValue(center.value)}`}</p>

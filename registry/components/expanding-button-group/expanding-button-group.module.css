@@ -1,0 +1,44 @@
+/* A flat pill on the surface. Geometry comes from the component as --ebg-* variables, so the measured widths and the CSS agree. */
+.group { --ebg-h: 36px; --ebg-icon: 16px; --ebg-start: 10px; --ebg-gap: 7px; --ebg-end: 14px; --ebg-pad: 3px; position: relative; isolation: isolate; display: inline-flex; max-width: 100%; flex: none; align-items: center; gap: 2px; padding: var(--ebg-pad); border: 1px solid var(--border); border-radius: var(--radius-pill); background: var(--surface); }
+
+/* The box never scales: its width is the animation, so a press answers with the icon and with color. The label overflows to the
+   right of the icon and the clipped width reveals it. min-width keeps the spring's settle from pinching a collapsed button. */
+.item { position: relative; display: inline-flex; height: var(--ebg-h); min-width: var(--ebg-h); flex: none; align-items: center; justify-content: flex-start; gap: var(--ebg-gap); overflow: clip; border: 0; border-radius: var(--radius-pill); padding: 0 0 0 var(--ebg-start); background: transparent; color: var(--text-secondary); font: inherit; font-size: var(--text-sm); font-weight: 500; line-height: 1; letter-spacing: var(--tracking-body); white-space: nowrap; cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation; transition: color var(--duration-fast) var(--ease-standard), background-color var(--duration-standard) var(--ease-standard); }
+.sm .item { font-size: var(--text-xs); }
+.item[data-expanded] { color: var(--foreground); background: var(--surface-muted); }
+.item[data-tone="danger"][data-expanded] { color: var(--danger); background: color-mix(in oklab, var(--danger) 10%, var(--surface)); }
+/* The confirmation carries its meaning on the check, with a faint tint behind the whole button. */
+.item[data-state="done"]:not([data-tone="danger"]) { background: color-mix(in oklab, var(--success) 10%, var(--surface)); }
+.item[data-state="done"]:not([data-tone="danger"]) .icon { color: var(--success); }
+.item[aria-busy="true"] { cursor: progress; }
+.item[aria-busy="true"] .icon { animation: busy 1.1s var(--ease-in-out) infinite; }
+.item[aria-disabled="true"] { cursor: not-allowed; color: var(--text-muted); opacity: .5; }
+.item[aria-disabled="true"][data-expanded] { background: var(--surface-muted); color: var(--text-secondary); }
+:global(:root[data-theme="dark"]) .item[data-tone="danger"][data-expanded] { background: color-mix(in oklab, var(--danger) 14%, var(--surface)); }
+:global(:root[data-theme="dark"]) .item[data-state="done"]:not([data-tone="danger"]) { background: color-mix(in oklab, var(--success) 14%, var(--surface)); }
+
+.icon { position: relative; display: grid; width: var(--ebg-icon); height: var(--ebg-icon); flex: none; place-items: center; transition: transform 320ms var(--ease-spring); }
+.item:active:not([aria-disabled="true"]) .icon { transform: scale(.86); transition-duration: 90ms; transition-timing-function: var(--ease-standard); }
+.glyph { display: grid; grid-area: 1 / 1; place-items: center; width: 100%; height: 100%; }
+.glyph svg { width: 100%; height: 100%; stroke-width: 1.75; }
+
+/* Outgoing and incoming words share one cell, so a confirmation crossfades in place while the width springs between them. */
+.label { display: inline-grid; flex: none; align-items: center; justify-items: start; }
+.word { grid-area: 1 / 1; white-space: nowrap; }
+
+/* Invisible copies of both words hold the slot at the longer one; they are also what gets measured for the width target. */
+.sizer { grid-area: 1 / 1; visibility: hidden; pointer-events: none; white-space: nowrap; }
+
+/* Before the first measurement (the server render), the expanded action takes its natural width, which is exactly the width the
+   spring later targets, so hydration never moves anything. */
+.item[data-unmeasured][data-expanded] { width: auto !important; padding-inline-end: var(--ebg-end); }
+
+.srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+
+@keyframes busy { 50% { opacity: .45; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .item { transition: color var(--duration-instant) linear, background-color var(--duration-instant) linear; }
+  .icon, .item:active:not([aria-disabled="true"]) .icon { transform: none; transition: none; }
+  .item[aria-busy="true"] .icon { animation: none; opacity: .6; }
+}

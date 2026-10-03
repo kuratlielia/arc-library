@@ -248,7 +248,7 @@ export function ImageCompare({ before, after, position, defaultPosition = 50, on
   }
 
   const capsule = dragging ? (vertical ? { width: 36, height: 56 } : { width: 56, height: 36 }) : { width: 40, height: 40 };
-  return <div ref={rootRef} className={[styles.root, className].filter(Boolean).join(" ")} data-orientation={orientation} data-dragging={dragging || undefined} style={{ aspectRatio }}
+  return <div ref={rootRef} className={[styles.root, className].filter(Boolean).join(" ")} data-orientation={orientation} data-dragging={dragging || undefined} data-frame-keep="" style={{ aspectRatio }}
     onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerEnd} onPointerCancel={onPointerEnd} onLostPointerCapture={onPointerEnd} onMouseDown={event => event.preventDefault()} onDragStart={event => event.preventDefault()}
     // Pointer capture sends the double-click to the frame, so it checks where the presses began.
     onDoubleClick={() => { if (pressedHandle.current && latest.current !== 50) commit(50); }}>
@@ -266,8 +266,8 @@ export function ImageCompare({ before, after, position, defaultPosition = 50, on
           aria-valuemin={0} aria-valuemax={100} aria-valuenow={afterShare} aria-valuetext={`${afterShare}% after`}
           initial={false} animate={capsule} transition={reduced ? { duration: 0 } : spring.morph} onKeyDown={onKeyDown} onBlur={() => setQuiet(false)}>
           <motion.span className={styles.chevrons} style={{ rotate: theta }} aria-hidden="true">
-            <motion.span className={styles.chevron} initial={false} animate={{ x: dragging ? -4 : 0 }} transition={reduced ? { duration: 0 } : spring.morph}><ChevronLeft size={16} strokeWidth={2} /></motion.span>
-            <motion.span className={styles.chevron} initial={false} animate={{ x: dragging ? 4 : 0 }} transition={reduced ? { duration: 0 } : spring.morph}><ChevronRight size={16} strokeWidth={2} /></motion.span>
+            <motion.span className={styles.chevron} initial={false} animate={{ x: dragging ? -4 : 0 }} transition={reduced ? { duration: 0 } : spring.morph}><ChevronLeft size={16} strokeWidth={1.75} /></motion.span>
+            <motion.span className={styles.chevron} initial={false} animate={{ x: dragging ? 4 : 0 }} transition={reduced ? { duration: 0 } : spring.morph}><ChevronRight size={16} strokeWidth={1.75} /></motion.span>
           </motion.span>
         </motion.div>
       </motion.span>

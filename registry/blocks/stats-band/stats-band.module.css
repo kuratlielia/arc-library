@@ -60,16 +60,16 @@
 .lit { fill: var(--ink); transition: fill var(--duration-standard) var(--ease-standard); }
 
 /* Hover or focus: the context line fades in and the visual takes the accent. The other stats stay neutral. */
-.stat:focus-visible { --ink: var(--accent); --soft: color-mix(in oklch, var(--accent) 42%, var(--background)); }
+.stat:focus-visible { --ink: var(--accent); --soft: color-mix(in oklab, var(--accent) 42%, var(--background)); }
 .stat[data-context]:focus-visible .detail { opacity: 0; transform: translateY(-4px); }
 .stat[data-context]:focus-visible .context { opacity: 1; transform: none; }
 @media (hover: none) {
-  .stat:focus { --ink: var(--accent); --soft: color-mix(in oklch, var(--accent) 42%, var(--background)); }
+  .stat:focus { --ink: var(--accent); --soft: color-mix(in oklab, var(--accent) 42%, var(--background)); }
   .stat[data-context]:focus .detail { opacity: 0; transform: translateY(-4px); }
   .stat[data-context]:focus .context { opacity: 1; transform: none; }
 }
 @media (hover: hover) {
-  .stat:hover { --ink: var(--accent); --soft: color-mix(in oklch, var(--accent) 42%, var(--background)); }
+  .stat:hover { --ink: var(--accent); --soft: color-mix(in oklab, var(--accent) 42%, var(--background)); }
   .stat[data-context]:hover .detail { opacity: 0; transform: translateY(-4px); }
   .stat[data-context]:hover .context { opacity: 1; transform: none; }
 }
@@ -130,6 +130,10 @@
 }
 @container stats (max-width: 800px) {
   .stats[data-count="3"] { grid-template-columns: minmax(0, 1fr); }
+  /* Three stacked stats in the divided grid: no column padding or vertical hairlines, a rule between each row instead. */
+  .band[data-layout="divided"] .stats[data-count="3"] .stat { padding-right: 0; padding-left: 0; }
+  .band[data-layout="divided"] .stats[data-count="3"] .stat::before { display: none; }
+  .band[data-layout="divided"] .stats[data-count="3"] .stat:nth-child(n + 2)::after { content: ""; position: absolute; top: 0; right: 0; left: 0; height: 1px; background: var(--border); }
 }
 
 .preview { display: grid; width: 100%; justify-items: center; gap: var(--space-4); }

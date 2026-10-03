@@ -75,24 +75,41 @@ function HeightFrame({ morphKey, reduce, children }: { morphKey: string; reduce:
   const content = useRef<HTMLDivElement>(null);
   const height = useMotionValue<number | "auto">("auto");
   const changedAt = useRef(0);
-  useLayoutEffect(() => { changedAt.current = performance.now(); }, [morphKey]);
+  const last = useRef<number | undefined>(undefined);
+  const animating = useRef(false);
+  /* Pin the old height in the same commit as the change, before Motion measures the chips' new layout. Otherwise the chips
+     are measured against an unpinned frame, the centred demo shifts by half the growth for that measurement, and the first row
+     sinks and floats back while the height springs. */
+  useLayoutEffect(() => {
+    changedAt.current = performance.now();
+    const node = frame.current;
+    if (reduce || !node || last.current === undefined) return;
+    const current = height.get();
+    const from = typeof current === "number" ? current : last.current;
+    height.jump(from);
+    Object.assign(node.style, { overflow: "clip", height: `${from}px`, minHeight: `${from}px` });
+    // If the change leaves the height alone, no resize follows, so release the pin after a frame.
+    let inner = 0;
+    const outer = requestAnimationFrame(() => { inner = requestAnimationFrame(() => { if (animating.current) return; height.jump("auto"); if (frame.current) Object.assign(frame.current.style, { overflow: "", height: "auto", minHeight: "" }); }); });
+    return () => { cancelAnimationFrame(outer); cancelAnimationFrame(inner); };
+  }, [morphKey, reduce, height]);
   useEffect(() => {
     const node = content.current;
     if (!node || typeof ResizeObserver === "undefined") return;
-    let last: number | undefined;
     let controls: AnimationPlaybackControls | undefined;
-    const settle = () => { height.jump("auto"); if (frame.current) Object.assign(frame.current.style, { overflow: "", height: "auto", minHeight: "" }); };
+    const settle = () => { animating.current = false; height.jump("auto"); if (frame.current) Object.assign(frame.current.style, { overflow: "", height: "auto", minHeight: "" }); };
     // The minimum follows the moving height, so a flex parent short on room cannot squeeze the frame mid-morph and snap it when the morph ends.
     const unfollow = height.on("change", value => { if (frame.current) frame.current.style.minHeight = typeof value === "number" ? `${value}px` : ""; });
     const observer = new ResizeObserver(([entry]) => {
       const next = entry.borderBoxSize?.[0]?.blockSize ?? node.offsetHeight;
       const current = height.get();
-      const from = typeof current === "number" ? current : last;
-      last = next;
+      const from = typeof current === "number" ? current : last.current;
+      last.current = next;
       controls?.stop();
       if (reduce || from === undefined || Math.abs(from - next) < .5 || performance.now() - changedAt.current > 160) return settle();
       // Pin the old height before this frame paints, then spring to the new one.
       if (frame.current) Object.assign(frame.current.style, { overflow: "clip", height: `${from}px`, minHeight: `${from}px` });
+      animating.current = true;
       controls = animate(height, [from, next], { ...motionTokens.spring.smooth, onComplete: settle });
     });
     observer.observe(node);
@@ -178,7 +195,7 @@ function MoreChip({ hidden, expanded, tabbable, reduce, onToggle, onFocusChip, r
       <motion.span className={styles.surface} style={{ right: edge }} aria-hidden="true" />
       <span className={styles.moreText}>
         <AnimatePresence mode="popLayout" initial={false}>
-          <Swap key={text} follow={centre} className={styles.moreLine} initial={reduce ? { opacity: 0 } : textIn} animate={shown} exit={reduce ? { opacity: 0, transition: reducedFade } : textOut} transition={reduce ? reducedFade : { duration: .22, ease: enterEase }}>{text}</Swap>
+          <Swap key={text} follow={centre} className={styles.moreLine} initial={reduce ? { opacity: 0 } : textIn} animate={shown} exit={reduce ? { opacity: 0, transition: reducedFade } : textOut} transition={reduce ? reducedFade : { duration: motionTokens.duration.standard, ease: enterEase }}>{text}</Swap>
         </AnimatePresence>
       </span>
     </span>

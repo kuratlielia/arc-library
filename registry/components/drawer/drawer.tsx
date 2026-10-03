@@ -59,8 +59,8 @@ function SwapText({ text }: { text: string }) {
         className={styles.swap}
         initial={reduced ? false : { opacity: 0, y: "0.3em", filter: `blur(${motionTokens.blur.soft}px)` }}
         animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-        exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: "-0.3em", filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: 0.15, ease: [...motionTokens.ease.standard] } }}
-        transition={{ duration: 0.24, ease: [...motionTokens.ease.enter] }}
+        exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: "-0.3em", filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: motionTokens.duration.fast, ease: [...motionTokens.ease.standard] } }}
+        transition={{ duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] }}
       >
         {text}
       </motion.span>
@@ -125,7 +125,7 @@ export function DrawerContent({
         ) : null}
       </div>
       <DialogPrimitive.Close className={styles.close} aria-label="Close drawer">
-        <X size={18} strokeWidth={1.8} aria-hidden="true" />
+        <X size={16} strokeWidth={1.75} aria-hidden="true" />
       </DialogPrimitive.Close>
     </motion.div>
     <div className={styles.body}>{children}</div>

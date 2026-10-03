@@ -10,23 +10,23 @@
   --mesh-1: #0d3a47; --mesh-2: #2a2f86; --mesh-3: #5a2a3c; --mesh-4: #3a1f5a; --mesh-5: #7a3a22; --mesh-6: #12142c;
 }
 /* A theme-aware scrim keeps body text above 4.5:1 wherever the mesh drifts. */
-.hero::after { content: ""; position: absolute; z-index: -1; inset: 0; background: linear-gradient(to bottom, transparent 40%, color-mix(in oklch, var(--background) 22%, transparent)); pointer-events: none; }
+.hero::after { content: ""; position: absolute; z-index: -1; inset: 0; background: linear-gradient(to bottom, transparent 40%, color-mix(in oklab, var(--background) 22%, transparent)); pointer-events: none; }
 
 .inner { display: grid; box-sizing: border-box; width: 100%; max-width: 1320px; grid-template-rows: 1fr auto auto 1fr auto; gap: var(--space-10); margin: 0 auto; padding: clamp(88px, 12svh, 128px) var(--space-10) var(--space-10); }
 .title { grid-row: 2; }
 .row { grid-row: 3; }
 .brands { grid-row: 5; }
-.title { max-width: 14ch; font-size: clamp(2.75rem, 1rem + 7cqi, 7rem); letter-spacing: -.045em; line-height: 1; }
+.title { max-width: 14ch; font-size: clamp(2.75rem, 1rem + 7cqi, 7rem); }
 .row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: var(--space-8) var(--space-16); }
-.description { max-width: 520px; color: color-mix(in oklch, var(--foreground) 76%, transparent); }
+.description { max-width: 520px; color: color-mix(in oklab, var(--foreground) 76%, transparent); }
 .cta { display: grid; justify-items: end; gap: var(--space-3); }
 .actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
-.fine { margin: 0; color: color-mix(in oklch, var(--foreground) 62%, transparent); font-size: var(--text-sm); }
+.fine { margin: 0; color: color-mix(in oklab, var(--foreground) 62%, transparent); font-size: var(--text-sm); }
 
-.brands { display: grid; gap: var(--space-5); border-top: 1px solid color-mix(in oklch, var(--foreground) 14%, transparent); padding-top: var(--space-6); }
-.brands p { margin: 0; color: color-mix(in oklch, var(--foreground) 62%, transparent); font-size: var(--text-sm); }
+.brands { display: grid; gap: var(--space-5); border-top: 1px solid color-mix(in oklab, var(--foreground) 14%, transparent); padding-top: var(--space-6); }
+.brands p { margin: 0; color: color-mix(in oklab, var(--foreground) 62%, transparent); font-size: var(--text-sm); }
 .brands ul { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-5) var(--space-8); margin: 0; padding: 0; list-style: none; }
-.brands li { display: inline-flex; align-items: center; gap: 9px; color: color-mix(in oklch, var(--foreground) 78%, transparent); font-size: var(--text-lg); font-weight: 500; letter-spacing: -.02em; }
+.brands li { display: inline-flex; align-items: center; gap: 9px; color: color-mix(in oklab, var(--foreground) 78%, transparent); font-size: var(--text-lg); font-weight: 500; letter-spacing: var(--tracking-body); }
 .brands i { width: 22px; height: 22px; background: currentColor; -webkit-mask-position: center; mask-position: center; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-size: contain; mask-size: contain; }
 
 @container hero (max-width: 800px) {

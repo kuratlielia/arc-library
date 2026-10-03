@@ -11,6 +11,5 @@
 .info .icon { color: var(--accent); } .success .icon { color: var(--success); } .warning .icon { color: var(--warning); } .danger .icon { color: var(--danger); }
 .dismiss { display: grid; width: 28px; height: 28px; flex: 0 0 auto; place-items: center; margin: -5px -6px -5px 0; border: 0; border-radius: var(--radius-pill); background: transparent; color: var(--text-muted); cursor: pointer; transition: transform var(--duration-spring) var(--ease-spring), background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard); }
 .dismiss:active { transform: scale(.96); transition-duration: var(--duration-instant); transition-timing-function: var(--ease-standard); }
-.dismiss:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 @media (hover: hover) and (pointer: fine) { .dismiss:hover { background: var(--surface-muted); color: var(--foreground); } }
 @media (prefers-reduced-motion: reduce) { .dismiss { transition: none; } .dismiss:active { transform: none; } }

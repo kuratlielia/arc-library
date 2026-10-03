@@ -40,8 +40,8 @@ textarea.control { white-space: pre-wrap; overflow-wrap: break-word; }
   .display:hover ~ .frame .pencil, .display:focus-visible ~ .frame .pencil, .pencil:hover { opacity: 1; }
 }
 .root[data-editing] .frame { border-color: var(--foreground); background: var(--surface); box-shadow: 0 0 0 3px var(--focus-ring); }
-.root[data-invalid] .frame { border-color: var(--danger); box-shadow: 0 0 0 3px color-mix(in oklch, var(--danger) 24%, transparent); }
-.root[data-flash="on"] .frame { border-color: color-mix(in oklch, var(--danger) 30%, transparent); background: color-mix(in oklch, var(--danger) 9%, transparent); }
+.root[data-invalid] .frame { border-color: var(--danger); box-shadow: 0 0 0 3px color-mix(in oklab, var(--danger) 24%, transparent); }
+.root[data-flash="on"] .frame { border-color: color-mix(in oklab, var(--danger) 30%, transparent); background: color-mix(in oklab, var(--danger) 9%, transparent); }
 /* The wash leaves slowly, without any movement, once the message has been read. */
 .root[data-flash="off"] .frame { transition-duration: var(--duration-considered); }
 
@@ -55,7 +55,7 @@ textarea.control { white-space: pre-wrap; overflow-wrap: break-word; }
 .save { background: var(--foreground); color: var(--background); }
 .cancel { border-color: var(--border); background: var(--surface); color: var(--text-secondary); }
 .save:active, .cancel:active { transform: scale(.96); }
-@media (hover: hover) and (pointer: fine) { .save:hover { background: color-mix(in oklch, var(--foreground) 86%, var(--background)); } .cancel:hover { border-color: var(--border-strong); background: var(--surface-muted); color: var(--foreground); } }
+@media (hover: hover) and (pointer: fine) { .save:hover { background: color-mix(in oklab, var(--foreground) 86%, var(--background)); } .cancel:hover { border-color: var(--border-strong); background: var(--surface-muted); color: var(--foreground); } }
 .save:focus-visible, .cancel:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .pencil { margin-left: 2px; color: var(--text-muted); cursor: pointer; }
 .spinner { display: block; width: 14px; height: 14px; margin-left: 2px; border: 1.5px solid var(--text-muted); border-right-color: transparent; border-radius: var(--radius-pill); animation: spin .7s linear infinite; }

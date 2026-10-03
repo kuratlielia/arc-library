@@ -140,6 +140,10 @@ export function SlopeChart({ data, label, startLabel, endLabel, formatValue, for
   const tipSpringX = useSpring(tipX, follow), tipSpringY = useSpring(tipY, follow);
   const wasShown = useRef(false);
   const activeRow = rows.find(row => row.item.key === active) ?? null;
+  // The tooltip keeps the last item's content while it fades out, so it never collapses to an empty box mid-fade.
+  const [shownKey, setShownKey] = useState<string | null>(null);
+  if (active && active !== shownKey) setShownKey(active);
+  const tipRow = activeRow ?? rows.find(row => row.item.key === shownKey) ?? null;
   useLayoutEffect(() => {
     const bubble = tip.current;
     if (!activeRow || !bubble || !width) { wasShown.current = false; return; }
@@ -232,10 +236,10 @@ export function SlopeChart({ data, label, startLabel, endLabel, formatValue, for
         </div>
       </>}
       <motion.div ref={tip} className={styles.tooltip} style={{ x: reduced ? tipX : tipSpringX, y: reduced ? tipY : tipSpringY }} aria-hidden="true">
-        <p className={styles.tipTitle}>{activeRow?.item.label ?? ""}</p>
-        <p className={styles.tipRow}><span className={styles.tipName}>{startLabel}</span><span className={styles.tipValue}>{activeRow ? format(activeRow.item.start) : ""}</span></p>
-        <p className={styles.tipRow}><span className={styles.tipName}>{endLabel}</span><span className={styles.tipValue}>{activeRow ? format(activeRow.item.end) : ""}</span></p>
-        <p className={styles.tipMeta}>{activeRow ? `${change(activeRow.item)}, ${rankText(activeRow)}` : ""}</p>
+        <p className={styles.tipTitle}>{tipRow?.item.label ?? ""}</p>
+        <p className={styles.tipRow}><span className={styles.tipName}>{startLabel}</span><span className={styles.tipValue}>{tipRow ? format(tipRow.item.start) : ""}</span></p>
+        <p className={styles.tipRow}><span className={styles.tipName}>{endLabel}</span><span className={styles.tipValue}>{tipRow ? format(tipRow.item.end) : ""}</span></p>
+        <p className={styles.tipMeta}>{tipRow ? `${change(tipRow.item)}, ${rankText(tipRow)}` : ""}</p>
       </motion.div>
       {empty && <p className={styles.message}>{emptyLabel}</p>}
     </div>

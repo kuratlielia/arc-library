@@ -16,7 +16,7 @@
 :global(:root[data-theme="dark"]) .shade { background: oklch(0% 0 0 / .22); }
 
 .stamp { position: absolute; top: var(--space-4); display: inline-flex; height: 2rem; align-items: center; gap: 6px; padding: 0 var(--space-3) 0 10px; border: 1px solid var(--border); border-radius: var(--radius-pill); background: var(--surface-raised); color: var(--foreground); font-size: var(--text-sm); font-weight: 500; white-space: nowrap; pointer-events: none; }
-.stamp[data-side="right"] { left: var(--space-4); border-color: color-mix(in oklch, var(--success) 32%, var(--border)); background: color-mix(in oklch, var(--success) 9%, var(--surface-raised)); }
+.stamp[data-side="right"] { left: var(--space-4); border-color: color-mix(in oklab, var(--success) 32%, var(--border)); background: color-mix(in oklab, var(--success) 9%, var(--surface-raised)); }
 .stamp[data-side="right"] svg { color: var(--success); }
 .stamp[data-side="left"] { right: var(--space-4); }
 .stamp[data-side="left"] svg { color: var(--text-secondary); }
@@ -31,15 +31,16 @@
 .controls { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-2); }
 .control { display: inline-flex; min-height: var(--control-height-md); align-items: center; justify-content: center; gap: var(--space-2); padding: 0 var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--surface); color: var(--foreground); font: inherit; font-size: var(--text-sm); font-weight: 500; line-height: var(--leading-body); white-space: nowrap; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: background-color var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard), opacity var(--duration-fast) var(--ease-standard); }
 .control svg { flex: none; }
-.control[data-tone="primary"] { border-color: var(--foreground); background: var(--foreground); color: var(--background); }
+/* The approving action follows the selected accent. */
+.control[data-tone="primary"] { border-color: var(--accent); background: var(--accent); color: var(--accent-foreground); }
 .control[data-tone="quiet"] { border-color: transparent; background: transparent; color: var(--text-secondary); }
 @media (hover: hover) and (pointer: fine) {
   .control:not([aria-disabled]):hover { background: var(--surface-muted); }
-  .control[data-tone="primary"]:not([aria-disabled]):hover { background: var(--foreground); opacity: .9; }
+  .control[data-tone="primary"]:not([aria-disabled]):hover { border-color: var(--accent-strong); background: var(--accent-strong); }
   .control[data-tone="quiet"]:not([aria-disabled]):hover { color: var(--foreground); }
 }
 .control:not([aria-disabled]):active { background: var(--surface-muted); }
-.control[data-tone="primary"]:not([aria-disabled]):active { background: var(--foreground); opacity: .84; }
+.control[data-tone="primary"]:not([aria-disabled]):active { border-color: var(--accent-strong); background: var(--accent-strong); }
 .control[aria-disabled] { cursor: default; opacity: .42; }
 .control:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 

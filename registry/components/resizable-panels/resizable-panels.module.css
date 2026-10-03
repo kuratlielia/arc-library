@@ -24,8 +24,8 @@
 }
 .handle[data-active] { background: var(--border-strong); }
 .handle[data-active] .grip { background: var(--foreground); opacity: 1; transform: translate(-50%, -50%) scaleY(1); }
-.handle:focus-visible:not([data-collapsed]) .grip { opacity: 1; outline: 2px solid var(--focus-ring); outline-offset: 2px; transform: translate(-50%, -50%) scaleY(1); }
-.handle[data-collapsed]:focus-visible .restore { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.handle:focus-visible:not([data-collapsed]) .grip { opacity: 1; transform: translate(-50%, -50%) scaleY(1); }
+.handle[data-collapsed]:focus-visible .restore { border-color: var(--border-strong); color: var(--foreground); }
 
 /* Once a neighbour is hidden, a tab on the divider points the way it will come back. */
 .restore { position: absolute; top: 50%; display: grid; width: 18px; height: 40px; margin-top: -20px; place-items: center; border: 1px solid var(--border); border-radius: var(--radius-pill); background: var(--surface); box-shadow: var(--shadow-resting); color: var(--text-secondary); pointer-events: none; transition: border-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard); }

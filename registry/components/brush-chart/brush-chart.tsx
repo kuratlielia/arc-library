@@ -438,8 +438,8 @@ export function BrushChart({ data, label, unit = "", formatValue = value => grou
           {overview.marks.map(mark => <circle key={mark.t} className={styles.overviewEvent} cx={mark.x} cy={mark.y} r={2.5} />)}
         </svg>
         {!empty && <>
-          <div className={styles.shade} style={{ left: 0, width: Math.max(0, wx0) }} />
-          <div className={styles.shade} style={{ left: wx1, right: 0 }} />
+          <div className={styles.shade} data-edge="start" style={{ left: 0, width: Math.max(0, wx0) }} />
+          <div className={styles.shade} data-edge="end" style={{ left: wx1, right: 0 }} />
           <div className={styles.window} style={{ left: wx0, width: Math.max(0, wx1 - wx0) }} role="slider" tabIndex={0} aria-label={`${label} window`} aria-roledescription="range window" aria-valuemin={first} aria-valuemax={lastT} aria-valuenow={Math.round(start)} aria-valuetext={windowText} onKeyDown={event => onHandleKey(event, "window")} />
           <div className={styles.handle} style={{ left: wx0 }} role="slider" tabIndex={0} aria-label="Window start" aria-valuemin={first} aria-valuemax={Math.round(end)} aria-valuenow={Math.round(start)} aria-valuetext={shortDate.format(start)} onKeyDown={event => onHandleKey(event, "start")}><span className={styles.grip} /></div>
           <div className={styles.handle} style={{ left: wx1 }} role="slider" tabIndex={0} aria-label="Window end" aria-valuemin={Math.round(start)} aria-valuemax={lastT} aria-valuenow={Math.round(end)} aria-valuetext={shortDate.format(end)} onKeyDown={event => onHandleKey(event, "end")}><span className={styles.grip} /></div>

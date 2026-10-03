@@ -13,13 +13,12 @@
 .morphValue { display: inline-block; flex: none; white-space: nowrap; }
 .measure { position: absolute; top: 0; left: 0; visibility: hidden; white-space: nowrap; pointer-events: none; }
 .chip button { display: grid; width: 24px; height: 24px; flex: 0 0 24px; place-items: center; border: 0; border-radius: var(--radius-pill); background: transparent; color: var(--text-muted); cursor: pointer; transition: background var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard), transform var(--duration-spring) var(--ease-spring); }
-.chip button:active { transform: scale(.96); transition-duration: var(--duration-fast), var(--duration-fast), 100ms; transition-timing-function: var(--ease-standard), var(--ease-standard), ease-out; }
-.chip button:focus-visible, .clear:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
+.chip button:active { transform: scale(.96); transition-duration: var(--duration-fast), var(--duration-fast), var(--duration-instant); transition-timing-function: var(--ease-standard), var(--ease-standard), var(--ease-standard); }
 .empty { position: absolute; top: 0; bottom: 0; left: 0; display: flex; max-width: 100%; align-items: center; overflow: hidden; color: var(--text-muted); font-size: var(--text-sm); white-space: nowrap; pointer-events: none; }
 .actions { display: inline-flex; flex: 0 0 auto; align-items: center; gap: var(--space-3); }
-.clear { min-height: var(--control-height-sm); padding: 0 var(--space-3); border: 0; border-radius: var(--radius-control); background: transparent; color: var(--text-muted); font: inherit; font-size: var(--text-xs); white-space: nowrap; cursor: pointer; transition: background var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard), transform var(--duration-spring) var(--ease-spring); }
+.clear { min-height: var(--control-height-sm); padding: 0 var(--space-3); border: 0; border-radius: var(--radius-control); background: transparent; color: var(--text-muted); font: inherit; font-size: var(--text-sm); line-height: var(--leading-body); letter-spacing: var(--tracking-body); white-space: nowrap; cursor: pointer; transition: background var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard), transform var(--duration-spring) var(--ease-spring); }
 .clearText { display: block; }
-.clear:active { transform: scale(.97); transition-duration: var(--duration-fast), var(--duration-fast), 100ms; transition-timing-function: var(--ease-standard), var(--ease-standard), ease-out; }
+.clear:active { transform: scale(.97); transition-duration: var(--duration-fast), var(--duration-fast), var(--duration-instant); transition-timing-function: var(--ease-standard), var(--ease-standard), var(--ease-standard); }
 .srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 /* Add filter: the trigger is transparent and the surface behind it is the button's rounded rectangle.
@@ -27,7 +26,6 @@
 .menu { position: relative; display: inline-flex; flex: none; isolation: isolate; }
 .menu:not([data-state="closed"]) { z-index: 30; }
 .trigger { position: relative; z-index: 1; display: inline-flex; min-height: var(--control-height-sm); align-items: center; padding: 0 var(--space-3); border: 1px solid transparent; border-radius: var(--radius-control); background: transparent; color: var(--foreground); font: inherit; font-size: var(--text-sm); font-weight: 500; line-height: var(--leading-body); letter-spacing: var(--tracking-body); white-space: nowrap; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-.trigger:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
 .menu[data-state="open"] .trigger { pointer-events: none; }
 .face { display: inline-flex; align-items: center; gap: var(--space-2); }
 .face svg { flex: none; }
@@ -36,25 +34,23 @@
 .menu[data-y="up"] .surface { top: auto; bottom: 0; }
 .menu[data-state="open"] .surface { border-radius: var(--radius-panel); background: var(--surface-raised); box-shadow: var(--shadow-floating); }
 /* The trigger anchors the panel, so a press answers in color and never scales. */
-.menu[data-state="closed"] .trigger:active + .surface { background: color-mix(in oklch, var(--surface-muted), var(--border) 55%); }
+.menu[data-state="closed"] .trigger:active + .surface { background: color-mix(in oklab, var(--surface-muted), var(--border) 55%); }
 @media (hover: hover) and (pointer: fine) {
   .menu[data-state="closed"] .trigger:hover + .surface { background: var(--surface-muted); box-shadow: var(--shadow-resting); }
 }
-.panel { position: absolute; top: 0; left: 0; width: min(var(--filter-menu-width, 16rem), calc(100vw - var(--space-8))); padding: 2px 6px 6px; outline: none; }
+.panel { position: absolute; top: 0; left: 0; width: min(var(--filter-menu-width, 16rem), calc(100vw - var(--space-8))); padding: 6px 6px 6px; outline: none; }
 .menu[data-y="up"] .panel { top: auto; bottom: 0; }
 .menu[data-state="closed"] .panel { visibility: hidden; }
 .head { display: flex; height: 32px; align-items: center; padding: 0 var(--space-2) 0 10px; }
 .menu[data-y="up"] .head { margin-top: 4px; }
 .back { display: grid; width: 28px; height: 28px; flex: none; place-items: center; margin-left: -6px; padding: 0; border: 0; border-radius: var(--radius-pill); background: transparent; color: var(--text-secondary); cursor: pointer; transition: background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard); }
-.back:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 1px; }
 .back:active { background: var(--surface-muted); color: var(--foreground); }
 .title { position: relative; display: flex; min-width: 0; color: var(--foreground); font-size: var(--text-sm); font-weight: 500; letter-spacing: var(--tracking-body); white-space: nowrap; }
 .titleText { display: block; }
 .stage { position: relative; margin-top: 2px; }
 .step { width: 100%; }
 .list { position: relative; display: grid; max-height: min(20rem, 55vh); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
-.highlight { position: absolute; top: 0; right: 0; left: 0; border-radius: calc(var(--radius-panel) - 6px); background: color-mix(in oklch, var(--foreground) 6%, transparent); opacity: 0; pointer-events: none; }
-.highlight[data-ring] { outline: 2px solid var(--focus-ring); outline-offset: -2px; }
+.highlight { position: absolute; top: 0; right: 0; left: 0; border-radius: calc(var(--radius-panel) - 6px); background: color-mix(in oklab, var(--foreground) 6%, transparent); opacity: 0; pointer-events: none; }
 .item:focus-visible { outline: none; }
 .item { position: relative; display: flex; min-width: 0; min-height: var(--control-height-sm); align-items: center; gap: 10px; padding: 0 10px; border: 0; border-radius: calc(var(--radius-panel) - 6px); background: transparent; color: var(--foreground); font: inherit; font-size: var(--text-sm); letter-spacing: var(--tracking-body); text-align: left; cursor: pointer; outline: none; -webkit-tap-highlight-color: transparent; }
 .itemIcon { display: inline-flex; min-width: 16px; flex: none; align-items: center; justify-content: center; color: var(--text-secondary); }

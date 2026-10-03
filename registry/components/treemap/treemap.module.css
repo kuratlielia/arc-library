@@ -4,23 +4,22 @@
 
 /* Breadcrumb on the left, the total of what fills the view on the right. */
 .bar { display: flex; min-width: 0; align-items: center; justify-content: space-between; gap: var(--space-3); }
-.crumbs { min-width: 0; }
-.crumbList { display: flex; min-width: 0; min-height: 32px; flex-wrap: wrap; align-items: center; margin: 0; padding: 0; list-style: none; }
+/* Pull the trail back by the crumb padding, so the first label lines up with the tiles and the title. */
+.crumbs { min-width: 0; margin-left: -4px; }
+.crumbList { position: relative; display: flex; min-width: 0; min-height: 32px; flex-wrap: wrap; align-items: center; margin: 0; padding: 0; list-style: none; }
 .crumb { display: inline-flex; align-items: center; min-width: 0; }
 .crumbSep { padding: 0 4px; color: var(--border-strong); font-size: var(--text-sm); }
 .crumbButton { min-height: 32px; padding: 0 6px; margin: 0 -2px; border: 0; border-radius: 10px; background: transparent; color: var(--text-secondary); cursor: pointer; font: inherit; font-size: var(--text-sm); line-height: var(--leading-body); white-space: nowrap; -webkit-tap-highlight-color: transparent; transition: color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), transform var(--duration-instant) var(--ease-standard); }
 .crumbButton:active { transform: scale(.97); }
-.crumbButton:focus-visible { outline: 2px solid var(--ring, var(--foreground)); outline-offset: 1px; }
 .crumbCurrent { padding: 0 4px; color: var(--foreground); font-size: var(--text-sm); font-weight: 500; line-height: var(--leading-body); white-space: nowrap; }
-@media (hover: hover) and (pointer: fine) { .crumbButton:hover { background: color-mix(in oklch, var(--foreground) 5%, transparent); color: var(--foreground); } }
+@media (hover: hover) and (pointer: fine) { .crumbButton:hover { background: color-mix(in oklab, var(--foreground) 5%, transparent); color: var(--foreground); } }
 .total { position: relative; display: inline-grid; flex: none; justify-items: end; overflow: hidden; margin: 0; color: var(--foreground); font-size: var(--text-sm); font-weight: 500; line-height: var(--leading-body); font-variant-numeric: tabular-nums; }
 .totalValue { display: block; }
 
 /* Tiles are absolutely placed and sized each frame, so text never scales while a tile grows or shrinks. */
 .stage { position: relative; min-width: 0; overflow: hidden; border-radius: 12px; outline: none; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
-.stage:focus-visible { outline: 2px solid var(--ring, var(--foreground)); outline-offset: 2px; }
 .tile { position: absolute; top: 0; left: 0; display: flex; flex-direction: column; gap: 1px; overflow: hidden; padding: 6px 8px; border-radius: 6px; background: var(--fill); color: var(--foreground); cursor: pointer; visibility: hidden; will-change: transform, width, height; transition: background-color var(--duration-considered) var(--ease-standard), color var(--duration-considered) var(--ease-standard), filter var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard); }
-.tile[data-branch][data-level="1"] { padding: 3px 8px; border-radius: 8px; background: color-mix(in oklch, var(--hue) 9%, var(--surface)); color: var(--foreground); cursor: zoom-in; }
+.tile[data-branch][data-level="1"] { padding: 3px 8px; border-radius: 8px; background: color-mix(in oklab, var(--hue) 9%, var(--surface)); color: var(--foreground); cursor: zoom-in; }
 .tileLabel, .tileValue { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--text-xs); line-height: 16px; opacity: 0; transition: opacity var(--duration-fast) var(--ease-standard); }
 .tileLabel { font-weight: 500; }
 .tileValue { opacity: 0; font-variant-numeric: tabular-nums; }
@@ -34,7 +33,7 @@
 .tile[data-level="2"] { padding: 5px 7px; }
 
 .tile[data-active] { box-shadow: inset 0 0 0 2px var(--foreground); }
-.tile[data-lineage] { box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--hue) 70%, transparent); }
+.tile[data-lineage] { box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--hue) 70%, transparent); }
 .stage[data-active] .tile[data-dim] { filter: opacity(.5); }
 
 .message { position: absolute; inset: 0; display: grid; place-items: center; margin: 0; color: var(--text-muted); font-size: var(--text-sm); pointer-events: none; }

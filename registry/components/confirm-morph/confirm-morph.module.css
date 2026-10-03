@@ -8,7 +8,7 @@
   color: var(--foreground);
   font-family: var(--font-body);
   font-size: var(--text-sm);
-  letter-spacing: -0.005em;
+  letter-spacing: var(--tracking-body);
   line-height: 1;
   -webkit-tap-highlight-color: transparent;
 }
@@ -28,11 +28,11 @@
   transition: background-color var(--duration-standard) var(--ease-standard), box-shadow var(--duration-standard) var(--ease-standard), transform var(--duration-spring) var(--ease-spring);
 }
 .surface::after { content: ""; position: absolute; inset: 0; border: 1px solid var(--border); border-radius: inherit; pointer-events: none; transition: border-color var(--duration-standard) var(--ease-standard); }
-/* Danger: a quiet red tint at rest that deepens while asking. */
-.root[data-tone="danger"] .surface { background: color-mix(in oklch, var(--danger) 5%, var(--surface-raised)); box-shadow: none; }
-.root[data-tone="danger"] .surface::after { border-color: color-mix(in oklch, var(--danger) 18%, var(--border)); }
-.root[data-tone="danger"][data-state="confirming"] .surface { background: color-mix(in oklch, var(--danger) 10%, var(--surface-raised)); box-shadow: 0 4px 14px color-mix(in oklch, var(--danger) 12%, transparent); }
-.root[data-tone="danger"][data-state="confirming"] .surface::after { border-color: color-mix(in oklch, var(--danger) 34%, var(--border)); }
+/* Danger stays quiet: red text and a faint red edge on a neutral pill. The confirm button follows the accent like every other primary action. */
+.root[data-tone="danger"] .surface { background: color-mix(in oklab, var(--danger) 4%, var(--surface-raised)); box-shadow: none; }
+.root[data-tone="danger"] .surface::after { border-color: color-mix(in oklab, var(--danger) 18%, var(--border)); }
+.root[data-tone="danger"][data-state="confirming"] .surface { background: var(--surface-raised); box-shadow: var(--shadow-resting); }
+.root[data-tone="danger"][data-state="confirming"] .surface::after { border-color: color-mix(in oklab, var(--danger) 24%, var(--border)); }
 .root[data-tone="danger"]:is([data-state="pending"], [data-state="done"]) .surface { background: var(--surface-raised); box-shadow: var(--shadow-resting); }
 .root[data-tone="danger"]:is([data-state="pending"], [data-state="done"]) .surface::after { border-color: var(--border); }
 .root[data-disabled][data-state="idle"] .surface { background: var(--surface-raised); box-shadow: none; }
@@ -83,10 +83,8 @@
   transition: background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard), transform var(--duration-spring) var(--ease-spring);
 }
 .secondary { background: transparent; color: var(--text-secondary); }
-.root[data-tone="danger"][data-state="confirming"] .secondary { color: color-mix(in oklch, var(--danger) 30%, var(--text-secondary)); }
 .face:is([data-face="done"], [data-face="error"]) .secondary { color: var(--foreground); }
-.primary { background: var(--foreground); color: var(--background); }
-.root[data-tone="danger"] .primary { background: var(--danger); box-shadow: inset 0 1px 0 color-mix(in oklch, white 18%, transparent), 0 1px 2px color-mix(in oklch, var(--danger) 30%, transparent); }
+.primary { background: var(--accent); color: var(--accent-foreground); }
 .secondary:active,
 .primary:active { transform: scale(.95); transition-duration: var(--duration-fast), var(--duration-fast), 90ms; }
 
@@ -103,27 +101,22 @@
 .spinner { animation: spin .7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* The timeout: a hairline tucked inside the bottom curve that drains toward the start. It fades in so it never flashes. */
-
 .srOnly { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
 
 @media (hover: hover) and (pointer: fine) {
-  .trigger:hover:not(:disabled) { background: color-mix(in oklch, var(--foreground) 5%, transparent); }
-  .root[data-tone="danger"] .trigger:hover:not(:disabled) { background: color-mix(in oklch, var(--danger) 8%, transparent); }
-  .secondary:hover { background: color-mix(in oklch, var(--foreground) 7%, transparent); color: var(--foreground); }
-  .primary:hover { background: color-mix(in oklch, var(--foreground) 86%, var(--background)); }
-  .root[data-tone="danger"] .primary:hover { background: color-mix(in oklch, var(--danger) 88%, var(--foreground)); }
+  .trigger:hover:not(:disabled) { background: color-mix(in oklab, var(--foreground) 5%, transparent); }
+  .root[data-tone="danger"] .trigger:hover:not(:disabled) { background: color-mix(in oklab, var(--danger) 8%, transparent); }
+  .secondary:hover { background: color-mix(in oklab, var(--foreground) 7%, transparent); color: var(--foreground); }
+  .primary:hover { background: var(--accent-strong); }
 }
 /* Keyboard focus reads through fill, never a ring. */
-.trigger:focus-visible { background: color-mix(in oklch, var(--foreground) 6%, transparent); }
-.root[data-tone="danger"] .trigger:focus-visible { background: color-mix(in oklch, var(--danger) 9%, transparent); }
-.secondary:focus-visible { background: color-mix(in oklch, var(--foreground) 8%, transparent); color: var(--foreground); }
-.primary:focus-visible { background: color-mix(in oklch, var(--foreground) 86%, var(--background)); }
-.root[data-tone="danger"] .primary:focus-visible { background: color-mix(in oklch, var(--danger) 86%, var(--foreground)); }
+.trigger:focus-visible { background: color-mix(in oklab, var(--foreground) 6%, transparent); }
+.root[data-tone="danger"] .trigger:focus-visible { background: color-mix(in oklab, var(--danger) 9%, transparent); }
+.secondary:focus-visible { background: color-mix(in oklab, var(--foreground) 8%, transparent); color: var(--foreground); }
+.primary:focus-visible { background: var(--accent-strong); }
 
 @media (prefers-reduced-motion: reduce) {
   .surface, .trigger, .secondary, .primary { transition-duration: 0ms; }
-  .root:has(.trigger:active) .surface { transform: none; }
   .spinner { animation-duration: 1.6s; }
   .root:has(.trigger:active) .surface, .secondary:active, .primary:active { transform: none; }
 }

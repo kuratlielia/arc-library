@@ -2,9 +2,9 @@
 
 /* A key cap: a one pixel edge with a slightly heavier bottom, so it reads as a key without a shadow. Held, it drops a pixel and takes the accent. */
 .kbd { display: inline-grid; min-width: 26px; height: 26px; box-sizing: border-box; place-items: center; padding: 0 7px 1px; border: 1px solid var(--border-strong); border-bottom-width: 2px; border-radius: 8px; background: var(--surface-raised); color: var(--foreground); font-family: var(--font-body); font-size: var(--text-xs); font-weight: 500; line-height: 1; letter-spacing: 0; font-variant-numeric: tabular-nums; white-space: nowrap; transition: transform var(--duration-spring) var(--ease-spring), border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard), border-bottom-width var(--duration-fast) var(--ease-standard); }
-.kbd[data-size="sm"] { min-width: 22px; height: 22px; padding: 0 5px 1px; border-radius: 7px; font-size: 11px; }
-.kbd[data-pressed] { transform: translateY(1px); border-color: color-mix(in oklch, var(--accent) 55%, var(--border-strong)); border-bottom-width: 1px; background: var(--accent-subtle); color: var(--accent-strong); transition-duration: 90ms; }
-.kbd[data-tone="warning"] { border-color: color-mix(in oklch, var(--warning) 55%, var(--border-strong)); background: color-mix(in oklch, var(--warning) 12%, var(--surface-raised)); color: var(--foreground); }
+.kbd[data-size="sm"] { min-width: 22px; height: 22px; padding: 0 5px 1px; border-radius: 7px; font-size: var(--text-xs); }
+.kbd[data-pressed] { transform: translateY(1px); border-color: color-mix(in oklab, var(--accent) 55%, var(--border-strong)); border-bottom-width: 1px; background: var(--accent-subtle); color: var(--accent-strong); transition-duration: 90ms; }
+.kbd[data-tone="warning"] { border-color: color-mix(in oklab, var(--warning) 55%, var(--border-strong)); background: color-mix(in oklab, var(--warning) 12%, var(--surface-raised)); color: var(--foreground); }
 .keys { display: inline-flex; flex: none; align-items: center; gap: 4px; }
 
 /* ---------------------------------------------- Recorder ---------------------------------------------- */
@@ -15,7 +15,7 @@
 .control { position: relative; display: flex; min-width: 0; height: var(--control-height-md); box-sizing: border-box; align-items: center; border: 1px solid var(--border-strong); border-radius: var(--radius-control); background: var(--surface); transition: border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard); }
 @media (hover: hover) and (pointer: fine) { .control[data-state="idle"]:hover { border-color: var(--foreground); } }
 .control:has(.recorder:focus-visible) { border-color: var(--foreground); }
-.control[data-state="recording"] { border-color: var(--accent); background: color-mix(in oklch, var(--accent) 4%, var(--surface)); }
+.control[data-state="recording"] { border-color: var(--accent); background: color-mix(in oklab, var(--accent) 4%, var(--surface)); }
 .control[data-state="conflict"] { border-color: var(--warning); }
 .field[data-disabled] .control { opacity: .5; background: var(--surface-muted); }
 
@@ -57,8 +57,8 @@
 .search::placeholder { color: var(--text-muted); }
 .search::-webkit-search-cancel-button { display: none; }
 .count { flex: none; color: var(--text-muted); font-size: var(--text-xs); font-variant-numeric: tabular-nums; }
-.clear { display: grid; width: 24px; height: 24px; flex: none; place-items: center; padding: 0; border: 0; border-radius: var(--radius-pill); background: color-mix(in oklch, var(--foreground) 8%, transparent); color: var(--text-secondary); cursor: pointer; }
-.clear:focus-visible { background: color-mix(in oklch, var(--foreground) 14%, transparent); color: var(--foreground); outline: none; }
+.clear { display: grid; width: 24px; height: 24px; flex: none; place-items: center; padding: 0; border: 0; border-radius: var(--radius-pill); background: color-mix(in oklab, var(--foreground) 8%, transparent); color: var(--text-secondary); cursor: pointer; }
+.clear:focus-visible { background: color-mix(in oklab, var(--foreground) 14%, transparent); color: var(--foreground); outline: none; }
 
 .groups { display: grid; align-items: start; gap: 0 var(--space-6); }
 @container (min-width: 520px) { .groups { grid-template-columns: 1fr 1fr; } }

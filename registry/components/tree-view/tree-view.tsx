@@ -3,7 +3,7 @@
 import { useId, useRef, useState } from "react";
 import type { CSSProperties, KeyboardEvent, ReactNode } from "react";
 import { ChevronRight, File, Folder, FolderOpen } from "lucide-react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useIsPresent, useReducedMotion } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
 import styles from "./tree-view.module.css";
 
@@ -66,6 +66,17 @@ function FolderIcon({ open, reduced }: { open: boolean; reduced: boolean }) {
       transition={reduced ? still : { ...motionTokens.spring.snappy, opacity: fadeIn, filter: fadeIn }}
     >{open ? <FolderOpen size={16} strokeWidth={1.7} /> : <Folder size={16} strokeWidth={1.7} />}</motion.span>
   </AnimatePresence>;
+}
+
+/**
+ * The selection fill glides between rows through a shared layoutId. A row that is leaving drops its fill at once: left
+ * in place, it held the row's exit open, so the row stayed in the tree with pointer events off and the next click on it
+ * after reopening its folder did nothing.
+ */
+function Selection({ layoutId, reduced }: { layoutId: string; reduced: boolean }) {
+  const present = useIsPresent();
+  if (!present) return null;
+  return <motion.span aria-hidden="true" layoutId={layoutId} className={styles.selection} transition={reduced ? still : motionTokens.spring.morph} />;
 }
 
 export function TreeView({ nodes, defaultExpandedIds = [], expandedIds, onExpandedChange, onSelect, "aria-label": ariaLabel = "File tree" }: TreeViewProps) {
@@ -144,7 +155,7 @@ export function TreeView({ nodes, defaultExpandedIds = [], expandedIds, onExpand
           className={styles.row}
           layout={reduced ? false : "position"}
           initial={reduced ? false : { height: 0, opacity: 0, x: -6, overflow: "hidden" }}
-          animate={{ height: rowHeight, opacity: 1, x: 0, transitionEnd: { overflow: "visible" }, transition: reduced ? still : { height: motionTokens.spring.smooth, opacity: { ...fadeIn, delay }, x: { ...motionTokens.spring.smooth, delay } } }}
+          animate={{ height: rowHeight, opacity: 1, x: 0, pointerEvents: "auto", transitionEnd: { overflow: "visible" }, transition: reduced ? still : { height: motionTokens.spring.smooth, opacity: { ...fadeIn, delay }, x: { ...motionTokens.spring.smooth, delay } } }}
           exit={reduced ? { opacity: 0, transition: still } : { height: 0, opacity: 0, x: -4, overflow: "hidden", pointerEvents: "none", transition: { height: motionTokens.spring.smooth, opacity: fadeOut, x: fadeOut } }}
           transition={reduced ? still : { layout: motionTokens.spring.smooth }}
         >
@@ -164,12 +175,7 @@ export function TreeView({ nodes, defaultExpandedIds = [], expandedIds, onExpand
             onKeyDown={event => onKeyDown(event, item, index)}
             onClick={() => { setFocusedId(item.node.id); select(item.node); if (hasChildren) toggle(item.node); }}
           >
-            {isSelected && <motion.span
-              aria-hidden="true"
-              layoutId={selectionLayoutId}
-              className={styles.selection}
-              transition={reduced ? still : motionTokens.spring.morph}
-            />}
+            {isSelected && <Selection layoutId={selectionLayoutId} reduced={reduced} />}
             {item.depth > 1 && <motion.span
               aria-hidden="true"
               className={styles.branch}

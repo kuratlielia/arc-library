@@ -11,7 +11,7 @@
 .axis { stroke: var(--border); stroke-width: 1; shape-rendering: crispEdges; }
 
 /* Every line is one neutral ink; the story item takes the first series (derived from the accent) and the item in focus comes forward. */
-.item { --ink: color-mix(in oklch, var(--foreground) 36%, var(--surface)); transition: opacity var(--duration-standard) var(--ease-standard); }
+.item { --ink: color-mix(in oklab, var(--foreground) 36%, var(--surface)); transition: opacity var(--duration-standard) var(--ease-standard); }
 .item[data-accent] { --ink: var(--series-1); }
 .item[data-on]:not([data-accent]) { --ink: var(--foreground); }
 .item[data-dim] { opacity: .14; }
@@ -28,7 +28,8 @@
 .name { min-width: 0; overflow: hidden; color: var(--text-secondary); text-overflow: ellipsis; }
 .value { color: var(--foreground); font-variant-numeric: tabular-nums; }
 .labels[data-on] .name, .labels[data-accent] .name { color: var(--foreground); }
-.labels[data-on] .value, .labels[data-accent] .value { font-weight: 500; }
+/* Only the story item is medium; the item in focus changes color, not weight, so its label never shifts sideways. */
+.labels[data-accent] .value { font-weight: 500; }
 
 .rank { display: inline-flex; min-width: 30px; align-items: center; gap: 2px; color: var(--text-muted); font-size: var(--text-xs); font-variant-numeric: tabular-nums; }
 .rank[data-move="up"] { color: var(--text-secondary); }

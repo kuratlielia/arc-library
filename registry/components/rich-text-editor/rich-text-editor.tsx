@@ -2,7 +2,7 @@
 
 import { forwardRef, useCallback, useEffect, useId, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { ClipboardEvent as ReactClipboardEvent, CSSProperties, FormEvent, KeyboardEvent as ReactKeyboardEvent, ReactNode } from "react";
-import { AnimatePresence, animate, motion, useIsPresent, useMotionValue, useReducedMotion } from "motion/react";
+import { AnimatePresence, animate, motion, useIsPresent, useMotionValue, useReducedMotion, useTransform } from "motion/react";
 import type { Transition, Variants } from "motion/react";
 import { ArrowLeft, Bold, Check, Code, Heading1, Heading2, Heading3, Italic, Link, List, ListOrdered, Minus, Pilcrow, Quote, SquareCode, Strikethrough, Unlink } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
@@ -1358,23 +1358,47 @@ export const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorPro
   /* Toolbar geometry: one surface whose size springs between faces and whose position glides with the selection. */
   const tx = useMotionValue(0), ty = useMotionValue(0), tw = useMotionValue(0), th = useMotionValue(0);
   const shown = useRef(false);
-  const targetWidth = useRef(0);
+  /* Until a face has reported its size the surface has nothing to show, so it stays hidden rather than flashing a 1px dot. */
+  const toolbarVisibility = useTransform(tw, width => width > 0 ? "visible" : "hidden");
+  const targetSize = useRef({ width: 0, height: 0 });
   const onFaceSize = useCallback((width: number, height: number) => {
-    targetWidth.current = width;
+    targetSize.current = { width, height };
     if (!shown.current || reduced || tw.get() === 0) { tw.jump(width); th.jump(height); return; }
     animate(tw, width, MORPH);
     animate(th, height, MORPH);
   }, [reduced, th, tw]);
   const toolbarOpen = !!bar && !readOnly;
+  // A fresh toolbar is placed, not glided, and stays "fresh" until it has painted once, so a selection that settles in the same
+  // frame cannot send it sliding in from its last spot or from the root's corner. Motion resets a remounted element's bound
+  // values to what they held at render (Strict Mode does this on every open in development), so the placement is applied
+  // again once mounting is done. Its size is left alone on close so the exit keeps its shape instead of collapsing.
+  const placedFrame = useRef(0);
+  const placement = useRef<{ x: number; y: number } | null>(null);
+  const place = useCallback(() => {
+    const at = placement.current;
+    if (!at) return;
+    const { width, height } = targetSize.current;
+    if (tx.get() !== at.x) tx.jump(at.x);
+    if (ty.get() !== at.y) ty.jump(at.y);
+    if (width && tw.get() !== width) { tw.jump(width); th.jump(height); }
+  }, [th, tw, tx, ty]);
   useLayoutEffect(() => {
-    if (!bar) { shown.current = false; tw.jump(0); return; }
+    if (!bar) { shown.current = false; placement.current = null; cancelAnimationFrame(placedFrame.current); return; }
     const root = rootRef.current;
-    const half = (targetWidth.current || 280) / 2;
+    const half = (targetSize.current.width || 280) / 2;
     const x = root ? Math.max(half + 4, Math.min(bar.x, root.offsetWidth - half - 4)) : bar.x;
-    if (!shown.current || reduced) { tx.jump(x); ty.jump(bar.y); shown.current = true; return; }
+    if (!shown.current || reduced) {
+      placement.current = { x, y: bar.y };
+      place();
+      cancelAnimationFrame(placedFrame.current);
+      placedFrame.current = requestAnimationFrame(() => { place(); shown.current = true; placement.current = null; });
+      return;
+    }
     animate(tx, x, GLIDE);
     animate(ty, bar.y, GLIDE);
-  }, [bar, reduced, tw, tx, ty]);
+  }, [bar, place, reduced, tx, ty]);
+  useEffect(() => { if (bar) place(); }, [bar, place]);
+  useEffect(() => () => cancelAnimationFrame(placedFrame.current), []);
   const direction = face === "link" ? 1 : -1;
 
   /* Slash menu geometry: the highlight glides between rows and the panel springs to its rows. */
@@ -1384,10 +1408,11 @@ export const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorPro
   const slashPanel = useRef<HTMLDivElement>(null);
   const slashMax = slash?.max ?? 320;
   const panelSized = useRef(false);
+  const highlightPlaced = useRef(false);
   useLayoutEffect(() => {
     const row = listRef.current?.querySelector<HTMLElement>(`[data-index="${slashIndex}"]`);
     if (!row) return;
-    if (reduced || hh.get() === 0) { hy.jump(row.offsetTop); hh.jump(row.offsetHeight); return; }
+    if (reduced || !highlightPlaced.current || hh.get() === 0) { hy.jump(row.offsetTop); hh.jump(row.offsetHeight); highlightPlaced.current = true; return; }
     animate(hy, row.offsetTop, GLIDE);
     animate(hh, row.offsetHeight, GLIDE);
     // A short panel scrolls to keep the active row in view.
@@ -1399,7 +1424,8 @@ export const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorPro
     }
   }, [hh, hy, reduced, slashIndex, slashResults, slashOpen]);
   useLayoutEffect(() => {
-    if (!slashOpen) { panelSized.current = false; hh.jump(0); return; }
+    // The highlight keeps its row while the menu fades out; the next open places it fresh.
+    if (!slashOpen) { panelSized.current = false; highlightPlaced.current = false; return; }
     const body = panelBody.current;
     if (!body) return;
     const fit = () => {
@@ -1463,7 +1489,7 @@ export const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorPro
         aria-label="Formatting"
         className={styles.toolbar}
         data-below={bar.below || undefined}
-        style={{ left: tx, top: ty, width: tw, height: th, transformOrigin: bar.below ? "50% 0" : "50% 100%" }}
+        style={{ left: tx, top: ty, width: tw, height: th, visibility: toolbarVisibility, transformOrigin: bar.below ? "50% 0" : "50% 100%" }}
         initial={reduced ? { opacity: 0 } : { opacity: 0, scale: .94, y: bar.below ? -4 : 4 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={reduced ? { opacity: 0 } : { opacity: 0, scale: .96, transition: { duration: duration.exit * .8, ease: standard } }}
@@ -1514,7 +1540,7 @@ export const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorPro
         ref={slashPanel}
         className={styles.slash}
         data-above={slash.above || undefined}
-        style={{ left: slash.x, top: slash.y, height: panelHeight, transformOrigin: slash.above ? "16px 100%" : "16px 0" }}
+        style={{ left: slash.x, top: slash.y, height: panelHeight, maxHeight: slashMax, transformOrigin: slash.above ? "16px 100%" : "16px 0" }}
         initial={reduced ? { opacity: 0 } : { opacity: 0, scale: .96, y: slash.above ? 4 : -4 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={reduced ? { opacity: 0 } : { opacity: 0, scale: .97, transition: { duration: duration.exit * .8, ease: standard } }}

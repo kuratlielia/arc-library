@@ -24,8 +24,8 @@
 .icon { width: .875rem; height: .875rem; }
 .item[data-status="current"] .disc { box-shadow: inset 0 0 0 1.5px var(--accent); color: var(--foreground); }
 .item[data-status="complete"] .disc { background: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); color: var(--accent-foreground); }
-.item[data-status="error"] .disc { background: color-mix(in oklch, var(--danger) 10%, var(--surface)); box-shadow: inset 0 0 0 1.5px var(--danger); color: var(--danger); }
-.item[data-status="error"] .ring { background: color-mix(in oklch, var(--danger) 16%, transparent); }
+.item[data-status="error"] .disc { background: color-mix(in oklab, var(--danger) 10%, var(--surface)); box-shadow: inset 0 0 0 1.5px var(--danger); color: var(--danger); }
+.item[data-status="error"] .ring { background: color-mix(in oklab, var(--danger) 16%, transparent); }
 
 /* The track stays put; only the fill scales along it on a spring, from the step that was just finished. */
 .connector { position: absolute; overflow: hidden; border-radius: var(--radius-pill); background: var(--border); pointer-events: none; }
@@ -56,7 +56,7 @@
 @media (hover: hover) and (pointer: fine) {
   .head[data-clickable]:hover .label { color: var(--foreground); }
   .item[data-status="complete"] .head[data-clickable]:hover .disc { background: var(--accent-strong); box-shadow: inset 0 0 0 1px var(--accent-strong); }
-  .item[data-status="error"] .head[data-clickable]:hover .disc { background: color-mix(in oklch, var(--danger) 18%, var(--surface)); }
+  .item[data-status="error"] .head[data-clickable]:hover .disc { background: color-mix(in oklab, var(--danger) 18%, var(--surface)); }
 }
 .head[data-clickable]:active .disc { transform: scale(.92); }
 

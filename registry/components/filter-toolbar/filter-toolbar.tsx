@@ -34,7 +34,7 @@ export interface FilterToolbarProps {
 const enter = { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] as const };
 const leave = { duration: motionTokens.duration.instant, ease: [...motionTokens.ease.standard] as const };
 const still = { duration: 0 };
-const fade = { duration: motionTokens.duration.instant, ease: "linear" as const };
+const fade = { duration: motionTokens.duration.instant, ease: [...motionTokens.ease.standard] as const };
 const blur = (px: number) => `blur(${px}px)`;
 const clamp = (value: number) => Math.min(1, Math.max(0, value));
 const toOption = (entry: string | FilterOption): FilterOption => typeof entry === "string" ? { value: entry } : entry;

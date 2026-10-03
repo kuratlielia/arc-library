@@ -43,7 +43,7 @@ const collator = new Intl.Collator("en", { numeric: true, sensitivity: "base" })
 const isEmpty = (value: unknown) => value == null || value === "";
 const comparable = (value: unknown) => value instanceof Date ? value.getTime() : value;
 const blur = (px: number) => `blur(${px}px)`;
-const enter: Transition = { duration: .22, ease: [...motionTokens.ease.enter] };
+const enter: Transition = { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] };
 const leave: Transition = { duration: motionTokens.duration.fast, ease: [...motionTokens.ease.standard] };
 const instant: Transition = { duration: motionTokens.duration.instant };
 /** Changing text rises in from the side it is moving toward and lifts away on the other. */

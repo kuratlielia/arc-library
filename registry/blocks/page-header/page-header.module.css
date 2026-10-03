@@ -41,7 +41,7 @@
 .tabs { position: relative; display: flex; gap: 2px; margin: 2px calc(var(--pad) * -1) 0; padding: 0 calc(var(--pad) - 10px); overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; }
 .tabs::-webkit-scrollbar { display: none; }
 .tab { position: relative; display: inline-flex; height: 44px; flex: none; align-items: center; gap: 6px; border: 0; padding: 0 10px; background: none; color: var(--text-secondary); font: inherit; font-weight: 500; letter-spacing: inherit; white-space: nowrap; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: color var(--duration-fast) var(--ease-standard); }
-.tab::before { position: absolute; inset: 8px 0; border-radius: 8px; background: color-mix(in oklch, var(--foreground) 4.5%, transparent); content: ""; opacity: 0; transition: opacity var(--duration-fast) var(--ease-standard); }
+.tab::before { position: absolute; inset: 8px 0; border-radius: 8px; background: color-mix(in oklab, var(--foreground) 4.5%, transparent); content: ""; opacity: 0; transition: opacity var(--duration-fast) var(--ease-standard); }
 .tab[data-state="active"] { color: var(--foreground); }
 .tabLabel, .count { position: relative; }
 .count { color: var(--text-muted); font-variant-numeric: tabular-nums; }
@@ -80,7 +80,7 @@
 .issue[data-closing] .issueTitle { color: var(--text-muted); text-decoration-color: currentColor; }
 .issueLabel { color: var(--text-muted); font-size: var(--text-xs); }
 /* A new row arrives lit and settles to the page, so it is easy to find without a lasting marker. */
-.issue[data-fresh] .issueInner::before, .update[data-fresh] .updateInner::before { position: absolute; z-index: -1; inset: 3px 0; border-radius: 10px; background: color-mix(in oklch, var(--foreground) 6%, transparent); content: ""; animation: arrived 1.8s var(--ease-standard) both; }
+.issue[data-fresh] .issueInner::before, .update[data-fresh] .updateInner::before { position: absolute; z-index: -1; inset: 3px 0; border-radius: 10px; background: color-mix(in oklab, var(--foreground) 6%, transparent); content: ""; animation: arrived 1.8s var(--ease-standard) both; }
 @keyframes arrived { 0%, 35% { opacity: 1; } 100% { opacity: 0; } }
 
 .updateInner { position: relative; isolation: isolate; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px; margin-inline: -10px; padding: 18px 10px; }
@@ -111,7 +111,7 @@
 .menu { --menu-y: -5px; position: relative; z-index: 60; min-width: 13rem; border: 1px solid var(--border); border-radius: var(--radius-panel); padding: 5px; background: var(--surface-raised); box-shadow: var(--shadow-floating); color: var(--foreground); font-family: var(--font-body); font-size: var(--text-sm); letter-spacing: var(--tracking-body); transform-origin: var(--radix-dropdown-menu-content-transform-origin); transition: opacity var(--duration-fast) var(--ease-enter), transform var(--duration-spring) var(--ease-spring); }
 .menu[data-side="top"] { --menu-y: 5px; }
 @starting-style { .menu[data-state="open"] { opacity: 0; transform: translateY(var(--menu-y)) scale(.97); } }
-.menu[data-state="closed"] { opacity: 0; transform: translateY(calc(var(--menu-y) * .5)) scale(.985); transition: opacity 130ms var(--ease-standard), transform 130ms var(--ease-standard); animation: menu-exit 130ms linear both; pointer-events: none; }
+.menu[data-state="closed"] { opacity: 0; transform: translateY(calc(var(--menu-y) * .5)) scale(.985); transition: opacity var(--duration-instant) var(--ease-standard), transform var(--duration-instant) var(--ease-standard); animation: menu-exit var(--duration-instant) linear both; pointer-events: none; }
 @keyframes menu-exit { to { --menu-exit: 1; } }
 .highlight { position: absolute; top: 0; right: 5px; left: 5px; border-radius: calc(var(--radius-panel) - 6px); background: var(--surface-muted); opacity: 0; pointer-events: none; }
 .item { position: relative; display: flex; min-height: 36px; align-items: center; gap: 10px; border-radius: calc(var(--radius-panel) - 6px); padding: 0 11px; outline: none; cursor: pointer; user-select: none; }
@@ -121,10 +121,10 @@
 
 @media (hover: hover) and (pointer: fine) {
   .crumb:hover { color: var(--foreground); }
-  .compact:hover { background: color-mix(in oklch, var(--foreground) 4.5%, transparent); }
+  .compact:hover { background: color-mix(in oklab, var(--foreground) 4.5%, transparent); }
   .tab:hover { color: var(--foreground); }
   .tab:hover::before { opacity: 1; }
-  .check:hover { background: color-mix(in oklch, var(--foreground) 5%, transparent); color: var(--foreground); }
+  .check:hover { background: color-mix(in oklab, var(--foreground) 5%, transparent); color: var(--foreground); }
   .issue[data-closing] .check:hover { background: none; color: var(--success); }
 }
 

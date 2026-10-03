@@ -35,7 +35,7 @@ const leave: Transition = { duration: motionTokens.duration.fast, ease: [...moti
 function SwapText({ text }: { text: string }) {
   const reduced = useReducedMotion();
   return <AnimatePresence mode="popLayout" initial={false}>
-    <motion.span key={text} className={styles.swap} initial={reduced ? false : { opacity: 0, y: "0.3em", filter: `blur(${motionTokens.blur.soft}px)` }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: "-0.3em", filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: .15, ease: [...motionTokens.ease.standard] } }} transition={{ duration: .24, ease: [...motionTokens.ease.enter] }}>{text}</motion.span>
+    <motion.span key={text} className={styles.swap} initial={reduced ? false : { opacity: 0, y: "0.3em", filter: `blur(${motionTokens.blur.soft}px)` }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: "-0.3em", filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: motionTokens.duration.fast, ease: [...motionTokens.ease.standard] } }} transition={{ duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] }}>{text}</motion.span>
   </AnimatePresence>;
 }
 
@@ -52,7 +52,7 @@ export function DialogContent({ title, description, children, className, onPoint
   };
   const classes = [styles.content, className].filter(Boolean).join(" ");
   const inner = <>
-    <div className={styles.header}><div><DialogPrimitive.Title className={styles.title}><SwapText text={title}/></DialogPrimitive.Title>{description ? <DialogPrimitive.Description className={styles.description}><SwapText text={description}/></DialogPrimitive.Description> : null}</div><DialogPrimitive.Close className={styles.close} aria-label="Close dialog"><X width={18} height={18} aria-hidden="true"/></DialogPrimitive.Close></div>
+    <div className={styles.header}><div><DialogPrimitive.Title className={styles.title}><SwapText text={title}/></DialogPrimitive.Title>{description ? <DialogPrimitive.Description className={styles.description}><SwapText text={description}/></DialogPrimitive.Description> : null}</div><DialogPrimitive.Close className={styles.close} aria-label="Close dialog"><X size={16} strokeWidth={1.75} aria-hidden="true"/></DialogPrimitive.Close></div>
     <div className={styles.body}>{children}</div>
   </>;
   // Under a bare Radix root the open state is unknown here, so CSS keyframes keyed off data-state animate the layers instead.

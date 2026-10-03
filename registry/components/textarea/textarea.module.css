@@ -7,7 +7,6 @@
 @media (hover: hover) and (pointer: fine) { .control:hover:not(:disabled, [aria-invalid="true"]) { border-color: var(--foreground); } }
 .control:focus-visible { border-color: var(--foreground); box-shadow: 0 0 0 3px var(--focus-ring); outline: 2px solid transparent; outline-offset: 2px; }
 .control[aria-invalid="true"] { border-color: var(--danger); }
-.control[aria-invalid="true"]:focus-visible { box-shadow: 0 0 0 3px color-mix(in oklch, var(--danger) 24%, transparent); }
 .control:disabled { cursor: not-allowed; background: var(--surface-muted); opacity: .6; }
 /* The row's space is padding inside the clipped slot, so the height animates from a true zero. */
 .messageSlot { display: block; overflow: hidden; }

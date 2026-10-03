@@ -15,13 +15,13 @@
 /* Color is the only press response: the target never scales. */
 .dropzone:has(.trigger:active) { background: var(--surface-muted); }
 /* A file over the target closes the dashes into a solid edge and the target breathes, slowly, while it waits. */
-.dropzone.dragging { background: color-mix(in oklch, var(--accent) 2.5%, var(--surface)); animation: breathe 2.2s cubic-bezier(.45, 0, .55, 1) infinite; }
+.dropzone.dragging { background: color-mix(in oklab, var(--accent) 2.5%, var(--surface)); animation: breathe 2.2s var(--ease-in-out) infinite; }
 @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.012); } }
 /* Light that follows the pointer: a wash inside, and a brighter stretch of the edge nearest the file. */
 .wash, .glow { position: absolute; inset: 0; border-radius: inherit; opacity: 0; pointer-events: none; transition: opacity var(--duration-standard) var(--ease-standard); }
 .glow { padding: 1.5px; -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
 .dragging .wash, .dragging .glow { opacity: 1; }
-.dragging .edge rect { stroke: color-mix(in oklch, var(--accent) 40%, var(--border)); stroke-dasharray: 7 0; stroke-dashoffset: 1.75; }
+.dragging .edge rect { stroke: color-mix(in oklab, var(--accent) 40%, var(--border)); stroke-dasharray: 7 0; stroke-dashoffset: 1.75; }
 /* No gaps between the prompt's parts: each slot carries its own space, so a folding slot takes its space with it. */
 .iconSlot, .noteSlot { display: flex; flex-direction: column; overflow: hidden; }
 /* Three sheets of paper, the target's one illustration. The slot's top margin is room for them to lift without clipping. */
@@ -33,11 +33,11 @@
   box-shadow: 0 1px 2px oklch(0% 0 0 / .05), 0 3px 8px oklch(0% 0 0 / .04);
   transform: translate(var(--x), var(--y)) rotate(var(--r));
   transform-origin: 50% 100%;
-  transition: transform 420ms cubic-bezier(.34, 1.3, .64, 1), color var(--duration-standard) var(--ease-standard), border-color var(--duration-standard) var(--ease-standard);
+  transition: transform var(--duration-spring) var(--ease-spring), color var(--duration-standard) var(--ease-standard), border-color var(--duration-standard) var(--ease-standard);
 }
 .sheet::before, .sheet::after { position: absolute; top: 8px; left: 7px; width: 16px; height: 2px; border-radius: 2px; background: currentColor; content: ""; opacity: .3; }
 .sheet::after { top: 13px; width: 11px; }
-.sheet > svg { transition: transform 420ms cubic-bezier(.34, 1.3, .64, 1); }
+.sheet > svg { transition: transform var(--duration-spring) var(--ease-spring); }
 .dragging .sheet > svg { transform: translateY(-3px); }
 .sheet[data-sheet="back"] { --r: -10deg; --x: -9px; --y: 2px; }
 .sheet[data-sheet="side"] { --r: 10deg; --x: 9px; --y: 2px; }
@@ -67,7 +67,7 @@
 /* Rows animate height; the gap lives inside the clipped row as margin, so a closing row reaches a true zero. */
 .item { min-width: 0; overflow: hidden; }
 .row { position: relative; display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; column-gap: 12px; min-height: 58px; margin-top: 8px; border: 1px solid var(--border); border-radius: var(--radius-control); padding: 8px 8px 8px 9px; background: var(--surface); transition: border-color var(--duration-standard) var(--ease-standard); }
-.row.isFailed { border-color: color-mix(in oklch, var(--danger) 26%, var(--border)); }
+.row.isFailed { border-color: color-mix(in oklab, var(--danger) 26%, var(--border)); }
 .fileIcon { display: grid; width: 40px; height: 40px; place-items: center; color: var(--text-secondary); }
 .thumb { display: block; width: 40px; height: 40px; overflow: hidden; border-radius: 10px; background: var(--surface-muted); box-shadow: inset 0 0 0 1px oklch(0% 0 0 / .06); }
 .thumb img { display: block; width: 100%; height: 100%; object-fit: cover; }
@@ -109,9 +109,7 @@
 .word { display: inline-block; white-space: pre; }
 .srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 @media (prefers-reduced-motion: reduce) {
-  .dropzone, .edge rect, .sheet, .row, .retry, .remove, .wash, .glow { transition: none; }
+  .dropzone, .edge rect, .sheet, .sheet > svg, .row, .retry, .remove, .wash, .glow { transition: none; }
   .dropzone.dragging { animation: none; }
   .retry:active, .remove:active { transform: none; }
 }
-.dropzone:has(.trigger:focus-visible) { box-shadow: 0 0 0 3px var(--focus-ring); }
-.retry:focus-visible, .remove:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--focus-ring); }

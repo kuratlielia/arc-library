@@ -3,7 +3,7 @@
 .stack { display: grid; gap: var(--space-8); max-width: 720px; margin: 0 auto; padding: var(--space-20) var(--space-6); }
 .intro { display: grid; gap: var(--space-3); }
 .accordion .intro, .search .intro { justify-items: center; text-align: center; }
-.title { margin: 0; font-family: var(--font-display); font-size: clamp(1.75rem, 1rem + 3cqi, var(--text-4xl)); font-weight: 500; letter-spacing: var(--tracking-display); line-height: var(--leading-display); text-wrap: balance; }
+.title { margin: 0; font-family: var(--font-display); font-size: var(--text-3xl); font-weight: 500; letter-spacing: var(--tracking-display); line-height: var(--leading-display); text-wrap: balance; }
 .description { max-width: 480px; margin: 0; color: var(--text-secondary); font-size: var(--text-base); line-height: var(--leading-body); text-wrap: pretty; }
 
 .list { margin: 0; padding: 0; border-top: 1px solid var(--border); list-style: none; }
@@ -50,6 +50,7 @@
 .clear { height: var(--control-height-sm); border: 1px solid var(--border); border-radius: var(--radius-control); padding: 0 var(--space-4); background: var(--surface); color: var(--foreground); font: inherit; font-size: var(--text-sm); font-weight: 500; cursor: pointer; transition: transform var(--duration-fast) var(--ease-standard); }
 .clear:active { transform: scale(.97); }
 
+@container faq (min-width: 720px) { .title { font-size: var(--text-4xl); } }
 @container faq (max-width: 760px) {
   .columnsGrid { grid-template-columns: minmax(0, 1fr); gap: var(--space-8); padding-inline: var(--space-6); }
   .rail { position: static; }

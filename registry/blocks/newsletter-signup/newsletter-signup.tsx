@@ -60,15 +60,15 @@ function validate(value: string): Problem | null {
 
 const swapIn = { opacity: 0, y: 6, filter: `blur(${motionTokens.blur.subtle}px)` };
 const swapShown = { opacity: 1, y: 0, filter: "blur(0px)" };
-const swapOut = { opacity: 0, y: -6, filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: .14, ease: standard } };
+const swapOut = { opacity: 0, y: -6, filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: motionTokens.duration.fast, ease: standard } };
 const fadeIn = { opacity: 0 };
-const fadeOut = { opacity: 0, transition: { duration: .1 } };
+const fadeOut = { opacity: 0, transition: { duration: motionTokens.duration.instant } };
 
 /** A line that swaps in place: the old text lifts away and the new one rises out of a soft blur. */
 function Swap({ id, children, reduced, className, live }: { id: string; children: ReactNode; reduced: boolean; className?: string; live?: "polite" }) {
   return <div className={className} aria-live={live}>
     <AnimatePresence initial={false} mode="popLayout">
-      <motion.div key={id} initial={reduced ? fadeIn : swapIn} animate={swapShown} exit={reduced ? fadeOut : swapOut} transition={{ duration: reduced ? .12 : .26, ease: enter }}>{children}</motion.div>
+      <motion.div key={id} initial={reduced ? fadeIn : swapIn} animate={swapShown} exit={reduced ? fadeOut : swapOut} transition={{ duration: reduced ? motionTokens.duration.instant : motionTokens.duration.standard, ease: enter }}>{children}</motion.div>
     </AnimatePresence>
   </div>;
 }
@@ -103,7 +103,7 @@ const stackVariants: Variants = {
   away: ({ upcoming }: Placement) => upcoming ? { opacity: 0, y: 56, scale: 1 } : { opacity: 0, y: -3 * STEP, scale: 1 - 3 * .045 },
 };
 /** Position rides the no-overshoot spring; opacity resolves fast so two issues never read through each other. */
-const settle = { ...motionTokens.spring.smooth, opacity: { duration: motionTokens.duration.instant, ease: "linear" as const } };
+const settle = { ...motionTokens.spring.smooth, opacity: { duration: motionTokens.duration.instant, ease: standard } };
 /** Reduced motion: issues take their places at once and only fade. */
 const still = { duration: 0, opacity: { duration: motionTokens.duration.fast } };
 
@@ -151,7 +151,12 @@ function Readers({ readers, done, reduced }: { readers: { count: number; faces: 
       <span className={styles.count}><AnimatedCounter value={readers.count + (done ? 1 : 0)} /></span>
       {" "}readers
       <AnimatePresence initial={false}>
-        {done && <motion.span key="you" className={styles.you} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reduced ? .12 : motionTokens.duration.standard, ease: enter, delay: reduced ? 0 : .18 }}>, including you</motion.span>}
+        {/* The phrase opens its own width on the no-overshoot spring, so the centred line glides instead of jumping sideways. */}
+        {done && <motion.span key="you" className={styles.you}
+          initial={reduced ? { opacity: 0 } : { opacity: 0, width: 0 }}
+          animate={reduced ? { opacity: 1 } : { opacity: 1, width: "auto" }}
+          exit={reduced ? { opacity: 0 } : { opacity: 0, width: 0 }}
+          transition={reduced ? { duration: motionTokens.duration.instant } : { width: motionTokens.spring.smooth, opacity: { duration: motionTokens.duration.standard, ease: enter, delay: .12 } }}>, including you</motion.span>}
       </AnimatePresence>
     </span>
   </div>;
@@ -280,7 +285,7 @@ export const NewsletterSignup = forwardRef<HTMLElement, NewsletterSignupProps>(f
         <span className={styles.labels}>
           {Object.keys(labels).map(key => <span key={key} className={styles.sizer} aria-hidden="true">{key === "done" ? <><span className={styles.check} />Subscribed</> : labels[key]}</span>)}
           <AnimatePresence initial={false} mode="popLayout">
-            <motion.span key={labelKey} className={styles.label} initial={reduced ? fadeIn : swapIn} animate={swapShown} exit={reduced ? fadeOut : swapOut} transition={{ duration: reduced ? .12 : .24, ease: enter }}>
+            <motion.span key={labelKey} className={styles.label} initial={reduced ? fadeIn : swapIn} animate={swapShown} exit={reduced ? fadeOut : swapOut} transition={{ duration: reduced ? motionTokens.duration.instant : motionTokens.duration.standard, ease: enter }}>
               {labels[labelKey]}
             </motion.span>
           </AnimatePresence>

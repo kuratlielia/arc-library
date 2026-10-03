@@ -54,7 +54,7 @@
 .replies::before { content: ""; position: absolute; top: 2px; bottom: 14px; left: 0; width: 1px; background: var(--border); }
 
 .comment { display: flex; gap: 10px; padding: 10px; border-radius: 16px; }
-.avatar { display: inline-grid; flex: none; place-items: center; overflow: hidden; border-radius: 50%; background: var(--surface-muted); color: var(--text-secondary); font-size: 10px; font-weight: 500; object-fit: cover; }
+.avatar { display: inline-grid; flex: none; place-items: center; overflow: hidden; border-radius: 50%; background: var(--surface-muted); color: var(--text-secondary); font-size: var(--text-xs); font-weight: 500; letter-spacing: 0; object-fit: cover; }
 .deletedDot { width: 28px; height: 28px; flex: none; border: 1px dashed var(--border-strong); border-radius: 50%; }
 .main { display: grid; min-width: 0; flex: 1; gap: 2px; }
 .meta { display: flex; min-width: 0; align-items: baseline; gap: 8px; }
@@ -82,7 +82,7 @@
   font-weight: 500;
   transition: background-color var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard);
 }
-.reaction[aria-pressed="true"] { border-color: color-mix(in oklch, var(--accent) 45%, var(--border)); background: var(--accent-subtle); color: var(--foreground); }
+.reaction[aria-pressed="true"] { border-color: color-mix(in oklab, var(--accent) 45%, var(--border)); background: var(--accent-subtle); color: var(--foreground); }
 .reaction:active { transform: scale(.94); }
 .count { position: relative; display: inline-grid; min-width: 1ch; overflow: hidden; font-variant-numeric: tabular-nums; }
 .count > span { grid-area: 1 / 1; }
@@ -110,7 +110,7 @@
 .iconAction { width: 28px; padding: 0; }
 .action[data-tone="danger"] { color: var(--danger); }
 .prompt { margin-right: 4px; color: var(--foreground); font-size: var(--text-xs); }
-.emoji { display: grid; width: 32px; height: 32px; place-items: center; padding: 0; border: 0; border-radius: 50%; background: transparent; cursor: pointer; font-size: 17px; line-height: 1; transition: background-color var(--duration-fast) var(--ease-standard), transform var(--duration-instant) var(--ease-standard); }
+.emoji { display: grid; width: 28px; height: 28px; place-items: center; padding: 0; border: 0; border-radius: 50%; background: transparent; cursor: pointer; font-size: var(--text-base); line-height: 1; transition: background-color var(--duration-fast) var(--ease-standard), transform var(--duration-instant) var(--ease-standard); }
 .emoji[aria-pressed="true"] { background: var(--accent-subtle); }
 .emoji:active { transform: scale(.88); }
 
@@ -164,7 +164,7 @@
 
 /* Resolved chip */
 .resolved { display: flex; align-items: center; gap: 12px; padding: 10px 10px 10px 14px; }
-.resolvedIcon { display: grid; width: 24px; height: 24px; flex: none; place-items: center; border-radius: 50%; background: color-mix(in oklch, var(--success) 14%, transparent); color: var(--success); }
+.resolvedIcon { display: grid; width: 24px; height: 24px; flex: none; place-items: center; border-radius: 50%; background: color-mix(in oklab, var(--success) 14%, transparent); color: var(--success); }
 .resolvedText { display: grid; min-width: 0; flex: 1; }
 .resolvedTitle { overflow: hidden; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
 .resolvedSubject { color: var(--text-secondary); font-weight: 400; }
@@ -175,11 +175,11 @@
   .comment:hover .actions,
   .comment:focus-within .actions { opacity: 1; }
   .action:hover, .iconAction:hover, .toggle:hover, .ghost:hover { background: var(--surface-muted); color: var(--foreground); }
-  .action[data-tone="danger"]:hover { background: color-mix(in oklch, var(--danger) 9%, transparent); color: var(--danger); }
+  .action[data-tone="danger"]:hover { background: color-mix(in oklab, var(--danger) 9%, transparent); color: var(--danger); }
   .reaction:hover { border-color: var(--border-strong); }
   .emoji:hover { background: var(--surface-muted); }
   .resolve:hover:not(:disabled), .reopen:hover { border-color: var(--border-strong); background: var(--surface-muted); }
-  .send:hover:not(:disabled) { background: color-mix(in oklch, var(--foreground) 86%, var(--background)); }
+  .send:hover:not(:disabled) { background: color-mix(in oklab, var(--foreground) 86%, var(--background)); }
 }
 .action:focus-visible, .iconAction:focus-visible, .toggle:focus-visible, .emoji:focus-visible { background: var(--surface-muted); color: var(--foreground); }
 

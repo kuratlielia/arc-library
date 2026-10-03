@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, useId, useState } from "react";
+import { forwardRef, useId, useLayoutEffect, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowUpRight, Check } from "lucide-react";
@@ -139,7 +139,7 @@ function Newsletter({ title, description, placeholder = "you@example.com", onSub
         {message && <motion.p key={message} className={styles.message} data-tone={tone} role={tone === "error" ? "alert" : undefined}
           initial={reduced ? { opacity: 0 } : { opacity: 0, y: 4, filter: `blur(${motionTokens.blur.subtle}px)` }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: -4, filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: .12 } }}
+          exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: -4, filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: motionTokens.duration.instant } }}
           transition={{ duration: reduced ? 0 : motionTokens.duration.standard, ease: enter }}>{message}</motion.p>}
       </AnimatePresence>
     </div>
@@ -241,10 +241,27 @@ const variantOptions = [{ value: "columns", label: "Columns" }, { value: "minima
 export function SiteFooterBlock({ variant: initial = "columns" }: { variant?: SiteFooterVariant }) {
   const [variant, setVariant] = useState<SiteFooterVariant>(initial);
   const [last, setLast] = useState<string | null>(null);
+  const reduced = !!useReducedMotion();
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState<number | null>(null);
+  // The frame springs between layout heights instead of snapping; the new layout fades in where it sits.
+  useLayoutEffect(() => {
+    const node = contentRef.current;
+    if (!node) return;
+    setHeight(node.offsetHeight);
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(() => setHeight(node.offsetHeight));
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [variant]);
   return <div className={styles.preview}>
     <SegmentedControl label="Footer layout" options={variantOptions} value={variant} onValueChange={value => setVariant(value as SiteFooterVariant)} />
     <div className={styles.frame}>
-      <SiteFooter key={variant} variant={variant} onNavigate={link => setLast(link.label)} />
+      <motion.div className={styles.frameBody} initial={false} animate={{ height: height ?? "auto" }} transition={reduced ? { duration: 0 } : motionTokens.spring.smooth}>
+        <motion.div ref={contentRef} key={variant} initial={reduced ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: motionTokens.duration.standard, ease: enter }}>
+          <SiteFooter variant={variant} onNavigate={link => setLast(link.label)} />
+        </motion.div>
+      </motion.div>
     </div>
     <p className={styles.srOnly} aria-live="polite">{last ? `Opened ${last}` : ""}</p>
   </div>;

@@ -100,7 +100,7 @@ const panelSlide: Variants = {
   center: { opacity: 1, x: 0, transition: { x: motionTokens.spring.smooth, opacity: { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] } } },
   exit: (direction: number) => ({ opacity: 0, x: direction * -8, transition: { duration: motionTokens.duration.instant, ease: [...motionTokens.ease.standard] } }),
 };
-const panelFade: Variants = { enter: { opacity: 0, x: 0 }, center: { opacity: 1, x: 0, transition: { duration: motionTokens.duration.instant } }, exit: { opacity: 0, x: 0, transition: { duration: .1 } } };
+const panelFade: Variants = { enter: { opacity: 0, x: 0 }, center: { opacity: 1, x: 0, transition: { duration: motionTokens.duration.instant } }, exit: { opacity: 0, x: 0, transition: { duration: motionTokens.duration.instant } } };
 
 /** Rows open and close their own height, so the list closes the gap instead of jumping. */
 function rowMotion(reduce: boolean) {
@@ -477,7 +477,7 @@ export function PageHeader() {
 
         <div className={styles.toastLayer} aria-hidden="true">
           <AnimatePresence initial={false} mode="popLayout">
-            {notice && <motion.div key={notice.key} className={styles.toast} data-tone={notice.tone} initial={reduce ? { opacity: 0 } : { opacity: 0, y: 14, filter: blur(motionTokens.blur.soft) }} animate={{ opacity: 1, y: 0, filter: blur(0) }} exit={reduce ? { opacity: 0, transition: still } : { opacity: 0, y: 8, filter: blur(motionTokens.blur.subtle), transition: quick }} transition={reduce ? { duration: motionTokens.duration.instant } : { ...motionTokens.spring.snappy, opacity: { duration: .2 }, filter: { duration: .2 } }}>
+            {notice && <motion.div key={notice.key} className={styles.toast} data-tone={notice.tone} initial={reduce ? { opacity: 0 } : { opacity: 0, y: 14, filter: blur(motionTokens.blur.soft) }} animate={{ opacity: 1, y: 0, filter: blur(0) }} exit={reduce ? { opacity: 0, transition: still } : { opacity: 0, y: 8, filter: blur(motionTokens.blur.subtle), transition: quick }} transition={reduce ? { duration: motionTokens.duration.instant } : { ...motionTokens.spring.snappy, opacity: { duration: motionTokens.duration.fast, ease: [...motionTokens.ease.standard] }, filter: { duration: motionTokens.duration.fast, ease: [...motionTokens.ease.standard] } }}>
               {notice.tone === "success" ? <Check {...icon} /> : notice.tone === "error" ? <CircleAlert {...icon} /> : null}
               <span>{notice.text}</span>
             </motion.div>}

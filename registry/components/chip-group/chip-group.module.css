@@ -17,12 +17,12 @@
 .label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* Selected reads as a quiet tint of the accent (neutral by default) plus the check, never color alone. */
-.body[data-selected="true"] .surface { border-color: color-mix(in oklch, var(--accent) 42%, var(--border)); background: color-mix(in oklch, var(--accent) 11%, var(--surface)); }
+.body[data-selected="true"] .surface { border-color: color-mix(in oklab, var(--accent) 42%, var(--border)); background: color-mix(in oklab, var(--accent) 11%, var(--surface)); }
 .chip[aria-pressed="true"] { color: var(--foreground); }
 @media (hover: hover) and (pointer: fine) {
   .chip:hover { color: var(--foreground); }
   .chip:hover .surface { border-color: var(--border-strong); }
-  .chip[aria-pressed="true"]:hover .surface { border-color: color-mix(in oklch, var(--accent) 60%, var(--border)); background: color-mix(in oklch, var(--accent) 16%, var(--surface)); }
+  .chip[aria-pressed="true"]:hover .surface { border-color: color-mix(in oklab, var(--accent) 60%, var(--border)); background: color-mix(in oklab, var(--accent) 16%, var(--surface)); }
 }
 
 /* The overflow chip travels under the chips it reveals, so they seem to come out of it. */

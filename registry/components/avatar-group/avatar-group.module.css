@@ -4,7 +4,7 @@
 /* Each slot is the avatar's visible width, so a slot that opens or closes moves the rest of the stack smoothly. */
 .slot { position: relative; display: inline-flex; flex: 0 0 auto; height: var(--avatar-size); align-items: center; }
 /* One wrapper per person carries every hover move as a single translate, so the stack never changes size. */
-.lift { --fan: 0px; --aside: 0px; --rise: 0px; position: relative; display: inline-flex; margin-left: -6px; border-radius: var(--radius-pill); transform: translate(calc(var(--fan) + var(--aside)), var(--rise)); transition: transform 260ms var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard); }
+.lift { --fan: 0px; --aside: 0px; --rise: 0px; position: relative; display: inline-flex; margin-left: -6px; border-radius: var(--radius-pill); transform: translate(calc(var(--fan) + var(--aside)), var(--rise)); transition: transform var(--duration-standard) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard); }
 .avatar, .overflow { border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--border); transition: box-shadow var(--duration-fast) var(--ease-standard); }
 .overflow { position: relative; display: inline-grid; place-items: center; overflow: hidden; border-radius: var(--radius-pill); background: var(--surface-muted); color: var(--text-secondary); font-size: var(--text-xs); font-weight: 500; font-variant-numeric: tabular-nums; }
 .count { display: inline-block; }
@@ -12,7 +12,7 @@
 .overflow.md { width: 36px; height: 36px; }
 .overflow.lg { width: 48px; height: 48px; font-size: var(--text-sm); }
 /* The name floats above the stack, outside the layout, so showing it never moves anything. */
-.tip { position: absolute; z-index: 2; bottom: calc(100% + 8px); left: 50%; padding: 4px 8px; border-radius: var(--radius-pill); background: var(--foreground); color: var(--background); font-size: var(--text-xs); font-weight: 500; line-height: 1.2; white-space: nowrap; pointer-events: none; opacity: 0; transform: translate(-50%, 3px); transition: opacity var(--duration-fast) var(--ease-standard), transform var(--duration-fast) var(--ease-standard); }
+.tip { position: absolute; z-index: 2; bottom: calc(100% + 8px); left: 50%; padding: 4px 8px; border-radius: var(--radius-pill); background: var(--foreground); color: var(--background); font-size: var(--text-xs); font-weight: 500; line-height: var(--leading-body); white-space: nowrap; pointer-events: none; opacity: 0; transform: translate(-50%, 3px); transition: opacity var(--duration-fast) var(--ease-standard), transform var(--duration-fast) var(--ease-standard); }
 /* Pointing at the stack loosens its overlap from the center; the person under the pointer lifts with a crisp ring and names themselves, and their neighbors ease aside. */
 @media (hover: hover) and (pointer: fine) {
   .group:hover .lift { --fan: calc((var(--index) - (var(--count) - 1) / 2) * 4px); }

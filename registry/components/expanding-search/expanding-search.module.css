@@ -11,7 +11,7 @@
   .clear:hover { background: var(--surface-muted); color: var(--foreground); }
 }
 /* A compact press while it is still a button; the morph takes over on release. */
-.shell:not([data-expanded]):has(> .trigger:active) { transform: scale(.97); transition-duration: var(--duration-fast), var(--duration-fast), var(--duration-fast), var(--duration-standard), 110ms; }
+.shell:not([data-expanded]):has(> .trigger:active) { transform: scale(.97); transition-duration: var(--duration-fast), var(--duration-fast), var(--duration-fast), var(--duration-standard), var(--duration-instant); }
 .trigger { position: absolute; z-index: 1; inset: 0; margin: 0; padding: 0; border: 0; border-radius: inherit; background: transparent; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .trigger:focus-visible { outline: none; }
 /* The glass sits at the leading edge, so it is centered in the circle and rides that edge to its place in the open field. */
@@ -33,7 +33,7 @@
 .groupLabel { padding: 8px 12px 4px; color: var(--text-muted); font-size: var(--text-xs); font-weight: 500; line-height: var(--leading-body); }
 /* Nested corners step down from the panel by its inset. The highlight paints under every row's content, so text never hides while it travels. */
 .option { position: relative; display: flex; min-height: 48px; align-items: center; gap: 12px; padding: 6px 12px; border-radius: calc(var(--radius-panel) - 6px); color: var(--foreground); cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; }
-.highlight { position: absolute; z-index: -1; inset: 0; border-radius: inherit; background: color-mix(in oklch, var(--foreground) 6%, transparent); pointer-events: none; }
+.highlight { position: absolute; z-index: -1; inset: 0; border-radius: inherit; background: color-mix(in oklab, var(--foreground) 6%, transparent); pointer-events: none; }
 .optionIcon { display: grid; flex: none; width: 18px; place-items: center; color: var(--text-muted); transition: color var(--duration-fast) var(--ease-standard); }
 .option[data-active] .optionIcon { color: var(--foreground); }
 .optionText { display: grid; min-width: 0; }

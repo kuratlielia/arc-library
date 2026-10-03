@@ -22,7 +22,7 @@
 }
 .editor[contenteditable="false"] { caret-color: transparent; }
 .editor::selection,
-.editor *::selection { background: color-mix(in oklch, var(--accent) 22%, transparent); }
+.editor *::selection { background: color-mix(in oklab, var(--accent) 22%, transparent); }
 
 .editor > * { margin: 0; }
 .editor > * + * { margin-top: .6em; }
@@ -39,7 +39,7 @@
 
 .editor strong { font-weight: 600; }
 .editor s { color: var(--text-secondary); text-decoration-thickness: 1px; }
-.editor a { color: var(--accent-strong); text-decoration: underline; text-decoration-color: color-mix(in oklch, var(--accent) 45%, transparent); text-decoration-thickness: 1px; text-underline-offset: 3px; cursor: text; }
+.editor a { color: var(--accent-strong); text-decoration: underline; text-decoration-color: color-mix(in oklab, var(--accent) 45%, transparent); text-decoration-thickness: 1px; text-underline-offset: 3px; cursor: text; }
 .editor code {
   padding: .12em .38em;
   border-radius: 6px;
@@ -52,6 +52,10 @@
 
 .editor ul,
 .editor ol { margin-block: 0; padding-left: 1.45em; }
+/* Set the markers explicitly: app resets that strip list styles would otherwise leave lists unmarked. */
+.editor ul { list-style: disc; }
+.editor ul ul { list-style: circle; }
+.editor ol { list-style: decimal; }
 .editor li { padding-left: .2em; }
 .editor li + li { margin-top: .2em; }
 .editor li > :is(ul, ol) { margin-top: .2em; }
@@ -65,7 +69,7 @@
   border-radius: 14px;
   background: var(--surface-muted);
   font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
-  font-size: 13px;
+  font-size: var(--text-sm);
   line-height: 1.6;
   tab-size: 2;
   white-space: pre;
@@ -174,7 +178,7 @@
 .slash[data-above] { translate: 0 -100%; }
 .slashBody { padding: 6px; }
 .slashList { position: relative; display: grid; margin: 0; padding: 0; list-style: none; }
-.slashHighlight { position: absolute; top: 0; right: 0; left: 0; border-radius: 12px; background: color-mix(in oklch, var(--foreground) 6.5%, transparent); pointer-events: none; }
+.slashHighlight { position: absolute; top: 0; right: 0; left: 0; border-radius: 12px; background: color-mix(in oklab, var(--foreground) 6.5%, transparent); pointer-events: none; }
 .slashOption {
   position: relative;
   display: flex;
@@ -192,6 +196,6 @@
 .slashOption[aria-selected="true"] { color: var(--foreground); }
 .slashIcon { display: grid; width: 20px; flex: none; place-items: center; }
 .slashLabel { min-width: 0; flex: 1; overflow: hidden; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
-.slashHint { flex: none; color: var(--text-muted); font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 11px; }
+.slashHint { flex: none; color: var(--text-muted); font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: var(--text-xs); }
 
 .srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }

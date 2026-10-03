@@ -3,7 +3,7 @@
 .card { position: relative; min-width: 0; overflow: hidden; isolation: isolate; border: 1px solid var(--border); border-radius: var(--radius-panel); background: var(--surface); color: var(--foreground); transition: border-color var(--duration-fast) var(--ease-standard), box-shadow var(--duration-standard) var(--ease-standard); }
 /* A pointed-at card floats a little, so the shadow arrives with the lift. Touch and pen never lift. */
 .card[data-hover] { border-color: var(--border-strong); box-shadow: var(--shadow-raised); }
-.card:has(.trigger:focus-visible) { border-color: var(--border-strong); outline: 2px solid var(--focus-ring); outline-offset: 3px; }
+.card:has(.trigger:focus-visible) { border-color: var(--border-strong); }
 .media { position: relative; overflow: hidden; background: var(--surface-muted); }
 .zoom { display: grid; min-height: 112px; place-items: center; }
 .content { padding: var(--space-5); }
@@ -42,9 +42,8 @@
 .panel .description { max-width: var(--card-measure, 34ch); }
 /* The slot carries the entrance, so the button's own press answers instantly. */
 .closeSlot { position: absolute; top: var(--space-4); right: var(--space-4); z-index: 2; display: grid; }
-.close { display: grid; width: var(--space-8); height: var(--space-8); place-items: center; padding: 0; border: 1px solid color-mix(in oklch, var(--border) 70%, transparent); border-radius: var(--radius-pill); background: color-mix(in oklch, var(--surface-raised) 74%, transparent); backdrop-filter: blur(12px); color: var(--foreground); cursor: pointer; -webkit-tap-highlight-color: transparent; transition: background-color var(--duration-fast) var(--ease-standard); }
+.close { display: grid; width: var(--space-8); height: var(--space-8); place-items: center; padding: 0; border: 1px solid color-mix(in oklab, var(--border) 70%, transparent); border-radius: var(--radius-pill); background: color-mix(in oklab, var(--surface-raised) 74%, transparent); backdrop-filter: blur(12px); color: var(--foreground); cursor: pointer; -webkit-tap-highlight-color: transparent; transition: background-color var(--duration-fast) var(--ease-standard); }
 @media (hover: hover) and (pointer: fine) { .close:hover { background: var(--surface-raised); } }
-.close:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .details { margin-top: var(--space-6); padding-top: var(--space-5); border-top: 1px solid var(--border); color: var(--text-secondary); font-size: var(--text-sm); line-height: var(--leading-body); }
 
 @media (prefers-reduced-motion: reduce) {

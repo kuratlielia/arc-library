@@ -87,7 +87,7 @@ export function DatePicker({ label, value, onChange, description, placeholder = 
     onChange?.(date);
     window.clearTimeout(closeTimer.current);
     if (reduce || !date) close();
-    else closeTimer.current = window.setTimeout(close, 240);
+    else closeTimer.current = window.setTimeout(close, 300);
   };
   const onTriggerKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
     if ((event.key === "ArrowDown" || event.key === "Enter" || event.key === " ") && !open) { event.preventDefault(); show(); }

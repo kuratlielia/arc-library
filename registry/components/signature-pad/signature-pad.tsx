@@ -440,7 +440,7 @@ export function SignaturePad({ signer, hint = "Sign here", defaultColor = "black
   }
   const showHint = empty && !drawing && !wiping;
   const hintHidden = reduced ? { opacity: 0 } : { opacity: 0, y: 6, scale: .97, filter: `blur(${blur.soft}px)` };
-  const t: Transition = reduced ? { duration: .12 } : spring.snappy;
+  const t: Transition = reduced ? { duration: duration.instant } : spring.snappy;
 
   return <div className={[styles.root, className].filter(Boolean).join(" ")} data-ink={color}>
     <div ref={padRef} className={styles.pad} tabIndex={0} role="img" aria-roledescription="signature pad"
@@ -454,7 +454,7 @@ export function SignaturePad({ signer, hint = "Sign here", defaultColor = "black
         <AnimatePresence initial={false}>
           {showHint && <motion.span key="hint" className={styles.hint} initial={hintHidden} animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             exit={{ ...hintHidden, transition: { duration: duration.fast, ease: [...ease.standard] } }}
-            transition={reduced ? { duration: .12 } : { duration: duration.standard, ease: [...ease.enter] }}>{hint}</motion.span>}
+            transition={reduced ? { duration: duration.instant } : { duration: duration.standard, ease: [...ease.enter] }}>{hint}</motion.span>}
         </AnimatePresence>
       </div>
       <div ref={inkRef} className={styles.ink}>
@@ -502,7 +502,7 @@ export function SignaturePad({ signer, hint = "Sign here", defaultColor = "black
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.span key={saved === kind ? "done" : saved === "failed" ? "failed" : "idle"} className={styles.exportContent}
             initial={{ opacity: 0, y: reduced ? 0 : 4, filter: reduced ? "blur(0px)" : `blur(${blur.subtle}px)` }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            exit={{ opacity: 0, y: reduced ? 0 : -4, transition: { duration: duration.instant } }} transition={reduced ? { duration: .12 } : { duration: .2, ease: [...ease.enter] }}>
+            exit={{ opacity: 0, y: reduced ? 0 : -4, transition: { duration: duration.instant } }} transition={reduced ? { duration: duration.instant } : { duration: duration.fast, ease: [...ease.enter] }}>
             {saved === kind ? <><Check size={15} strokeWidth={1.75} aria-hidden="true" />Saved</> : <><Download size={15} strokeWidth={1.75} aria-hidden="true" />{kind.toUpperCase()}</>}
           </motion.span>
         </AnimatePresence>

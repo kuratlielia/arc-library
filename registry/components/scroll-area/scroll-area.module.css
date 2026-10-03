@@ -53,7 +53,7 @@
   content: "";
   position: absolute;
   border-radius: var(--radius-pill);
-  background: color-mix(in oklch, var(--foreground) 30%, transparent);
+  background: color-mix(in oklab, var(--foreground) 30%, transparent);
   transition: width var(--duration-fast) var(--ease-standard), height var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard);
 }
 .track[data-axis="y"] .thumb::after { top: 0; right: 3px; bottom: 0; width: 5px; }
@@ -67,7 +67,7 @@
 @media (hover: hover) and (pointer: fine) {
   .root:hover > .track { opacity: 1; pointer-events: auto; transition-duration: var(--duration-fast); }
   .track:hover .thumb::after,
-  .root[data-dragging] .thumb::after { background: color-mix(in oklch, var(--foreground) 46%, transparent); }
+  .root[data-dragging] .thumb::after { background: color-mix(in oklab, var(--foreground) 46%, transparent); }
   .track[data-axis="y"]:hover .thumb::after,
   .root[data-dragging="y"] .track[data-axis="y"] .thumb::after { width: 7px; right: 2px; }
   .track[data-axis="x"]:hover .thumb::after,
@@ -77,4 +77,3 @@
 @media (prefers-reduced-motion: reduce) {
   .track, .thumb::after { transition: none; }
 }
-.viewport:focus-visible { outline: 2px solid var(--control-on); outline-offset: -2px; }

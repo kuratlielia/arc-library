@@ -631,12 +631,13 @@ export const ChatThread = forwardRef<ChatThreadHandle, ChatThreadProps>(function
       </div>
       <span className={styles.srOnly} role="status">{typingLabel}</span>
       <AnimatePresence>
-        {pill && <motion.button key="pill" type="button" className={styles.pill} onClick={() => scrollToBottom()} layout={!reduced}
+        {pill && <motion.button key="pill" type="button" className={styles.pill} onClick={() => scrollToBottom()} layout={!reduced} style={{ borderRadius: 16 }}
           initial={reduced ? { opacity: 0 } : { opacity: 0, y: 12, scale: .94 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={reduced ? { opacity: 0 } : { opacity: 0, y: 12, scale: .94, transition: { duration: duration.exit, ease: standard } }}
           transition={reduced ? { duration: duration.fast } : { ...spring.morph, opacity: { duration: duration.fast } }}>
-          <ArrowDown size={14} strokeWidth={2} aria-hidden="true" />
+          {/* Icon and label hold their own size while the pill's width morphs, so the text never stretches. */}
+          <motion.span className={styles.pillIcon} layout={reduced ? false : "position"} transition={spring.morph}><ArrowDown size={14} strokeWidth={2} aria-hidden="true" /></motion.span>
           <AnimatePresence initial={false} mode="popLayout">
-            <motion.span key={unread > 0 ? "new" : "latest"} initial={{ opacity: 0, filter: `blur(${blur.subtle}px)` }} animate={{ opacity: 1, filter: "blur(0px)" }} exit={{ opacity: 0, filter: `blur(${blur.subtle}px)` }} transition={{ duration: duration.fast }}>
+            <motion.span key={unread > 0 ? "new" : "latest"} layout={reduced ? false : "position"} initial={{ opacity: 0, filter: `blur(${blur.subtle}px)` }} animate={{ opacity: 1, filter: "blur(0px)" }} exit={{ opacity: 0, filter: `blur(${blur.subtle}px)` }} transition={{ duration: duration.fast }}>
               {unread > 0 ? withCount(t.newMessages(unread), unread, <Count value={unread} reduced={reduced} />) : t.jumpToLatest}
             </motion.span>
           </AnimatePresence>

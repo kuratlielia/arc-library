@@ -1,0 +1,74 @@
+/* Separate soft buttons in a quiet tray, with real gaps between them. The tray always keeps its natural size and never wraps or clips its buttons. The buttons stay transparent: one shared highlight
+   moves underneath their content, so there is only ever one moving surface. Corners are concentric with the tray. */
+.group {
+  --fbg-h: 36px; --fbg-pad: 4px; --fbg-gap: 4px; --fbg-pad-x: 12px;
+  --fbg-outer: var(--radius-control);
+  --fbg-radius: calc(var(--fbg-outer) - var(--fbg-pad) - 1px);
+  --fbg-highlight: color-mix(in oklab, var(--foreground) 7%, transparent);
+  --fbg-highlight-press: color-mix(in oklab, var(--foreground) 12%, transparent);
+  --fbg-on: color-mix(in oklab, var(--control-on) 12%, transparent);
+  --fbg-rule: color-mix(in oklab, var(--foreground) 12%, transparent);
+  /* The muted tray is a translucent tint, not --surface-muted, so it still reads when it sits on a muted surface. */
+  --fbg-tray: color-mix(in oklab, var(--foreground) 4.5%, transparent);
+  --fbg-tray-edge: color-mix(in oklab, var(--foreground) 3%, transparent);
+  position: relative; isolation: isolate; display: inline-flex; flex: none; flex-wrap: nowrap; align-items: center; gap: var(--fbg-gap); padding: var(--fbg-pad); border: 1px solid var(--fbg-tray-edge); border-radius: var(--fbg-outer); background: var(--fbg-tray); color: var(--text-secondary); font-family: var(--font-body); letter-spacing: var(--tracking-body); -webkit-tap-highlight-color: transparent;
+}
+.sm { --fbg-h: 30px; --fbg-pad: 3px; --fbg-gap: 3px; --fbg-pad-x: 10px; --fbg-outer: calc(var(--radius-control) - 3px); }
+.md { --fbg-h: 36px; }
+/* Raised for overlays such as a selection toolbar: the floating layer shadow and a hairline edge. */
+.floating { border-color: var(--border); background: var(--surface-raised); box-shadow: var(--shadow-floating); }
+.vertical { flex-direction: column; align-items: stretch; }
+:global(:root[data-theme="dark"]) .group {
+  --fbg-highlight: color-mix(in oklab, var(--foreground) 9%, transparent);
+  --fbg-highlight-press: color-mix(in oklab, var(--foreground) 15%, transparent);
+  --fbg-on: color-mix(in oklab, var(--control-on) 16%, transparent);
+  --fbg-tray: color-mix(in oklab, var(--foreground) 6%, transparent);
+  --fbg-tray-edge: color-mix(in oklab, var(--foreground) 5%, transparent);
+}
+
+/* The highlight paints above the buttons' own backgrounds (a pressed tint) and below their content. */
+.highlight { position: absolute; z-index: 1; top: 0; left: 0; border-radius: var(--fbg-radius); background: var(--fbg-highlight); pointer-events: none; transition: background-color var(--duration-fast) var(--ease-standard); }
+.highlight[data-pressing] { background: var(--fbg-highlight-press); transition-duration: var(--duration-instant); }
+
+/* Buttons are not positioned, so the highlight measures them against the tray and stacks above their background. */
+.item { display: inline-flex; min-width: var(--fbg-h); height: var(--fbg-h); flex: none; align-items: center; justify-content: center; margin: 0; padding: 0 var(--fbg-pad-x); border: 0; border-radius: var(--fbg-radius); background: transparent; color: inherit; font: inherit; font-size: var(--text-sm); font-weight: 500; line-height: 1; white-space: nowrap; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: manipulation; transition: color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), opacity var(--duration-fast) var(--ease-standard); }
+.sm .item { font-size: var(--text-xs); }
+.item[data-icon]:not([data-icon-only]) { padding-left: calc(var(--fbg-pad-x) - 2px); }
+.item[data-icon-only] { width: var(--fbg-h); padding: 0; }
+.item[data-active], .item[aria-pressed="true"] { color: var(--foreground); }
+.item[aria-pressed="true"] { background: var(--fbg-on); }
+.item[aria-disabled="true"] { color: var(--text-muted); cursor: not-allowed; opacity: .5; }
+.vertical .item:not([data-icon-only]) { justify-content: flex-start; }
+.vertical .item[data-icon-only] { align-self: center; }
+
+/* Ghosts of every label share one grid cell with the visible one, so the slot always has the widest label's width. */
+.slot { position: relative; z-index: 2; display: inline-grid; align-items: center; justify-items: center; }
+.slot > * { grid-area: 1 / 1; }
+.vertical .slot { justify-items: start; }
+.ghost { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; visibility: hidden; pointer-events: none; }
+.iconSpace { display: block; width: 16px; height: 16px; flex: none; }
+.phase { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.icon { display: inline-flex; flex: none; }
+.icon svg { width: 16px; height: 16px; stroke-width: 1.75; }
+.text { display: block; }
+
+.separator { flex: none; align-self: center; width: 1px; height: calc(var(--fbg-h) * .5); margin-inline: 2px; border-radius: 1px; background: var(--fbg-rule); }
+.vertical .separator { width: calc(var(--fbg-h) * .5); height: 1px; margin: 2px 0; }
+
+.tip { display: inline-flex; align-items: baseline; gap: var(--space-3); white-space: nowrap; }
+.kbd { font: inherit; color: color-mix(in oklab, var(--background) 58%, var(--foreground)); font-variant-numeric: tabular-nums; }
+
+/* Side tooltips for a column match the library tooltip, rising a few pixels away from the rail instead of up. */
+.sideTip { --tip-x: -3px; z-index: 90; max-width: 15rem; padding: var(--space-3) var(--space-4); border: 1px solid color-mix(in oklab, var(--background) 14%, var(--foreground)); border-radius: var(--radius-control); background: var(--foreground); color: var(--background); box-shadow: var(--shadow-raised); font-family: var(--font-body); font-size: var(--text-sm); font-weight: 400; letter-spacing: var(--tracking-body); line-height: var(--leading-body); transform-origin: var(--radix-tooltip-content-transform-origin); transition: opacity var(--duration-fast) var(--ease-enter), transform var(--duration-fast) var(--ease-enter); }
+.sideTip[data-side="left"] { --tip-x: 3px; }
+@starting-style {
+  .sideTip[data-state$="-open"] { opacity: 0; transform: translateX(var(--tip-x)) scale(.97); }
+}
+/* Radix unmounts when the exit animation ends, so a no-op keyframe times the exit while the transition does the visual work. */
+.sideTip[data-state="closed"] { opacity: 0; transform: scale(.98); transition: opacity 110ms var(--ease-standard), transform 110ms var(--ease-standard); animation: side-tip-exit 110ms linear both; }
+@keyframes side-tip-exit { to { --side-tip-exit: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .item, .highlight { transition: color var(--duration-instant) linear, background-color var(--duration-instant) linear, opacity var(--duration-instant) linear; }
+  .sideTip, .sideTip[data-state="closed"] { transform: none; transition: opacity 90ms linear; }
+}

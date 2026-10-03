@@ -50,7 +50,6 @@
 .switch .textButton { color: var(--foreground); font-weight: 500; text-decoration-color: transparent; }
 .srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
-.textButton:focus-visible { border-radius: 2px; outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 @media (hover: hover) and (pointer: fine) {
   .textButton:hover { color: var(--foreground); text-decoration-color: currentColor; }
 }

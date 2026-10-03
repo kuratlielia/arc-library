@@ -1,7 +1,7 @@
 /* No row gap: grid tracks clamp a negative margin at zero, so a closed message row would still pay the gap. Each row carries its own space instead. */
 .field { display: grid; min-width: 0; }
 .label { margin-bottom: 8px; color: var(--foreground); font-size: var(--text-sm); font-weight: 500; line-height: var(--leading-body); }
-.inputs { position: relative; display: flex; width: fit-content; max-width: 100%; gap: 7px; }
+.inputs { position: relative; display: flex; width: fit-content; max-width: 100%; gap: 8px; }
 .slot { position: relative; display: grid; width: 42px; height: 48px; min-width: 0; flex: 0 1 42px; }
 /* The native text is transparent (caret stays visible); .glyph draws the digit so it can rise in. */
 .input { width: 100%; height: 100%; min-width: 0; border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--surface); color: transparent; caret-color: var(--accent); font: inherit; font-size: var(--text-lg); font-variant-numeric: tabular-nums; text-align: center; outline: none; transition: border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard); }
@@ -13,8 +13,8 @@
 .glyph { position: absolute; inset: 0; display: grid; place-items: center; color: var(--foreground); font-size: var(--text-lg); font-variant-numeric: tabular-nums; pointer-events: none; }
 .input:disabled ~ .glyph { opacity: .48; }
 /* One ring per field. It glides to the focused slot and morphs to the danger color with the error state. */
-.ring { position: absolute; top: 0; left: 0; height: 100%; z-index: 2; border: 1px solid var(--accent-strong); border-radius: var(--radius-control); box-shadow: 0 0 0 3px var(--focus-ring); pointer-events: none; transition: border-color var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard); }
-.inputs[data-invalid="true"] .ring { border-color: var(--danger); box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger) 28%, transparent); }
+.ring { position: absolute; top: 0; left: 0; height: 100%; z-index: 2; border: 1px solid var(--accent-strong); border-radius: var(--radius-control); pointer-events: none; transition: border-color var(--duration-fast) var(--ease-standard); }
+.inputs[data-invalid="true"] .ring { border-color: var(--danger); }
 /* The row's space is padding inside the clipped slot, so the height animates from a true zero. */
 .messageSlot { display: block; overflow: hidden; }
 .description, .error { display: block; padding-top: 8px; font-size: var(--text-xs); line-height: var(--leading-body); }
@@ -23,6 +23,6 @@
 .words { position: relative; display: block; }
 .word { display: inline-block; white-space: pre; }
 .srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-@media (max-width: 360px) { .inputs { gap: 5px; }.slot { height: 44px; } }
+@media (max-width: 360px) { .inputs { gap: 6px; }.slot { height: 44px; } }
 @media (forced-colors: active) { .ring { display: none; } .input:focus-visible { outline: 2px solid CanvasText; outline-offset: 2px; } .input { color: CanvasText; } .glyph { display: none; } }
 @media (prefers-reduced-motion: reduce) { .input, .ring { transition: none; } }

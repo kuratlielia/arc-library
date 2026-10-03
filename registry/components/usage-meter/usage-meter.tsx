@@ -56,15 +56,15 @@ function soon(start: () => { stop: () => void }) {
 /** Changed text rises from a soft blur and leaves a little faster than it arrives. Icons cross through a small scale instead. */
 const rise: Variants = {
   hidden: (direction: number) => ({ opacity: 0, y: `${.3 * direction}em`, scale: 1, filter: `blur(${blur.soft}px)` }),
-  shown: { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", transition: { duration: .22, ease: [...ease.enter] } },
-  gone: (direction: number) => ({ opacity: 0, y: `${-.3 * direction}em`, scale: 1, filter: `blur(${blur.subtle}px)`, transition: { duration: .14, ease: [...ease.standard] } }),
+  shown: { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", transition: { duration: duration.standard, ease: [...ease.enter] } },
+  gone: (direction: number) => ({ opacity: 0, y: `${-.3 * direction}em`, scale: 1, filter: `blur(${blur.subtle}px)`, transition: { duration: duration.instant, ease: [...ease.standard] } }),
 };
 const pop: Variants = {
   hidden: { opacity: 0, y: 0, scale: .6, filter: `blur(${blur.subtle + 1}px)` },
   shown: { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", transition: { ...spring.snappy, opacity: { duration: duration.fast, ease: [...ease.enter] }, filter: { duration: duration.fast, ease: [...ease.enter] } } },
   gone: { opacity: 0, y: 0, scale: .6, filter: `blur(${blur.subtle + 1}px)`, transition: { duration: duration.instant, ease: [...ease.standard] } },
 };
-const fade: Variants = { hidden: { opacity: 0, y: 0, scale: 1, filter: "blur(0px)" }, shown: { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", transition: { duration: .15 } }, gone: { opacity: 0, y: 0, scale: 1, filter: "blur(0px)", transition: { duration: .1 } } };
+const fade: Variants = { hidden: { opacity: 0, y: 0, scale: 1, filter: "blur(0px)" }, shown: { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", transition: { duration: duration.fast } }, gone: { opacity: 0, y: 0, scale: 1, filter: "blur(0px)", transition: { duration: duration.instant } } };
 
 function Swap({ text, reduced, direction = 1 }: { text: string; reduced: boolean; direction?: number }) {
   return <span className={styles.swap}><AnimatePresence mode="popLayout" initial={false} custom={direction}>

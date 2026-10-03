@@ -315,7 +315,7 @@ export function ColorPicker({
     if (!shown) return;
     if (reduced) {
       progress.jump(open ? 1 : progress.get());
-      const controls = animate(fade, open ? 1 : 0, { duration: .14 });
+      const controls = animate(fade, open ? 1 : 0, { duration: duration.fast, ease: [...ease.standard] });
       controls.then(() => { if (!openNow.current) { progress.jump(0); setShown(false); } });
       return () => controls.stop();
     }
@@ -380,7 +380,7 @@ export function ColorPicker({
     const next = parseColor(draft, hsva.h);
     if (!next) {
       setInvalid(true);
-      if (!reduced) animate(fieldX, [0, -5, 4, -2, 0], { duration: .32, ease: "easeOut" });
+      if (!reduced) animate(fieldX, [0, -5, 4, -2, 0], { duration: .32, ease: [...ease.standard] });
       return false;
     }
     commit(next); setDraft(null); setInvalid(false);
@@ -495,7 +495,7 @@ export function ColorPicker({
             <span className={styles.grade} data-grade={grade === "Fails" ? "fail" : grade === "AA large" ? "large" : "pass"}>
               <AnimatePresence mode="popLayout" initial={false}>
                 <motion.span key={grade} initial={hidden} animate={{ opacity: 1, y: "0em", filter: "blur(0px)" }}
-                  exit={{ ...hidden, transition: { duration: duration.instant } }} transition={reduced ? { duration: .12 } : { duration: .2, ease: [...ease.enter] }}>{grade}</motion.span>
+                  exit={{ ...hidden, transition: { duration: duration.instant } }} transition={reduced ? { duration: duration.instant } : { duration: duration.standard, ease: [...ease.enter] }}>{grade}</motion.span>
               </AnimatePresence>
             </span>
             <span className={styles.srOnly}>{`Contrast ${ratio.toFixed(2)} to 1, ${grade === "Fails" ? "fails" : `passes ${grade}`}`}</span>

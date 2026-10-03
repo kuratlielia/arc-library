@@ -3,7 +3,6 @@
 .button:active:not(:disabled) { transform: scale(.97); transition-duration: var(--duration-fast), var(--duration-fast), var(--duration-fast), var(--duration-instant); transition-timing-function: var(--ease-standard); }
 .iconOnly:active:not(:disabled) { transform: scale(.96); }
 @media (hover: hover) and (pointer: fine) { .button:hover:not(:disabled) { background: var(--surface-muted); border-color: var(--border-strong); } .plain:hover:not(:disabled) { border-color: transparent; background: var(--surface-muted); color: var(--foreground); } }
-.button:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .button:disabled { cursor: not-allowed; opacity: .5; }
 /* Each icon carries its own color, so the outgoing glyph never tints on its way out. */
 .icon { position: relative; display: grid; width: 16px; height: 16px; flex: none; }

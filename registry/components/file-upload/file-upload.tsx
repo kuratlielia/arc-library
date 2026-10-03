@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import type { ChangeEvent, DragEvent, KeyboardEvent } from "react";
-import { AnimatePresence, animate, motion, useIsPresent, useMotionValue, useReducedMotion, useTransform, type HTMLMotionProps, type MotionProps, type TargetAndTransition, type Transition } from "motion/react";
+import { AnimatePresence, animate, motion, useIsPresent, useMotionValue, useMotionValueEvent, useReducedMotion, useTransform, type HTMLMotionProps, type MotionProps, type TargetAndTransition, type Transition } from "motion/react";
 import { File, FileArchive, FileImage, FileText, RotateCw, UploadCloud, X } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
 import styles from "./file-upload.module.css";
@@ -44,7 +44,8 @@ function FileTypeIcon({ file }: { file: File }) {
 function formatSize(bytes: number) {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  const mb = bytes / (1024 * 1024);
+  return `${mb >= 10 ? Math.round(mb) : Number(mb.toFixed(1))} MB`;
 }
 
 /** Outgoing copies are hidden from assistive tech while they fade, so live text reads only the current message. */
@@ -54,29 +55,38 @@ function Swap(props: HTMLMotionProps<"span">) {
 }
 
 function FileRow({ item, upload, reduce, onRemove, onRetry, removeRef }: { item: FileUploadItem; upload?: Upload; reduce: boolean | null; onRemove: () => void; onRetry: () => void; removeRef: (node: HTMLButtonElement | null) => void }) {
-  const phase = item.error ? "invalid" : upload?.status ?? "ready";
+  const status = upload?.status;
+  // A finished upload keeps its bar until the spring reaches the end, so 100% is seen before the label turns to Uploaded.
+  const [filled, setFilled] = useState(status !== "uploading");
+  const [seen, setSeen] = useState(status);
+  if (seen !== status) { setSeen(status); if (status === "uploading") setFilled(false); }
+  const shownStatus = status === "done" && !filled && !reduce ? "uploading" : status;
+  const phase = item.error ? "invalid" : shownStatus ?? "ready";
   // One spring drives the bar and the counted percentage, so both always agree.
   const progress = useMotionValue(upload?.progress ?? 0);
   // The fill slides in from the left instead of scaling, so its rounded end keeps its shape at every value.
   const x = useTransform(progress, latest => `${Math.min(Math.max(latest, 0), 100) - 100}%`);
   const percent = useTransform(progress, latest => `${Math.round(Math.min(Math.max(latest, 0), 100))}%`);
-  const target = upload?.status === "done" ? 100 : upload?.progress ?? 0;
+  const target = status === "done" ? 100 : upload?.progress ?? 0;
   useEffect(() => {
-    if (reduce) { progress.jump(target); return; }
-    const controls = animate(progress, target, motionTokens.spring.smooth);
+    // Every upload starts from an empty bar, even a retry that failed halfway.
+    if (reduce || (status === "uploading" && target === 0)) { progress.jump(target); return; }
+    const controls = animate(progress, target, { ...motionTokens.spring.smooth, onComplete: status === "done" ? () => setFilled(true) : undefined });
     return () => controls.stop();
-  }, [target, progress, reduce]);
+  }, [status, target, progress, reduce]);
+  // The label turns as soon as the count reads 100%, without waiting out the spring's last fraction of a pixel.
+  useMotionValueEvent(progress, "change", latest => { if (status === "done" && latest >= 99.5) setFilled(true); });
   const swap: MotionProps = { initial: reduce ? { opacity: 0 } : textIn, animate: shown, exit: reduce ? fadeOut : textOut, transition: reduce ? instant : enter };
   return <div className={styles.fileItem}>
     <span className={styles.fileIcon}><FileTypeIcon file={item.file} /></span>
     <span className={styles.fileCopy}>
       <strong title={item.file.name}>{item.file.name}</strong>
-      <span className={styles.meta}>{formatSize(item.file.size)}{upload ? <><span aria-hidden="true"> · </span><span className={styles.phase}><AnimatePresence mode="popLayout" initial={false}>
-        <Swap key={upload.status} className={upload.status === "failed" ? `${styles.phaseText} ${styles.error}` : styles.phaseText} {...swap}>{upload.status === "uploading" ? <>Uploading <motion.span className={styles.percent}>{percent}</motion.span></> : upload.status === "done" ? "Uploaded" : "Upload failed"}</Swap>
+      <span className={styles.meta}>{formatSize(item.file.size)}{shownStatus ? <><span className={styles.dot} aria-hidden="true">·</span><span className={styles.phase}><AnimatePresence mode="popLayout" initial={false}>
+        <Swap key={shownStatus} className={shownStatus === "failed" ? `${styles.phaseText} ${styles.error}` : styles.phaseText} {...swap}>{shownStatus === "uploading" ? <>Uploading <motion.span className={styles.percent}>{percent}</motion.span></> : shownStatus === "done" ? "Uploaded" : "Upload failed"}</Swap>
       </AnimatePresence></span></> : null}</span>
       {item.error && <span className={styles.error}>{item.error}</span>}
       {/* The bar fills on a spring, then folds away once the file lands. */}
-      <AnimatePresence initial={false}>{upload?.status === "uploading" && <motion.span key="bar" className={styles.barFrame} initial={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={reduce ? fadeOut : { height: 0, opacity: 0, transition: { height: { ...motionTokens.spring.smooth, delay: .24 }, opacity: { ...exitFast, delay: .24 } } }} transition={reduce ? instant : { height: motionTokens.spring.smooth, opacity: enter }}>
+      <AnimatePresence initial={false}>{shownStatus === "uploading" && <motion.span key="bar" className={styles.barFrame} initial={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={reduce ? fadeOut : { height: 0, opacity: 0, transition: { height: { ...motionTokens.spring.smooth, delay: .24 }, opacity: { ...exitFast, delay: .24 } } }} transition={reduce ? instant : { height: motionTokens.spring.smooth, opacity: enter }}>
         <span className={styles.bar}><motion.span className={styles.barFill} style={{ x }} /></span>
       </motion.span>}</AnimatePresence>
     </span>
@@ -168,7 +178,10 @@ export function FileUpload({
     if (!multiple) controllers.current.forEach(controller => controller.abort());
     update(multiple ? [...files, ...accepted] : accepted);
     const invalidCount = accepted.filter(item => item.error).length;
-    setStatus(invalidCount ? `${accepted.length - invalidCount} file${accepted.length - invalidCount === 1 ? "" : "s"} added. ${invalidCount} needs attention.` : `${accepted.length} file${accepted.length === 1 ? "" : "s"} added.`);
+    const validCount = accepted.length - invalidCount;
+    const added = `${validCount} file${validCount === 1 ? "" : "s"} added.`;
+    const attention = `${invalidCount} file${invalidCount === 1 ? " needs" : "s need"} attention.`;
+    setStatus(!invalidCount ? added : validCount ? `${added} ${attention}` : attention);
     accepted.filter(item => !item.error).forEach(startUpload);
   }
 

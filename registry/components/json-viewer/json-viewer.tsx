@@ -189,7 +189,7 @@ function CopyButton({ label, icon, onCopy, reduced, className, focusable = false
     <AnimatePresence initial={false} mode="popLayout">
       <motion.span key={state} className={styles.actionGlyph} initial={reduced ? { opacity: 0 } : { opacity: 0, scale: .6, filter: `blur(${motionTokens.blur.subtle}px)` }}
         animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }} exit={reduced ? { opacity: 0 } : { opacity: 0, scale: .6, filter: `blur(${motionTokens.blur.subtle}px)` }}
-        transition={reduced ? { duration: .1 } : { ...motionTokens.spring.snappy, opacity: { duration: .12 }, filter: { duration: .12 } }}>{glyph}</motion.span>
+        transition={reduced ? { duration: motionTokens.duration.instant } : { ...motionTokens.spring.snappy, opacity: { duration: motionTokens.duration.instant }, filter: { duration: motionTokens.duration.instant } }}>{glyph}</motion.span>
     </AnimatePresence>
   </button>;
 }
@@ -199,7 +199,9 @@ async function writeClipboard(text: string) {
   await navigator.clipboard.writeText(text);
 }
 
-const scrollSpring: Transition = { type: "spring", visualDuration: .45, bounce: 0 };
+/* Scroll, row heights and the current-row highlight share one critically damped spring, so a highlight that moves while
+ * the tree scrolls travels straight to its row instead of overshooting the viewport. */
+const scrollSpring: Transition = motionTokens.spring.smooth;
 
 export const JsonViewer = forwardRef<HTMLDivElement, JsonViewerProps>(function JsonViewer({
   data, rootName = "root", defaultExpandDepth = 1, expanded: expandedProp, defaultExpanded, onExpandedChange,
@@ -276,6 +278,8 @@ export const JsonViewer = forwardRef<HTMLDivElement, JsonViewerProps>(function J
     return best;
   }, [activeRaw, rootName, rows]);
   const activeIndex = Math.max(0, rows.findIndex(row => row.id === active));
+  /* The current row folded away and a branch above took over. The highlight lands there directly instead of flying from a row that is collapsing out of view. */
+  const folded = active !== activeRaw;
   const activeRow = rows[activeIndex];
 
   const onSelectRef = useRef(onSelect);
@@ -346,6 +350,8 @@ export const JsonViewer = forwardRef<HTMLDivElement, JsonViewerProps>(function J
   const expandAll = () => {
     setExpanded(new Set(allBranches(data, rootName)));
     setClosedWhileSearching({ needle, ids: new Set() });
+    // Branches above the current row unfold and push it down; follow it to where it settles.
+    moveTo(active, false, "nearest");
   };
   const collapseAll = () => {
     const rootOpen = isBranch(typeOf(data)) ? [rootName] : [];
@@ -384,6 +390,9 @@ export const JsonViewer = forwardRef<HTMLDivElement, JsonViewerProps>(function J
     if (trimmed) {
       const first = searchJson(data, rootName, trimmed).matches[0];
       if (first) moveTo(first, false, "center");
+    } else if (needle) {
+      // Clearing folds the branches search opened. Aim the scroll at where the current row settles, so it stays in view.
+      moveTo(activeRaw, false, "nearest");
     }
   };
 
@@ -431,7 +440,7 @@ export const JsonViewer = forwardRef<HTMLDivElement, JsonViewerProps>(function J
 
   const heightStyle = { "--json-max-height": typeof maxHeight === "number" ? `${maxHeight}px` : maxHeight } as CSSProperties;
   const bulk = rows.length > 400;
-  const rowTransition: Transition = reduced || bulk ? { duration: 0 } : { height: motionTokens.spring.smooth, opacity: { duration: .2, ease: [...motionTokens.ease.standard] } };
+  const rowTransition: Transition = reduced || bulk ? { duration: 0 } : { height: motionTokens.spring.smooth, opacity: { duration: motionTokens.duration.fast, ease: [...motionTokens.ease.standard] } };
 
   const describe = (row: Row) => {
     const name = row.name === null ? rootName : String(row.name);
@@ -478,7 +487,7 @@ export const JsonViewer = forwardRef<HTMLDivElement, JsonViewerProps>(function J
                 if (branch) toggle(row.id);
                 moveTo(row.id);
               }}>
-              {isActive ? <motion.span layoutId="json-active" className={styles.highlight} transition={reduced ? { duration: 0 } : motionTokens.spring.snappy} aria-hidden="true" /> : null}
+              {isActive ? <motion.span layoutId="json-active" className={styles.highlight} transition={reduced || folded ? { duration: 0 } : scrollSpring} aria-hidden="true" /> : null}
               <span className={styles.line}>
                 {row.kind === "more" ? <span className={styles.more}>
                   <span className={styles.moreLabel}>Show {Math.min(pageSize, row.hidden ?? 0)} more</span>

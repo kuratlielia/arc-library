@@ -87,7 +87,7 @@ function SwapText({ text, className, reduced }: { text?: string; className: stri
 function Glyph({ kind, number, delay, reduced }: { kind: GlyphKind; number: number; delay: number; reduced: boolean }) {
   const pop = reduced ? still : { scale: { ...motionTokens.spring.snappy, delay }, opacity: { duration: motionTokens.duration.fast, delay }, filter: { duration: motionTokens.duration.fast, delay } };
   const exit = { ...glyphFrom, transition: reduced ? still : leave };
-  const draw = reduced ? still : { duration: .32, ease: motionTokens.ease.enter, delay: delay + .04 };
+  const draw = reduced ? still : { duration: motionTokens.duration.standard, ease: motionTokens.ease.enter, delay: delay + .04 };
   if (kind === "number") return <motion.span className={styles.glyph} initial={glyphFrom} animate={glyphRest} exit={exit} transition={pop}>{number}</motion.span>;
   return <motion.svg className={`${styles.glyph} ${styles.icon}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" initial={glyphFrom} animate={glyphRest} exit={exit} transition={pop}>
     {kind === "check"

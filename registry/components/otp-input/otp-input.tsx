@@ -26,7 +26,7 @@ function MotionText({ text }: { text: string }) {
   const words = text.split(" ");
   return <><span className={styles.srOnly}>{text}</span><span className={styles.words} aria-hidden="true"><AnimatePresence initial={false} mode="popLayout">{words.map((word, index) => <motion.span key={`${index}:${word}`} className={styles.word}
     initial={reduced ? { opacity: 0 } : { opacity: 0, y: "0.35em", filter: `blur(${motionTokens.blur.soft}px)` }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-    exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: "-0.35em", filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: .14, ease: [...motionTokens.ease.standard] } }}
+    exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: "-0.35em", filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: motionTokens.duration.instant, ease: [...motionTokens.ease.standard] } }}
     transition={reduced ? { duration: motionTokens.duration.instant } : { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] }}>{index < words.length - 1 ? `${word} ` : word}</motion.span>)}</AnimatePresence></span></>;
 }
 
@@ -73,6 +73,18 @@ export function OtpInput({ length = 6, value = "", onChange, label, description,
   useEffect(() => {
     if (autoFocus) inputRefs.current[0]?.focus();
   }, [autoFocus]);
+
+  // Slots shrink at narrow widths; keep the ring on the focused slot when the row resizes.
+  useEffect(() => {
+    const row = scope.current;
+    if (!row || typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(() => {
+      const slot = (row.contains(document.activeElement) ? document.activeElement?.parentElement : null) as HTMLElement | null;
+      if (slot) setRing(current => (current.x === slot.offsetLeft && current.width === slot.offsetWidth ? current : { ...current, x: slot.offsetLeft, width: slot.offsetWidth, glide: false }));
+    });
+    observer.observe(row);
+    return () => observer.disconnect();
+  }, [scope]);
 
   // A new error nudges the row side to side once, so a rejected code reads as a response to the attempt.
   useEffect(() => {

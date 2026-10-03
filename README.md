@@ -12,7 +12,7 @@
   <a href="./LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-111111?style=flat-square"></a>
   <a href="https://uiarc.dev/docs/installation"><img alt="shadcn registry: @uiarc" src="https://img.shields.io/badge/shadcn%20registry-%40uiarc-111111?style=flat-square"></a>
   <a href="https://github.com/kuratlielia/arc-library/actions/workflows/ci.yml"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/kuratlielia/arc-library/ci.yml?branch=main&style=flat-square&label=CI"></a>
-  <img alt="101 components" src="https://img.shields.io/badge/components-101-7747ff?style=flat-square">
+  <img alt="105 components" src="https://img.shields.io/badge/components-105-7747ff?style=flat-square">
   <img alt="22 blocks" src="https://img.shields.io/badge/blocks-22-7747ff?style=flat-square">
   <img alt="React 19" src="https://img.shields.io/badge/React-19-111111?style=flat-square">
 </p>
@@ -29,7 +29,7 @@
   <a href="https://uiarc.dev/pro"><b>Pro</b></a>
 </p>
 
-Arc is a library of React components and blocks with calm, physical motion. Every item is plain source you own: CSS modules on a small set of design tokens, [Motion](https://motion.dev) for animation, keyboard support, and a reduced motion path for every animation. Install anything with the shadcn CLI or copy the files by hand. It works in Next.js and Vite, with or without Tailwind. This repository holds the free, open source part: **101 components and 22 blocks**, plus the design and motion tokens they share. Every one of them has a live preview at [uiarc.dev](https://uiarc.dev).
+Arc is a library of React components and blocks with calm, physical motion. Every item is plain source you own: CSS modules on a small set of design tokens, [Motion](https://motion.dev) for animation, keyboard support, and a reduced motion path for every animation. Install anything with the shadcn CLI or copy the files by hand. It works in Next.js and Vite, with or without Tailwind. This repository holds the free, open source part: **105 components and 22 blocks**, plus the design and motion tokens they share. Every one of them has a live preview at [uiarc.dev](https://uiarc.dev).
 
 ## Showcase
 
@@ -263,9 +263,9 @@ More in the [theming docs](https://uiarc.dev/docs/theming) and [motion docs](htt
 
 ## Components
 
-101 free components, grouped as on the site. Click a name for the live preview and docs.
+105 free components, grouped as on the site. Click a name for the live preview and docs.
 
-[Actions](#actions) (14) · [Inputs](#inputs) (31) · [Disclosure](#disclosure) (13) · [Feedback](#feedback) (8) · [Data](#data) (30) · [Text](#text) (4) · [Special](#special) (1)
+[Actions](#actions) (17) · [Inputs](#inputs) (32) · [Disclosure](#disclosure) (13) · [Feedback](#feedback) (8) · [Data](#data) (30) · [Text](#text) (4) · [Special](#special) (1)
 
 ### Actions
 
@@ -276,6 +276,9 @@ More in the [theming docs](https://uiarc.dev/docs/theming) and [motion docs](htt
 | [Button](https://uiarc.dev/components/button) | A clear, responsive action with quiet secondary states. | `npx shadcn@latest add @uiarc/button` |
 | [Action button](https://uiarc.dev/components/action-button) | A compact button for frequent toolbar actions. | `npx shadcn@latest add @uiarc/action-button` |
 | [Split button](https://uiarc.dev/components/split-button) | A primary action with a menu of nearby alternatives. | `npx shadcn@latest add @uiarc/split-button` |
+| [Button group](https://uiarc.dev/components/button-group) | Related actions joined into one surface with hairline dividers: a hover highlight glides between segments, the pressed one answers in place, and an attached menu can close the row. | `npx shadcn@latest add @uiarc/button-group` |
+| [Floating button group](https://uiarc.dev/components/floating-button-group) | Separate soft buttons in a quiet tray, with one shared highlight that morphs from button to button as you move, and a pressed state that settles in place. | `npx shadcn@latest add @uiarc/floating-button-group` |
+| [Expanding button group](https://uiarc.dev/components/expanding-button-group) | Icon buttons in a compact group: the one you point at or focus grows to reveal its label while its neighbours slide aside, and an action confirms in place. | `npx shadcn@latest add @uiarc/expanding-button-group` |
 | [Copy button](https://uiarc.dev/components/copy-button) | Copy a value with immediate confirmation. | `npx shadcn@latest add @uiarc/copy-button` |
 | [Confirm morph](https://uiarc.dev/components/confirm-morph) | A destructive button that morphs into an inline confirmation, a spinner, and a result with undo. | `npx shadcn@latest add @uiarc/confirm-morph` |
 
@@ -322,6 +325,7 @@ More in the [theming docs](https://uiarc.dev/docs/theming) and [motion docs](htt
 | Component | Description | Install |
 | --- | --- | --- |
 | [Number field](https://uiarc.dev/components/number-field) | Enter a bounded number with clear increment controls. | `npx shadcn@latest add @uiarc/number-field` |
+| [Money input](https://uiarc.dev/components/money-input) | A currency field with live grouping, stable width, rolling digits, and minor-unit output. | `npx shadcn@latest add @uiarc/money-input` |
 | [Phone input](https://uiarc.dev/components/phone-input) | A phone field with a country picker, formatting as you type, and E.164 output. | `npx shadcn@latest add @uiarc/phone-input` |
 | [Tag input](https://uiarc.dev/components/tag-input) | Turn short text values into removable tags. | `npx shadcn@latest add @uiarc/tag-input` |
 | [Mention input](https://uiarc.dev/components/mention-input) | A textarea with @people and #channel mentions that act as single tokens, with suggestions at the caret. | `npx shadcn@latest add @uiarc/mention-input` |
@@ -672,7 +676,7 @@ public/r/<id>.json           prebuilt registry items, one per component or block
 
 ## Arc Pro
 
-[Arc Pro](https://uiarc.dev/pro) adds 102 more components and blocks on top of this library: galleries like the Cover flow above, wallet and finance surfaces, richer charts, and complete product screens. They follow the same rules as everything here: plain source you own, both themes, keyboard support and a reduced motion path.
+[Arc Pro](https://uiarc.dev/pro) adds 105 more components and blocks on top of this library: galleries like the Cover flow above, wallet and finance surfaces, richer charts, and complete product screens. They follow the same rules as everything here: plain source you own, both themes, keyboard support and a reduced motion path.
 
 - Source for every Pro component and block, installed with the same shadcn CLI through a personal token, or through the MCP server
 - Every new Pro release, plus fixes and updates to the pieces you already have

@@ -164,7 +164,7 @@ export function WaffleChart({ data, label, unit = "", formatValue, rows = 10, co
     if (item.color) return item.color;
     if (key === accent) return "var(--series-1)";
     const rank = data.filter(entry => entry.key !== accent).findIndex(entry => entry.key === key);
-    return rank < 3 ? `var(--series-${rank + 2})` : `color-mix(in oklch, var(--foreground) ${SHADES[(rank - 3) % SHADES.length]}%, var(--surface))`;
+    return rank < 3 ? `var(--series-${rank + 2})` : `color-mix(in oklab, var(--foreground) ${SHADES[(rank - 3) % SHADES.length]}%, var(--surface))`;
   };
 
   const shapeOf = (key: string | null) => {
@@ -263,8 +263,8 @@ export function WaffleChart({ data, label, unit = "", formatValue, rows = 10, co
             animate={shown ? { x, y, scale: dip, opacity: cell.key === null ? 0 : 1 } : { x, y, scale: .4, opacity: 0 }}
             transition={reduced ? { duration: 0 } : {
               x: { ...settle, delay }, y: { ...settle, delay },
-              scale: travel ? { duration: .62, times: [0, .42, 1], ease: "easeInOut", delay } : { ...spring.snappy, delay: delay * .6 },
-              opacity: { duration: .24, delay: delay * .6 },
+              scale: travel ? { duration: .62, times: [0, .42, 1], ease: motionTokens.ease.inOut, delay } : { ...spring.snappy, delay: delay * .6 },
+              opacity: { duration: motionTokens.duration.standard, ease: motionTokens.ease.standard, delay: delay * .6 },
             }} />;
         })}
       </div>

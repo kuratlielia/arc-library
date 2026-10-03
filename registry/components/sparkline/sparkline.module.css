@@ -1,4 +1,4 @@
-.figure { display: grid; min-width: 0; gap: 12px; margin: 0; color: var(--foreground); }.caption { display: flex; align-items: baseline; gap: 9px; min-width: 0; color: var(--text-secondary); font-size: var(--text-sm); }.label { min-width: 0; overflow: hidden; white-space: nowrap; }.caption strong { margin-left: auto; color: var(--foreground); font-size: var(--text-lg); font-weight: 500; letter-spacing: var(--tracking-body); font-variant-numeric: tabular-nums; }.caption small { flex: none; font-size: var(--text-xs); font-weight: 500; font-variant-numeric: tabular-nums; transition: color var(--duration-standard) var(--ease-standard); }
+.figure { display: grid; min-width: 0; gap: var(--space-3); margin: 0; color: var(--foreground); }.caption { display: flex; align-items: baseline; gap: var(--space-2); min-width: 0; color: var(--text-secondary); font-size: var(--text-sm); }.label { min-width: 0; overflow: hidden; white-space: nowrap; }.caption strong { margin-left: auto; color: var(--foreground); font-size: var(--text-lg); font-weight: 500; letter-spacing: var(--tracking-body); font-variant-numeric: tabular-nums; }.caption small { flex: none; font-size: var(--text-xs); font-weight: 500; font-variant-numeric: tabular-nums; transition: color var(--duration-standard) var(--ease-standard); }
 .accent { color: var(--accent-strong); stroke: var(--accent); }.success { color: var(--success); stroke: var(--success); }.warning { color: var(--warning); stroke: var(--warning); }.danger { color: var(--danger); stroke: var(--danger); }
 /* The scrubbed date is context, not a change, so it stays neutral whatever the tone. */
 .point { color: var(--text-secondary); }
@@ -17,7 +17,7 @@
 .chart { display: block; width: 100%; height: auto; overflow: visible; }
 .baseline { stroke: var(--border); stroke-width: 1; }
 /* The area under the line carries a faint wash of the line tone. */
-.area.area { fill: color-mix(in oklch, currentColor 9%, transparent); stroke: none; }
+.area.area { fill: color-mix(in oklab, currentColor 9%, transparent); stroke: none; }
 .line, .trail { fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 .line { transition: stroke var(--duration-standard) var(--ease-standard); }
 .trail { stroke: var(--border-strong); }

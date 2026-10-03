@@ -65,15 +65,15 @@ const useHydrated = () => useSyncExternalStore(subscribe, () => true, () => fals
 /** The word rises when strength improves and drops when it falls, so the direction reads without looking at the meter. */
 const rise: Variants = {
   enter: (direction: number) => ({ opacity: 0, y: `${.3 * direction}em`, filter: `blur(${motionTokens.blur.soft}px)` }),
-  center: { opacity: 1, y: "0em", filter: "blur(0px)", transition: { duration: .22, ease: enter } },
-  exit: (direction: number) => ({ opacity: 0, y: `${-.3 * direction}em`, filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: .15, ease: standard } }),
+  center: { opacity: 1, y: "0em", filter: "blur(0px)", transition: { duration: motionTokens.duration.standard, ease: enter } },
+  exit: (direction: number) => ({ opacity: 0, y: `${-.3 * direction}em`, filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: motionTokens.duration.fast, ease: standard } }),
 };
-const fade: Variants = { enter: { opacity: 0 }, center: { opacity: 1, transition: { duration: .15 } }, exit: { opacity: 0, transition: { duration: .1 } } };
+const fade: Variants = { enter: { opacity: 0 }, center: { opacity: 1, transition: { duration: motionTokens.duration.fast } }, exit: { opacity: 0, transition: { duration: motionTokens.duration.instant } } };
 /** Digits turn like a counter: a shrinking count drops in from above, a growing one rises from below. */
 const roll: Variants = {
   enter: (direction: number) => ({ opacity: 0, y: `${.45 * direction}em`, filter: `blur(${motionTokens.blur.subtle}px)` }),
   center: { opacity: 1, y: "0em", filter: "blur(0px)", transition: { y: motionTokens.spring.snappy, opacity: { duration: motionTokens.duration.fast }, filter: { duration: motionTokens.duration.fast } } },
-  exit: (direction: number) => ({ opacity: 0, y: `${-.45 * direction}em`, filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: .14, ease: standard } }),
+  exit: (direction: number) => ({ opacity: 0, y: `${-.45 * direction}em`, filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: motionTokens.duration.fast, ease: standard } }),
 };
 
 function RollingNumber({ value, reduced }: { value: number; reduced: boolean }) {

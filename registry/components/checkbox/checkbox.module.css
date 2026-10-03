@@ -6,10 +6,7 @@
 .mark { position: absolute; inset: -1px; width: 18px; height: 18px; overflow: visible; }
 .box[data-state="checked"] .visual, .box[data-state="indeterminate"] .visual { border-color: var(--control-on); }
 @media (hover: hover) and (pointer: fine) { .box[data-state="unchecked"]:hover:not(:disabled) .visual { border-color: var(--text-muted); } }
-.box:active:not(:disabled) .visual { transform: scale(.95); transition: border-color var(--duration-fast) var(--ease-standard), transform 110ms var(--ease-standard); }
-/* The ring hugs the square, not the 44px hit area, so it never runs into the label beside it. */
-.box:focus-visible { outline: none; }
-.box:focus-visible .visual { outline: 2px solid var(--focus-ring); outline-offset: 2px; box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--focus-ring); }
+.box:active:not(:disabled) .visual { transform: scale(.95); transition: border-color var(--duration-fast) var(--ease-standard), transform var(--duration-instant) var(--ease-standard); }
 .box:disabled { opacity: .5; cursor: not-allowed; }
 /* The label's first line centers on the square: (44px box - 19.6px line) / 2. */
 .copy { display: grid; gap: 2px; min-width: 0; margin-left: 1px; padding-top: calc((var(--control-height-md) - var(--text-sm) * 1.4) / 2); }

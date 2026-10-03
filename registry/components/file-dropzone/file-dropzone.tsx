@@ -85,7 +85,7 @@ function MotionText({ text }: { text: string }) {
   const words = text.split(" ");
   return <><span className={styles.srOnly}>{text}</span><span className={styles.words} aria-hidden="true"><AnimatePresence initial={false} mode="popLayout">{words.map((word, index) => <motion.span key={`${index}:${word}`} className={styles.word}
     initial={reduced ? { opacity: 0 } : { opacity: 0, y: "0.35em", filter: `blur(${motionTokens.blur.soft}px)` }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-    exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: "-0.35em", filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: .14, ease: [...motionTokens.ease.standard] } }}
+    exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: "-0.35em", filter: `blur(${motionTokens.blur.subtle}px)`, transition: exitFast }}
     transition={reduced ? { duration: motionTokens.duration.instant } : { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] }}>{index < words.length - 1 ? `${word} ` : word}</motion.span>)}</AnimatePresence></span></>;
 }
 
@@ -237,7 +237,7 @@ export function FileDropzone({ accept, multiple = true, maxFiles = 5, onFilesCha
   const glowSpring = { stiffness: 260, damping: 32, mass: .8 };
   const glowX = useSpring(pointerX, glowSpring), glowY = useSpring(pointerY, glowSpring);
   const edgeLight = useMotionTemplate`radial-gradient(180px circle at ${glowX}% ${glowY}%, var(--accent), transparent 70%)`;
-  const washLight = useMotionTemplate`radial-gradient(260px circle at ${glowX}% ${glowY}%, color-mix(in oklch, var(--accent) 6%, transparent), transparent 70%)`;
+  const washLight = useMotionTemplate`radial-gradient(260px circle at ${glowX}% ${glowY}%, color-mix(in oklab, var(--accent) 6%, transparent), transparent 70%)`;
   const track = (event: DragEvent) => {
     const zone = zoneRef.current;
     if (!zone) return;

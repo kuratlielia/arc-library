@@ -6,7 +6,7 @@ import { motionTokens } from "@/lib/motion-tokens";
 import styles from "./pagination.module.css";
 export interface PaginationProps { page: number; pageCount: number; onPageChange: (page: number) => void; label?: string }
 /** When the five page window shifts, numbers travel like a belt: each one moves by the same number of slots. */
-const slot = 111.2; // One button plus the gap, as a percentage of the button width.
+const slot = 1000 / 9; // One button plus the gap (36px + 4px), as a percentage of the button width.
 const slide: Variants = {
   enter: (shift: number) => ({ opacity: 0, x: `${slot * shift}%` }),
   center: { opacity: 1, x: "0%" },

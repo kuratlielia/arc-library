@@ -43,7 +43,6 @@
 .grabberBar { width: 2.25rem; height: 5px; border-radius: var(--radius-pill); background: var(--border-strong); transition: background-color var(--duration-fast) var(--ease-standard); }
 @media (hover: hover) and (pointer: fine) { .grabber:hover .grabberBar { background: var(--text-muted); } }
 .sheet[data-dragging] .grabberBar { background: var(--text-muted); }
-.grabber:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 
 .headRow { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
 .headText { min-width: 0; }
@@ -53,7 +52,6 @@
 .close { display: grid; flex: none; width: 2rem; height: 2rem; place-items: center; margin-top: -2px; padding: 0; border: 1px solid var(--border); border-radius: var(--radius-pill); background: var(--surface-muted); color: var(--text-secondary); cursor: pointer; -webkit-tap-highlight-color: transparent; transition: background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard); }
 @media (hover: hover) and (pointer: fine) { .close:hover { color: var(--foreground); border-color: var(--border-strong); } }
 .close:active { color: var(--foreground); }
-.close:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 
 /* The content scrolls only at the tallest detent; below it, a drag or scroll opens the sheet first. */
 .body { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: var(--space-1) var(--space-5) var(--space-6); overscroll-behavior: contain; scrollbar-width: thin; touch-action: pan-y; font-size: var(--text-sm); line-height: var(--leading-body); }

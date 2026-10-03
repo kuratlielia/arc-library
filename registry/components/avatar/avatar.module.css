@@ -31,7 +31,7 @@
 .sm { width: 28px; height: 28px; font-size: 10px; }
 .md { width: 36px; height: 36px; }
 .lg { width: 48px; height: 48px; font-size: var(--text-sm); }
-.xl { width: 88px; height: 88px; font-size: 23px; }
+.xl { width: 88px; height: 88px; font-size: var(--text-xl); }
 
 .status {
   position: absolute;
@@ -42,7 +42,7 @@
   height: 10px;
   border: 2px solid var(--surface);
   border-radius: var(--radius-pill);
-  box-shadow: 0 0 0 1px color-mix(in oklch, var(--border) 70%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--border) 70%, transparent);
 }
 
 .sm .status { width: 8px; height: 8px; border-width: 1.5px; }

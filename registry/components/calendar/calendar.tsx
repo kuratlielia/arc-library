@@ -3,8 +3,8 @@
 import { useId, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import type { CSSProperties, KeyboardEvent, ReactNode } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { animate, LayoutGroup, motion, useMotionValue, useMotionValueEvent, useReducedMotion, useTransform } from "motion/react";
-import type { MotionValue } from "motion/react";
+import { animate, AnimatePresence, motion, useMotionValue, useMotionValueEvent, useReducedMotion, useTransform } from "motion/react";
+import type { AnimationPlaybackControls, MotionValue, Variants } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
 import styles from "./calendar.module.css";
 
@@ -69,6 +69,47 @@ const stripSpring = { type: "spring", visualDuration: 0.36, bounce: 0, restDelta
 const monthIndex = (date: Date) => date.getFullYear() * 12 + date.getMonth();
 const fromIndex = (index: number) => new Date(Math.floor(index / 12), ((index % 12) + 12) % 12, 1);
 
+/** The title crossfades in place: the old month leaves toward the side the strip travels to while the new one arrives from the other. */
+const titleSlide: Variants = {
+  enter: (direction: number) => ({ opacity: 0, x: direction * 12 }),
+  center: { opacity: 1, x: 0, transition: { duration: duration.standard, ease: ease.enter } },
+  exit: (direction: number) => ({ opacity: 0, x: direction * -12, transition: { duration: 0.14, ease: ease.standard } }),
+};
+/** Reduced motion swaps the title in place, with no travel and no blank frame. */
+const titleFade: Variants = { enter: { opacity: 1, x: 0 }, center: { opacity: 1, x: 0, transition: { duration: 0 } }, exit: { opacity: 0, transition: { duration: 0 } } };
+
+/**
+ * The selected disc of one month. It is positioned by week and weekday rather than measured, so it glides on a straight
+ * line between any two days, keeps gliding while the strip slides, and retargets mid-flight on a new pick.
+ * It only grows in or fades out when the selection enters or leaves this month.
+ */
+function SelectionDisc({ cell, reduced }: { cell: number; reduced: boolean }) {
+  const visible = cell >= 0;
+  const col = useMotionValue(visible ? cell % 7 : 0);
+  const row = useMotionValue(visible ? Math.floor(cell / 7) : 0);
+  const opacity = useMotionValue(visible ? 1 : 0);
+  const scale = useMotionValue(visible ? 1 : 0.6);
+  // Each step is one cell plus the 4px gap; percentages resolve against the disc's own size, which matches a cell.
+  const transform = useTransform(() => `translate(calc(${col.get()} * (100% + 4px)), calc(${row.get()} * (100% + 4px))) scale(${scale.get()})`);
+  const hidden = useRef(!visible);
+  useLayoutEffect(() => {
+    if (!visible) {
+      hidden.current = true;
+      const fade = reduced ? { duration: 0 } : { duration: 0.14, ease: ease.standard };
+      const controls = [animate(opacity, 0, fade), animate(scale, 0.6, fade)];
+      return () => controls.forEach((control) => control.stop());
+    }
+    const nextCol = cell % 7, nextRow = Math.floor(cell / 7);
+    const controls: AnimationPlaybackControls[] = [];
+    if (hidden.current || reduced) { col.jump(nextCol); row.jump(nextRow); }
+    else controls.push(animate(col, nextCol, spring.morph), animate(row, nextRow, spring.morph));
+    hidden.current = false;
+    controls.push(animate(opacity, 1, reduced ? { duration: 0 } : { duration: duration.fast, ease: ease.enter }), animate(scale, 1, reduced ? { duration: 0 } : spring.snappy));
+    return () => controls.forEach((control) => control.stop());
+  }, [cell, visible, reduced, col, row, opacity, scale]);
+  return <motion.span className={styles.highlight} style={{ transform, opacity }} aria-hidden="true"><span className={styles.highlightFill} /></motion.span>;
+}
+
 /** One month on the strip. Only the month being navigated to is focusable and exposed; the one sliding past is inert. */
 function MonthPane({ index, position, present, children }: { index: number; position: MotionValue<number>; present: boolean; children: ReactNode }) {
   const x = useTransform(position, (value) => `calc(${(index - value) * 100}% + ${(index - value) * 16}px)`);
@@ -89,7 +130,6 @@ export function Calendar({
   showToday = false,
 }: CalendarProps) {
   const titleId = useId();
-  const groupId = useId();
   const today = useToday();
   // Motion preference only counts after hydration, so server and client markup agree.
   const hydrated = useSyncExternalStore(subscribeNothing, clientSnapshot, serverSnapshot);
@@ -223,11 +263,17 @@ export function Calendar({
   };
 
   const cx = (...names: (string | false | undefined)[]) => names.filter(Boolean).join(" ");
-  const layoutMotion = reducedMotion ? { duration: 0 } : spring.morph;
-  // The title swaps at once and eases in from the side the strip travels from; a new click restarts it, so titles never pile up.
-  const titleEnter = reducedMotion || !direction ? { opacity: 1, x: 0 } : { opacity: 0, x: direction * 10 };
+  // Six fixed weeks per month, so a day's cell is its distance from the first day on the grid.
+  const cellOf = (paneMonth: Date) => {
+    if (!value) return -1;
+    const first = addDays(paneMonth, -paneMonth.getDay());
+    const index = Math.round((startOfDay(value).getTime() - first.getTime()) / 864e5);
+    return index >= 0 && index < 42 ? index : -1;
+  };
 
-  const renderMonth = (paneMonth: Date, present: boolean) => <div className={styles.grid} role="grid" aria-label={formatter.format(paneMonth)}>
+  const renderMonth = (paneMonth: Date, present: boolean) => <>
+    <SelectionDisc cell={cellOf(paneMonth)} reduced={reducedMotion} />
+    <div className={styles.grid} role="grid" aria-label={formatter.format(paneMonth)}>
     {makeWeeks(paneMonth).map((week) => <div key={dateKey(week[0])} className={styles.week} role="row">
       {week.map((date) => {
         const key = dateKey(date);
@@ -248,18 +294,20 @@ export function Calendar({
           onFocus={() => setFocusedDate(date)}
           onKeyDown={(event) => onDayKeyDown(event, date)}
           onClick={() => onChange?.(date)}
-        >{selected && <motion.span className={styles.highlight} layoutId={`selected-${dateKey(paneMonth)}`} layoutDependency={valueKey} transition={layoutMotion} aria-hidden="true" />}<span className={styles.dayNumber}>{date.getDate()}</span></button>;
+        ><span className={styles.dayNumber}>{date.getDate()}</span></button>;
       })}
     </div>)}
-  </div>;
+    </div>
+  </>;
 
-  return <LayoutGroup id={groupId}>
-    <section className={cx(styles.calendar, className)} aria-labelledby={titleId}>
+  return <section className={cx(styles.calendar, className)} aria-labelledby={titleId}>
       <div className={styles.header}>
         <h2 id={titleId} className={styles.heading}>
           <span className={styles.srOnly}>{monthLabel}</span>
           <span className={styles.title} aria-hidden="true">
-            {month && <motion.span key={monthKey} className={styles.titleRow} initial={titleEnter} animate={{ opacity: 1, x: 0 }} transition={{ duration: duration.standard, ease: ease.enter }}>{monthLabel}</motion.span>}
+            <AnimatePresence initial={false} custom={direction}>
+              {month && <motion.span key={monthKey} className={styles.titleRow} custom={direction} variants={reducedMotion || !direction ? titleFade : titleSlide} initial="enter" animate="center" exit="exit">{monthLabel}</motion.span>}
+            </AnimatePresence>
           </span>
         </h2>
         <span className={styles.srOnly} aria-live="polite">{direction ? monthLabel : ""}</span>
@@ -274,8 +322,7 @@ export function Calendar({
         {month ? paneIndexes.map((index) => <MonthPane key={index} index={index} position={position} present={index === target}>{renderMonth(fromIndex(index), index === target)}</MonthPane>)
           : <div className={styles.monthBody} aria-hidden="true"><div className={styles.grid}>{Array.from({ length: 6 }, (_, week) => <div key={week} className={styles.week}>{Array.from({ length: 7 }, (_, day) => <span key={day} className={styles.placeholderDay} />)}</div>)}</div></div>}
       </div>
-    </section>
-  </LayoutGroup>;
+    </section>;
 }
 
 export { addDays, addMonths, sameDay, startOfDay };

@@ -197,7 +197,7 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
     <div ref={rootRef} className={styles.field}>
       <label htmlFor={controlId}>{label}</label>
       <div className={[styles.control, open ? styles.open : "", disabled ? styles.disabled : "", className ?? ""].filter(Boolean).join(" ")}>
-        <Search className={styles.searchIcon} size={16} strokeWidth={1.8} aria-hidden="true" />
+        <Search className={styles.searchIcon} size={16} strokeWidth={1.75} aria-hidden="true" />
         <input
           {...inputProps}
           ref={inputRef}
@@ -236,13 +236,13 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
               initial={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.6, filter: `blur(${motionTokens.blur.subtle}px)` }}
               animate={{ opacity: 1, scale: 1, filter: "blur(0px)", transition: reduceMotion ? { duration: motionTokens.duration.instant } : { ...motionTokens.spring.snappy, opacity: { duration: motionTokens.duration.fast } } }}
               exit={{ opacity: 0, ...(reduceMotion ? {} : { scale: 0.6, filter: `blur(${motionTokens.blur.subtle}px)` }), transition: { duration: motionTokens.duration.instant, ease: [...motionTokens.ease.standard] } }}
-              whileTap={{ scale: reduceMotion ? 1 : 0.96, transition: { duration: 0.1, ease: [...motionTokens.ease.standard] } }}
+              whileTap={{ scale: reduceMotion ? 1 : 0.96, transition: { duration: motionTokens.duration.instant, ease: [...motionTokens.ease.standard] } }}
             >
-              <X size={15} strokeWidth={1.9} aria-hidden="true" />
+              <X size={16} strokeWidth={1.75} aria-hidden="true" />
             </motion.button>
           )}
         </AnimatePresence>
-        <ChevronDown className={styles.chevron} size={16} strokeWidth={1.8} aria-hidden="true" />
+        <ChevronDown className={styles.chevron} size={16} strokeWidth={1.75} aria-hidden="true" />
       </div>
       {description && <span id={hintId} className={styles.hint}>{description}</span>}
       <AnimatePresence initial={false}>
@@ -251,7 +251,7 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
             className={styles.popover}
             initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -6, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1, transition: reduceMotion ? { duration: motionTokens.duration.instant } : { ...motionTokens.spring.snappy, opacity: { duration: motionTokens.duration.fast, ease: [...motionTokens.ease.enter] } } }}
-            exit={{ opacity: 0, ...(reduceMotion ? {} : { y: -4, scale: 0.98 }), transition: { duration: 0.13, ease: [...motionTokens.ease.standard] } }}
+            exit={{ opacity: 0, ...(reduceMotion ? {} : { y: -4, scale: 0.98 }), transition: { duration: motionTokens.duration.instant, ease: [...motionTokens.ease.standard] } }}
             role="presentation"
           >
             <AutoHeight reduceMotion={reduceMotion}>
@@ -272,7 +272,7 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
                   onClick={() => choose(option)}
                 >
                   <span>{option.label}</span>
-                  {option.value === selectedValue && <Check className={styles.check} size={15} strokeWidth={2} aria-hidden="true" />}
+                  {option.value === selectedValue && <Check className={styles.check} size={16} strokeWidth={1.75} aria-hidden="true" />}
                 </div>
               )) : <motion.div className={styles.empty} role="status" initial={reduceMotion ? false : { opacity: 0, y: 4, filter: `blur(${motionTokens.blur.soft}px)` }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] }}>{emptyMessage}</motion.div>}
             </div>

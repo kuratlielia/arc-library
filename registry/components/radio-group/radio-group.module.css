@@ -2,23 +2,20 @@
 .group legend { margin-bottom: var(--space-2); padding: 0; font-size: var(--text-sm); font-weight: 500; }
 /* One highlight travels between the rows: above their borders and fills, below their text, so it never crosses a label. */
 .options { position: relative; display: grid; gap: var(--space-2); }
-.highlight { position: absolute; top: 0; right: 0; left: 0; z-index: 1; box-sizing: border-box; border: 1px solid var(--control-on); border-radius: var(--radius-control); background: color-mix(in oklch, var(--control-on) 5%, transparent); opacity: 0; pointer-events: none; }
+.highlight { position: absolute; top: 0; right: 0; left: 0; z-index: 1; box-sizing: border-box; border: 1px solid var(--control-on); border-radius: var(--radius-control); background: color-mix(in oklab, var(--control-on) 5%, transparent); opacity: 0; pointer-events: none; }
 /* Rows answer a press with color only; the mark is what moves. */
 /* The mark sits centered on the left edge of the row, whether or not the option has a description. */
 .option { position: relative; display: flex; align-items: center; gap: var(--space-3); border: 1px solid var(--border); border-radius: var(--radius-control); padding: var(--space-3); cursor: pointer; -webkit-tap-highlight-color: transparent; transition: background-color var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard); }
 @media (hover: hover) and (pointer: fine) { .option:hover { background: var(--surface-muted); } }
 .option:active { background: var(--surface-muted); }
 /* Until the highlight is placed (server paint or no script), the checked row carries the same look itself. */
-.options:not([data-ready]) .option:has(input:checked) { border-color: var(--control-on); background: color-mix(in oklch, var(--control-on) 5%, transparent); }
-/* Focus rides on the highlight when it marks the focused row, so the ring glides with arrow key choices. */
-.option:has(input:focus-visible:not(:checked)), .options:not([data-ready]) .option:has(input:focus-visible) { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
-.options[data-ready]:has(input:checked:focus-visible) .highlight { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.options:not([data-ready]) .option:has(input:checked) { border-color: var(--control-on); background: color-mix(in oklab, var(--control-on) 5%, transparent); }
 .option input { position: absolute; opacity: 0; }
 /* Rows are not stacking contexts, so their mark and copy rise above the highlight while their border and fill stay below it. */
 .option > span { position: relative; z-index: 2; }
 .mark { display: grid; width: 17px; height: 17px; flex: 0 0 auto; place-items: center; border: 1px solid var(--border-strong); border-radius: 50%; transition: border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), transform var(--duration-spring) var(--ease-spring); }
+/* 7px keeps the dot on whole pixels inside the 15px interior of the mark. */
 .mark::after, .dot { grid-area: 1 / 1; width: 7px; height: 7px; border-radius: 50%; background: var(--foreground); }
-.dot { width: 6px; height: 6px; }
 /* A faint dot previews the choice while the pointer is down, then the real dot springs in on release. */
 .mark::after { content: ""; opacity: 0; transition: opacity var(--duration-instant) var(--ease-standard); }
 .option:active:not(:has(input:checked)) .mark::after { opacity: .22; }

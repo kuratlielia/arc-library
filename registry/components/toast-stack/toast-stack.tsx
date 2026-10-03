@@ -84,14 +84,14 @@ const standard = [...motionTokens.ease.standard] as [number, number, number, num
 const enterEase = [...motionTokens.ease.enter] as [number, number, number, number];
 const fade: Transition = { duration: motionTokens.duration.fast, ease: standard };
 const enterFade: Transition = { duration: motionTokens.duration.standard, ease: enterEase };
-const reducedFade: Transition = { duration: .15, ease: standard };
+const reducedFade: Transition = { duration: motionTokens.duration.fast, ease: standard };
 const exitFast: Transition = { duration: motionTokens.duration.fast, ease: standard };
 const textIn: TargetAndTransition = { opacity: 0, y: "0.3em", filter: `blur(${motionTokens.blur.soft}px)` };
 const textOut: TargetAndTransition = { opacity: 0, y: "-0.3em", filter: `blur(${motionTokens.blur.subtle}px)`, transition: exitFast };
 const iconIn: TargetAndTransition = { opacity: 0, scale: .6, filter: `blur(${motionTokens.blur.subtle}px)` };
 const shown: TargetAndTransition = { opacity: 1, y: "0em", scale: 1, filter: "blur(0px)" };
 const fadeOnly: MotionProps = { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0, transition: reducedFade }, transition: reducedFade };
-const textSwap: MotionProps = { initial: textIn, animate: shown, exit: textOut, transition: { duration: .22, ease: enterEase } };
+const textSwap: MotionProps = { initial: textIn, animate: shown, exit: textOut, transition: { duration: motionTokens.duration.standard, ease: enterEase } };
 /** Scale rides the spring; opacity and blur tween so the blur never overshoots below zero. */
 const iconSwap: MotionProps = { initial: iconIn, animate: shown, exit: { ...iconIn, transition: exitFast }, transition: { ...motionTokens.spring.snappy, opacity: fade, filter: fade } };
 

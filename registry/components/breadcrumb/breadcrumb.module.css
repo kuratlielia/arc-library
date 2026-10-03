@@ -7,7 +7,6 @@
 .list a::after, .list li > span::after, .list li > button::after { height: 0; overflow: hidden; content: attr(data-label); font-weight: 500; visibility: hidden; user-select: none; pointer-events: none; }
 .list li > button { border: 0; margin: 0; background: none; font: inherit; line-height: inherit; text-align: start; cursor: pointer; }
 .list a, .list li > button { color: var(--text-secondary); text-decoration: underline 1px; text-decoration-color: transparent; text-underline-offset: 4px; transition: color var(--duration-fast) var(--ease-standard), text-decoration-color var(--duration-fast) var(--ease-standard); }
-.list a:focus-visible, .list li > button:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .list [aria-current="page"] { color: var(--accent-strong); font-weight: 500; transition: color var(--duration-fast) var(--ease-standard); }
-@media (hover: hover) and (pointer: fine) { .list a:hover, .list li > button:hover { color: var(--accent-strong); text-decoration-color: color-mix(in oklch, currentColor 45%, transparent); } }
+@media (hover: hover) and (pointer: fine) { .list a:hover, .list li > button:hover { color: var(--accent-strong); text-decoration-color: color-mix(in oklab, currentColor 45%, transparent); } }
 @media (prefers-reduced-motion: reduce) { .list a, .list li > button, .list [aria-current="page"] { transition: none; } }

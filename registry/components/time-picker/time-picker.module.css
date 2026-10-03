@@ -5,7 +5,6 @@
 .trigger { position: relative; display: flex; width: 100%; min-height: var(--control-height-md); align-items: center; gap: 9px; border: 1px solid var(--border); border-radius: var(--radius-control); padding: 0 12px; background: var(--surface); color: var(--foreground); font: inherit; font-size: var(--text-sm); text-align: left; cursor: pointer; transition: border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard); }
 @media (hover: hover) and (pointer: fine) { .trigger:hover:not(:disabled) { border-color: var(--border-strong); background: var(--surface-muted); } }
 .trigger:active:not(:disabled), .trigger[aria-expanded="true"] { border-color: var(--border-strong); background: var(--surface-muted); }
-.trigger:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .trigger:disabled { opacity: .5; cursor: not-allowed; }
 .trigger > svg:first-child { flex: 0 0 auto; color: var(--text-muted); }
 .valueText { display: grid; flex: 1; min-width: 0; grid-template-columns: minmax(0, 1fr); }
@@ -18,7 +17,7 @@
 .description { font-size: var(--text-xs); }
 .menu { position: absolute; z-index: 80; top: calc(100% + 6px); right: 0; left: 0; max-height: 250px; overflow-y: auto; overscroll-behavior: contain; border: 1px solid var(--border); border-radius: var(--radius-panel); padding: 5px; background: var(--surface-raised); box-shadow: var(--shadow-floating); transform-origin: top center; will-change: transform, opacity; }
 /* Arrow keys move the highlight often, so it changes almost instantly. The dot marks the chosen time, so only one row is ever highlighted. */
-.option { display: flex; width: 100%; min-height: 36px; align-items: center; justify-content: space-between; border: 0; border-radius: calc(var(--radius-control) - 6px); padding: 0 11px; background: transparent; color: var(--foreground); font: inherit; font-size: var(--text-sm); font-variant-numeric: tabular-nums; text-align: left; cursor: pointer; transition: background-color 80ms var(--ease-standard); }
+.option { display: flex; width: 100%; min-height: 36px; align-items: center; justify-content: space-between; border: 0; border-radius: calc(var(--radius-panel) - 5px); padding: 0 12px; background: transparent; color: var(--foreground); font: inherit; font-size: var(--text-sm); font-variant-numeric: tabular-nums; text-align: left; cursor: pointer; transition: background-color 80ms var(--ease-standard); }
 .option[data-active="true"] { background: var(--surface-muted); }
 .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--foreground); }
 @media (prefers-reduced-motion: reduce) { .trigger, .chevron, .option { transition: none; } }

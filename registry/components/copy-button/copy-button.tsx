@@ -37,7 +37,7 @@ const glyphOut: TargetAndTransition = { opacity: 0, y: -3, filter: soft, transit
 
 /** The success tick draws itself from its short stroke, the way a hand would write it: quick to start, then easing into place while the icon settles. */
 function DrawnCheck({ reduced }: { reduced: boolean }) {
-  return <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+  return <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round">
     <motion.path d="M4 12l5 5L20 6" initial={reduced ? false : { pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ pathLength: { duration: .5, ease: [...motionTokens.ease.standard], delay: .05 }, opacity: { duration: .01, delay: .05 } }} />
   </svg>;
 }
@@ -61,14 +61,18 @@ function useGlyphs(text: string) {
   return glyphs;
 }
 
-/** The label cell already reserves its widest state, so the row stays put and only the letters move. */
+/**
+ * The label cell already reserves its widest state, so the row stays put and only the letters move. It is a layout root:
+ * the letters measure their glide inside the label only, so when the button itself moves (a page entering, a panel
+ * sliding, a list reflowing) they ride along instead of flying in from where the button used to be.
+ */
 function MorphText({ text, reduced }: { text: string; reduced: boolean }) {
   const glyphs = useGlyphs(text);
-  return <span className={styles.glyphs}>
+  return <motion.span className={styles.glyphs} layoutRoot>
     <AnimatePresence mode="popLayout" initial={false}>
       {glyphs.map(glyph => <motion.span key={glyph.id} className={styles.glyph} layout={reduced ? false : "position"} layoutDependency={text} initial={reduced ? fadeIn : glyphIn} animate={rest} exit={reduced ? fadeOut : glyphOut} transition={reduced ? instant : { ...enter, delay: Math.min(glyph.order * .02, .12), layout: settle }}>{glyph.char}</motion.span>)}
     </AnimatePresence>
-  </span>;
+  </motion.span>;
 }
 
 export function CopyButton({ value, label = "Copy", className, iconOnly = false, variant = "outline", disabled, onCopied }: CopyButtonProps) {
@@ -91,7 +95,7 @@ export function CopyButton({ value, label = "Copy", className, iconOnly = false,
     <span className={styles.icon} aria-hidden="true">
       <AnimatePresence initial={false}>
         <motion.span key={state} className={styles.iconInner} data-state={state} initial={reduced ? fadeIn : iconIn} animate={rest} exit={reduced ? fadeOut : iconOut} transition={reduced ? instant : iconEnter}>
-          {state === "copied" ? <DrawnCheck reduced={reduced} /> : state === "error" ? <CircleAlert size={16} strokeWidth={1.8} /> : <Copy size={16} strokeWidth={1.8} />}
+          {state === "copied" ? <DrawnCheck reduced={reduced} /> : state === "error" ? <CircleAlert size={16} strokeWidth={1.75} /> : <Copy size={16} strokeWidth={1.75} />}
         </motion.span>
       </AnimatePresence>
     </span>

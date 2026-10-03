@@ -83,9 +83,9 @@ function RiseText({ text, reduced, direction = 1 }: { text: string; reduced: boo
         variants={{
           from: (dir: number) => reduced ? { opacity: 0 } : { opacity: 0, y: `${.3 * dir}em`, filter: `blur(${motionTokens.blur.soft}px)` },
           to: { opacity: 1, y: "0em", filter: "blur(0px)" },
-          gone: (dir: number) => reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: `${-.3 * dir}em`, filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: .14, ease: standard } },
+          gone: (dir: number) => reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: `${-.3 * dir}em`, filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: motionTokens.duration.fast, ease: standard } },
         }}
-        initial="from" animate="to" exit="gone" transition={{ duration: reduced ? .15 : .22, ease: enter }}>{text}</motion.span>
+        initial="from" animate="to" exit="gone" transition={{ duration: reduced ? motionTokens.duration.instant : motionTokens.duration.standard, ease: enter }}>{text}</motion.span>
     </AnimatePresence>
   </span>;
 }
@@ -118,7 +118,7 @@ function relative(time: number, now: number) {
 function DaySection({ id, fresh, reduced, children }: { id: string; fresh: boolean; reduced: boolean; children: ReactNode }) {
   const [entering, setEntering] = useState(fresh);
   return <motion.section className={styles.group} aria-labelledby={id} data-entering={entering || undefined}
-    initial={fresh ? { height: 0, opacity: 0 } : false} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0, transition: { duration: reduced ? .1 : .2, ease: standard } }}
+    initial={fresh ? { height: 0, opacity: 0 } : false} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0, transition: { duration: reduced ? motionTokens.duration.instant : motionTokens.duration.exit, ease: standard } }}
     transition={reduced ? { duration: .15 } : { height: motionTokens.spring.smooth, opacity: { duration: motionTokens.duration.standard, ease: enter } }}
     onAnimationComplete={() => setEntering(false)}>
     {children}
@@ -164,7 +164,7 @@ function TimelineRow({ row, last, expanded, onToggle, timeLabel, timeFull }: { r
           initial={{ height: 0 }} animate={{ height: "auto" }} exit={{ height: 0, transition: reduced ? { duration: 0 } : { ...motionTokens.spring.smooth, visualDuration: .28 } }}
           transition={reduced ? { duration: 0 } : motionTokens.spring.smooth}>
           <motion.div className={styles.detailInner} initial={reduced ? { opacity: 0 } : { opacity: 0, y: -4, filter: `blur(${motionTokens.blur.soft}px)` }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            exit={{ opacity: 0, transition: { duration: .1, ease: standard } }} transition={reduced ? { duration: .15 } : { duration: motionTokens.duration.standard, ease: enter, delay: .06 }}>{row.detail}</motion.div>
+            exit={{ opacity: 0, transition: { duration: motionTokens.duration.instant, ease: standard } }} transition={reduced ? { duration: .15 } : { duration: motionTokens.duration.standard, ease: enter, delay: .06 }}>{row.detail}</motion.div>
         </motion.div>}
       </AnimatePresence>
     </motion.div>

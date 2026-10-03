@@ -86,7 +86,7 @@ export default function Toast({ title, description, open = true, onOpenChange, d
     const direction = Math.sign(info.offset.x || info.velocity.x);
     // A short swipe springs back with its release velocity and a slight settle instead of drifting home.
     if (Math.abs(info.offset.x) < swipe.distance && Math.abs(info.velocity.x) < swipe.velocity) {
-      animate(x, 0, { type: "spring", stiffness: 420, damping: 34, velocity: info.velocity.x });
+      animate(x, 0, { ...motionTokens.spring.snappy, velocity: info.velocity.x });
       return;
     }
     releaseVelocity.current = info.velocity.x;

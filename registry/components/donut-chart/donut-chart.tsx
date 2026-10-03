@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useId, useImperativeHandle, useLayoutEffect, useRef, useState, useSyncExternalStore, type CSSProperties, type FocusEvent, type KeyboardEvent, type MouseEvent, type PointerEvent, type Ref } from "react";
-import { animate, frame, cancelFrame, motion, motionValue, useInView, useReducedMotion, type MotionValue, type Transition } from "motion/react";
+import { AnimatePresence, animate, frame, cancelFrame, motion, motionValue, useInView, useReducedMotion, type MotionValue, type Transition } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
 import styles from "./donut-chart.module.css";
 
@@ -56,7 +56,7 @@ type Segment = { start: MotionValue<number>; end: MotionValue<number>; lift: Mot
 
 const OTHER = "__other";
 const TAU = Math.PI * 2;
-const { spring, ease, stagger } = motionTokens;
+const { spring, ease, stagger, duration } = motionTokens;
 /** Motion drops inherited velocity on time-defined springs, so values that retarget mid-flight run the same springs written as stiffness and damping. */
 const physical = ({ visualDuration, bounce }: { visualDuration: number; bounce: number }, restDelta = .0005) => { const root = (2 * Math.PI) / (visualDuration * 1.2); return { type: "spring" as const, stiffness: root * root, damping: 2 * (1 - bounce) * root, restDelta, restSpeed: restDelta * 2 }; };
 const reveal = physical({ visualDuration: .72, bounce: 0 });
@@ -64,8 +64,8 @@ const settle = physical({ visualDuration: .5, bounce: 0 });
 const pop = physical(spring.snappy, .002);
 /** Neutral steps after the four series colors, and the quietest step for Other. */
 const NEUTRAL = [56, 42, 32];
-const seriesColor = (index: number) => index < 4 ? `var(--series-${index + 1})` : `color-mix(in oklch, var(--foreground) ${NEUTRAL[(index - 4) % NEUTRAL.length]}%, var(--surface))`;
-const OTHER_COLOR = "color-mix(in oklch, var(--foreground) 26%, var(--surface))";
+const seriesColor = (index: number) => index < 4 ? `var(--series-${index + 1})` : `color-mix(in oklab, var(--foreground) ${NEUTRAL[(index - 4) % NEUTRAL.length]}%, var(--surface))`;
+const OTHER_COLOR = "color-mix(in oklab, var(--foreground) 26%, var(--surface))";
 /** Room left outside the ring for the lift; the gap between segments and their corner radius, in pixels. */
 const LIFT = 4, GROW = 2, MARGIN = 7, GAP = 3, CORNER = 4;
 const grouped = new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 });
@@ -161,7 +161,7 @@ function Count({ value, format, reduced }: { value: number; format: (value: numb
 /** Center readouts stay mounted in one grid cell and roll like a drum: the ones before the active segment wait above, the ones after it below. */
 const drum = (place: number, reduced: boolean): { animate: { opacity: number; y: string }; transition: Transition } => ({
   animate: { opacity: place === 0 ? 1 : 0, y: `${.45 * Math.sign(place)}em` },
-  transition: reduced ? { duration: 0 } : place === 0 ? { duration: .26, ease: [...ease.enter] } : { duration: .16, ease: [...ease.standard] },
+  transition: reduced ? { duration: 0 } : place === 0 ? { duration: duration.standard, ease: [...ease.enter] } : { duration: duration.fast, ease: [...ease.standard] },
 });
 
 const subscribeNothing = () => () => {};
@@ -394,10 +394,11 @@ export function DonutChart({ data, label, unit = "", formatValue = value => grou
       </div>
     </div>
     {legend && slices.length > 0 && <ul className={styles.legend} aria-label={`${label}, segments${legendAction === "toggle" ? ". Press a segment to show or hide it" : ""}`} id={legendId} onPointerLeave={() => setPreview(null)}>
-      {slices.map((item, index) => {
+      <AnimatePresence initial={false}>{slices.map((item, index) => {
         const off = hidden.has(item.key);
-        return <li key={item.key}>
-          <button ref={node => { rows.current[index] = node; }} type="button" className={styles.row} aria-pressed={legendAction === "toggle" ? !off : selected === item.key} aria-label={off ? `${item.label}, hidden` : describe(item)} data-active={item.key === current || undefined} data-pinned={selected === item.key || undefined} data-hidden={off || undefined} style={{ "--slice": colorFor(item) } as CSSProperties}
+        // A row that joins or leaves (a part folding into Other, say) opens or closes its height, so the rows below and the card around them glide instead of jumping.
+        return <motion.li key={item.key} className={styles.item} initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={reduced ? { duration: 0 } : spring.smooth}>
+          <button ref={node => { if (node) rows.current[index] = node; }} type="button" className={styles.row} aria-pressed={legendAction === "toggle" ? !off : selected === item.key} aria-label={off ? `${item.label}, hidden` : describe(item)} data-active={item.key === current || undefined} data-pinned={selected === item.key || undefined} data-hidden={off || undefined} style={{ "--slice": colorFor(item) } as CSSProperties}
             onClick={() => legendAction === "toggle" ? setHidden(item.key) : select(selected === item.key ? null : item.key)}
             onPointerEnter={event => { if (event.pointerType === "mouse") setPreview(off ? null : item.key); }}
             onFocus={event => { if (event.currentTarget.matches(":focus-visible")) setPreview(off ? null : item.key); }} onBlur={onLegendBlur} onKeyDown={event => onLegendKey(event, index)}>
@@ -409,8 +410,8 @@ export function DonutChart({ data, label, unit = "", formatValue = value => grou
             <span className={styles.rowValue} aria-hidden="true"><Count value={item.value} format={formatValue} reduced={reduced} /></span>
             <span className={styles.rowShare} aria-hidden="true"><Count value={off || !total ? 0 : item.value / total} format={shareText} reduced={reduced} /></span>
           </button>
-        </li>;
-      })}
+        </motion.li>;
+      })}</AnimatePresence>
     </ul>}
     <p className={styles.srOnly}>{summary}</p>
     <p className={styles.srOnly} aria-live="polite">{announcement}</p>

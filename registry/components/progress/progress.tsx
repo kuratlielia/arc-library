@@ -49,7 +49,7 @@ export function Progress({ value = 0, max = 100, label, showValue = false, class
       {label ? <span className={styles.label}><AnimatePresence mode="popLayout" initial={false}><Swap key={label} className={styles.line} initial={reduce ? { opacity: 0 } : textIn} animate={shown} exit={reduce ? fadeOut : textOut} transition={enter}>{label}</Swap></AnimatePresence></span> : <span />}
       {showValue ? <span className={styles.value}>
         {/* Completion lands as the fill arrives: a check settles in beside the final count. */}
-        <AnimatePresence initial={false}>{complete && <motion.span key="done" className={styles.done} initial={reduce ? { opacity: 0 } : iconIn} animate={shown} exit={reduce ? fadeOut : { ...iconIn, transition: exitFast }} transition={reduce ? enter : { ...motionTokens.spring.snappy, delay: .24 }}><Check size={14} strokeWidth={2} aria-hidden="true" /></motion.span>}</AnimatePresence>
+        <AnimatePresence initial={false}>{complete && <motion.span key="done" className={styles.done} initial={reduce ? { opacity: 0 } : iconIn} animate={shown} exit={reduce ? fadeOut : { ...iconIn, transition: exitFast }} transition={reduce ? enter : { ...motionTokens.spring.snappy, delay: .24 }}><Check size={14} strokeWidth={1.75} aria-hidden="true" /></motion.span>}</AnimatePresence>
         <motion.span className={styles.count}>{counted}</motion.span>
       </span> : null}
     </div> : null}

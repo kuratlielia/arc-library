@@ -60,12 +60,14 @@
 .handle { touch-action: none; user-select: none; }
 .content[data-side="bottom"] .handle, .content[data-side="top"] .handle { cursor: grab; }
 .title, .description { position: relative; }
-.swap { display: block; }
+/* The copy sets its own line height so a page-level heading rule cannot squeeze the title. */
+.swap { display: block; line-height: var(--leading-body); }
 .title { margin: 0; font-family: var(--font-body); font-size: var(--text-lg); font-weight: 500; letter-spacing: var(--tracking-body); line-height: var(--leading-body); }
 .description { max-width: 32rem; margin: var(--space-2) 0 0; color: var(--text-secondary); font-size: var(--text-sm); line-height: var(--leading-body); }
-.close { display: grid; flex: 0 0 auto; width: var(--space-8); height: var(--space-8); place-items: center; border: 1px solid var(--border); border-radius: var(--radius-control); background: color-mix(in oklch, var(--surface-muted) 65%, transparent); color: var(--text-secondary); cursor: pointer; transition: background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard), transform var(--duration-spring) var(--ease-spring); }
+/* Centered on the first line of the title rather than its top edge. */
+.close { display: grid; flex: 0 0 auto; width: var(--space-8); height: var(--space-8); margin-top: calc((var(--text-lg) * var(--leading-body) - var(--space-8)) / 2); place-items: center; border: 1px solid var(--border); border-radius: var(--radius-control); background: color-mix(in oklab, var(--surface-muted) 65%, transparent); color: var(--text-secondary); cursor: pointer; transition: background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard), transform var(--duration-spring) var(--ease-spring); }
 @media (hover: hover) and (pointer: fine) { .close:hover { background: var(--surface-muted); color: var(--foreground); } }
-.close:active { transform: scale(.96); transition: background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard), transform 100ms var(--ease-standard); }
+.close:active { transform: scale(.96); transition: background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard), transform var(--duration-instant) var(--ease-standard); }
 .body { min-height: 0; overflow: auto; padding: var(--space-6); font-size: var(--text-sm); line-height: var(--leading-body); overscroll-behavior: contain; scrollbar-width: thin; }
 
 @media (max-width: 40rem) {

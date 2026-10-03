@@ -92,6 +92,8 @@ const physical = (visualDuration: number, bounce: number): Transition => {
   return { type: "spring", stiffness: root * root, damping: 2 * (1 - bounce) * root, mass: 1 };
 };
 const GLIDE = physical(.3, .1), GROW = physical(spring.smooth.visualDuration, 0);
+/** First placements. A jump made in the commit that mounts its element never reaches the DOM; an instant animation lands on the first frame. */
+const INSTANT: Transition = { duration: 0 };
 
 export const mentionText = (kind: MentionKind, label: string) => `${SYMBOL[kind]}${label}`;
 
@@ -353,7 +355,7 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(fu
     const fit = () => {
       const target = Math.min(limits.max, Math.max(limits.min, backdrop.offsetHeight));
       const current = height.get();
-      if (!measured.current || reduced || typeof current !== "number") { height.jump(target); measured.current = true; return; }
+      if (!measured.current || reduced || typeof current !== "number") { animate(height, target, INSTANT); measured.current = true; return; }
       if (Math.abs(current - target) > .5) animate(height, target, GROW);
     };
     fit();
@@ -379,6 +381,8 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(fu
     setAnchor(current => current && current.x === x && current.y === y && current.above === above && current.line === line ? current : { x, y, line, above });
   }, [placement]);
   useLayoutEffect(() => { if (open) measureAnchor(); }, [measureAnchor, open, trigger?.start, value.text]);
+  // The popover mounts one commit after `open`, once the anchor is measured; the effects below wait for it.
+  const shown = open && !!anchor;
 
   const onScroll = (event: UIEvent<HTMLTextAreaElement>) => {
     const backdrop = backdropRef.current;
@@ -389,23 +393,25 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(fu
   /* The list's highlight glides between rows; the panel springs its height as matches come and go. */
   const listRef = useRef<HTMLUListElement>(null);
   const hy = useMotionValue(0), hh = useMotionValue(0);
+  const placed = useRef(false);
   const panelHeight = useMotionValue<number | "auto">("auto");
   useLayoutEffect(() => {
     const row = listRef.current?.querySelector<HTMLElement>(`[data-index="${activeIndex}"]`);
     if (!row) return;
-    if (reduced || hh.get() === 0) { hy.jump(row.offsetTop); hh.jump(row.offsetHeight); return; }
+    if (reduced || !placed.current) { animate(hy, row.offsetTop, INSTANT); animate(hh, row.offsetHeight, INSTANT); placed.current = true; return; }
     animate(hy, row.offsetTop, GLIDE);
     animate(hh, row.offsetHeight, GLIDE);
-  }, [activeIndex, hh, hy, open, reduced, suggestions]);
+  }, [activeIndex, hh, hy, reduced, shown, suggestions]);
   const bodyRef = useRef<HTMLDivElement>(null);
   const panelSized = useRef(false);
   useLayoutEffect(() => {
-    if (!open) { panelSized.current = false; hh.jump(0); return; }
+    // The leaving list keeps its highlight while it fades; the next open places it fresh.
+    if (!shown) { panelSized.current = false; placed.current = false; return; }
     const body = bodyRef.current;
     if (!body) return;
     const fit = () => {
       const target = body.offsetHeight;
-      if (!panelSized.current || reduced) { panelHeight.jump(target); panelSized.current = true; return; }
+      if (!panelSized.current || reduced) { animate(panelHeight, target, INSTANT); panelSized.current = true; return; }
       animate(panelHeight, target, GROW);
     };
     fit();
@@ -413,7 +419,7 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(fu
     const observer = new ResizeObserver(fit);
     observer.observe(body);
     return () => observer.disconnect();
-  }, [hh, open, panelHeight, reduced, trigger?.start]);
+  }, [panelHeight, reduced, shown, trigger?.start]);
 
   /* Mirror: the same text as the textarea, with tokens drawn in place and a marker at the open trigger. */
   const mirror = useMemo(() => {

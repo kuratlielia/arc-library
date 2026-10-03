@@ -1,18 +1,18 @@
 /* Split, one full screen: the whole hero is a workflow canvas. A dot grid fills the screen, strongest behind the graph, and the
    copy sits on the quiet side of it. */
 .hero {
-  --dot: color-mix(in oklch, var(--foreground) 13%, transparent);
-  --wire: color-mix(in oklch, var(--foreground) 17%, transparent);
+  --dot: color-mix(in oklab, var(--foreground) 13%, transparent);
+  --wire: color-mix(in oklab, var(--foreground) 17%, transparent);
   --node-shadow: 0 1px 1px rgb(20 24 40 / .04), 0 8px 24px -12px rgb(20 24 40 / .14);
   isolation: isolate;
   display: grid;
   align-items: center;
-  background: color-mix(in oklch, var(--accent) 2%, var(--background));
+  background: color-mix(in oklab, var(--accent) 2%, var(--background));
 }
 :global(:root[data-theme="dark"]) .hero {
-  --dot: color-mix(in oklch, var(--foreground) 17%, transparent);
-  --wire: color-mix(in oklch, var(--foreground) 20%, transparent);
-  --node-shadow: inset 0 1px 0 color-mix(in oklch, var(--foreground) 7%, transparent), 0 12px 32px -14px rgb(0 0 0 / .7);
+  --dot: color-mix(in oklab, var(--foreground) 17%, transparent);
+  --wire: color-mix(in oklab, var(--foreground) 20%, transparent);
+  --node-shadow: inset 0 1px 0 color-mix(in oklab, var(--foreground) 7%, transparent), 0 12px 32px -14px rgb(0 0 0 / .7);
 }
 .hero::before {
   content: ""; position: absolute; z-index: -1; inset: 0; pointer-events: none;
@@ -52,21 +52,21 @@
   font-size: 13px; line-height: 1.3;
   transition: border-color var(--duration-standard) var(--ease-standard), opacity var(--duration-standard) var(--ease-standard), background-color var(--duration-standard) var(--ease-standard);
 }
-.node[data-status="running"] { border-color: color-mix(in oklch, var(--accent) 70%, var(--border)); background: color-mix(in oklch, var(--accent) 4%, var(--surface)); }
+.node[data-status="running"] { border-color: color-mix(in oklab, var(--accent) 70%, var(--border)); background: color-mix(in oklab, var(--accent) 4%, var(--surface)); }
 .node[data-status="skipped"] { opacity: .5; box-shadow: none; }
 .icon { display: grid; width: 20px; height: 20px; flex: none; place-items: center; }
 .logo { width: 18px; height: 18px; background: center / contain no-repeat; }
 .glyph { color: var(--text-secondary); }
 .text { display: grid; flex: 1; min-width: 0; }
 .text strong { overflow: hidden; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
-.text small { overflow: hidden; color: var(--text-muted); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.text small { overflow: hidden; color: var(--text-muted); font-size: var(--text-xs); text-overflow: ellipsis; white-space: nowrap; }
 .state { display: grid; flex: none; justify-items: end; }
 .stateInner { display: inline-flex; align-items: center; gap: 6px; }
-.meta { color: var(--text-muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.meta { color: var(--text-muted); font-size: var(--text-xs); font-variant-numeric: tabular-nums; }
 .check { color: var(--success); }
 .skip { color: var(--text-muted); }
 .pending { display: block; width: 10px; height: 10px; border: 1.5px solid var(--wire); border-radius: 50%; }
-.spinner { display: block; width: 13px; height: 13px; flex: none; border: 1.5px solid color-mix(in oklch, var(--accent) 22%, transparent); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
+.spinner { display: block; width: 13px; height: 13px; flex: none; border: 1.5px solid color-mix(in oklab, var(--accent) 22%, transparent); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
 @keyframes spin { to { rotate: 360deg; } }
 
 /* Compact nodes on a phone: icon and state on top, the name and its result under them. */
@@ -78,7 +78,7 @@
 /* The run summary under the graph. */
 .summary { position: absolute; left: 0; display: flex; height: 44px; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid var(--border-subtle); padding: 0 2px; color: var(--text-muted); font-size: 13px; }
 .event { display: inline-flex; align-items: center; gap: 12px; }
-.event code { border: 1px solid var(--border-subtle); border-radius: 6px; padding: 1px 7px; background: var(--surface); color: var(--text-secondary); font-family: var(--font-mono, ui-monospace, "SF Mono", Menlo, monospace); font-size: 12px; }
+.event code { border: 1px solid var(--border-subtle); border-radius: 6px; padding: 1px 7px; background: var(--surface); color: var(--text-secondary); font-family: var(--font-mono, ui-monospace, "SF Mono", Menlo, monospace); font-size: var(--text-xs); }
 .num { font-variant-numeric: tabular-nums; }
 .result { display: inline-flex; align-items: center; gap: 7px; }
 .result[data-done] { color: var(--foreground); }

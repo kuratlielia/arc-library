@@ -6,10 +6,9 @@
 .track[data-fade-start] { --fade-start: 20px; }
 .track[data-fade-end] { --fade-end: 20px; }
 /* Items never scale or change weight; only the highlight travels and the label color follows it. */
-.button { position: relative; flex: 0 0 auto; min-height: var(--control-height-sm); border: 0; border-radius: calc(var(--radius-control) - 3px); padding: 0 13px; background: transparent; color: var(--text-muted); font: inherit; font-size: var(--text-sm); font-weight: 500; white-space: nowrap; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: color var(--duration-fast) var(--ease-standard); }
+.button { position: relative; flex: 0 0 auto; min-height: var(--control-height-sm); border: 0; border-radius: calc(var(--radius-control) - 4px); padding: 0 12px; background: transparent; color: var(--text-muted); font: inherit; font-size: var(--text-sm); font-weight: 500; white-space: nowrap; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: color var(--duration-fast) var(--ease-standard); }
 @media (hover: hover) and (pointer: fine) { .button:hover { color: var(--foreground); } }
 .button:active, .button[aria-pressed="true"] { color: var(--foreground); }
-.button:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: -2px; }
 .selection { position: absolute; z-index: -1; inset: 0; border: 1px solid var(--border); border-radius: inherit; background: var(--surface); box-shadow: var(--shadow-resting); }
 .label { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 6px; }
 @media (max-width: 380px) { .button { padding: 0 10px; } }

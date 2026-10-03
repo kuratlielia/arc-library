@@ -13,22 +13,20 @@
 .track { position: absolute; top: 50%; right: calc(var(--slider-thumb) / 2); left: calc(var(--slider-thumb) / 2); height: var(--slider-track); margin-top: calc(var(--slider-track) / -2); border-radius: var(--radius-pill); background: var(--control-track); }
 /* The fill spans the track and is revealed by a clip that follows the thumbs on the same frame. Ticks inside it are the "on" set, cut exactly at the thumb. */
 .fill { position: absolute; inset: 0; border-radius: inherit; background: var(--control-fill); }
-.tick { position: absolute; top: 50%; width: 4px; height: 4px; margin: -2px 0 0 -2px; border-radius: var(--radius-pill); background: color-mix(in oklch, var(--foreground) 30%, transparent); }
-.fill .tick { background: color-mix(in oklch, var(--control-glyph) 60%, transparent); }
+.tick { position: absolute; top: 50%; width: 4px; height: 4px; margin: -2px 0 0 -2px; border-radius: var(--radius-pill); background: color-mix(in oklab, var(--foreground) 30%, transparent); }
+.fill .tick { background: color-mix(in oklab, var(--control-glyph) 60%, transparent); }
 .thumbs { position: absolute; inset: 0 calc(var(--slider-thumb) / 2); container-type: inline-size; pointer-events: none; }
 /* Each layer is as wide as the track and slides by a percentage of itself; it only ever overflows to the left, which never scrolls. */
 .thumbLayer { position: absolute; inset: 0; }
 /* Centering uses the translate property, so Motion's scale on transform composes with it instead of replacing it. */
-.thumb { position: absolute; top: 50%; right: 0; box-sizing: border-box; width: var(--slider-thumb); height: var(--slider-thumb); translate: 50% -50%; border: 0; border-radius: var(--radius-pill); background: var(--control-thumb); box-shadow: var(--control-thumb-shadow); pointer-events: auto; cursor: grab; outline: 0 solid transparent; transition: box-shadow var(--duration-fast) var(--ease-standard); }
+.thumb { position: absolute; top: 50%; right: 0; box-sizing: border-box; width: var(--slider-thumb); height: var(--slider-thumb); translate: 50% -50%; border: 0; border-radius: var(--radius-pill); background: var(--control-thumb); box-shadow: var(--control-thumb-shadow); pointer-events: auto; cursor: grab; transition: box-shadow var(--duration-fast) var(--ease-standard); }
 .thumb::after { content: ""; position: absolute; inset: -11px; border-radius: inherit; }
-/* A thumb focused by a press stays quiet until the keyboard takes over. */
-.thumb:focus-visible:not([data-quiet]) { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
 .root[data-dragging], .root[data-dragging] .control, .root[data-dragging] .thumb { cursor: grabbing; }
 /* The bubble centers on the thumb until it would pass the component's edge, then holds there. --at is the thumb position in percent of
    the track, written each frame, and cqw measures the track, so the clamp needs no JavaScript measuring. It floats higher on touch so a fingertip never hides it. */
 .bubbleAnchor { --edge: calc(var(--slider-thumb) / 2); --x: calc(var(--at, 0) * 1cqw); position: absolute; right: 0; bottom: calc(50% + var(--slider-thumb) / 2 + 8px); display: flex; translate: clamp(calc(100% - var(--edge) - var(--x)), 50%, calc(100cqw + var(--edge) - var(--x))) 0; pointer-events: none; }
 @media (pointer: coarse) { .bubbleAnchor { bottom: calc(50% + var(--slider-thumb) / 2 + 18px); } }
-.bubble { display: inline-flex; min-height: 1.75rem; align-items: center; padding: 0 var(--space-3); border: 1px solid color-mix(in oklch, var(--background) 14%, var(--foreground)); border-radius: var(--radius-pill); background: var(--foreground); color: var(--background); box-shadow: var(--shadow-raised); font-size: var(--text-sm); font-weight: 500; white-space: nowrap; transform-origin: 50% 100%; }
+.bubble { display: inline-flex; min-height: 1.75rem; align-items: center; padding: 0 var(--space-3); border: 1px solid color-mix(in oklab, var(--background) 14%, var(--foreground)); border-radius: var(--radius-pill); background: var(--foreground); color: var(--background); box-shadow: var(--shadow-raised); font-size: var(--text-sm); font-weight: 500; white-space: nowrap; transform-origin: 50% 100%; }
 /* Mark labels sit on their ticks; one at a limit keeps its outer edge inside the component. */
 .marks { position: relative; grid-area: 2 / 2; height: 1.25rem; margin: calc(var(--space-1) * -1) calc(var(--slider-thumb) / 2) 0; color: var(--text-muted); font-size: var(--text-xs); font-variant-numeric: tabular-nums; }
 .markLabel { position: absolute; top: 0; translate: -50% 0; white-space: nowrap; cursor: pointer; transition: color var(--duration-fast) var(--ease-standard); }

@@ -2,7 +2,7 @@
 @media (hover: hover) and (pointer: fine) { .trigger:hover { border-color: var(--border-strong); background: var(--surface-muted); box-shadow: var(--shadow-resting); } }
 /* The trigger anchors the menu, so press feedback stays in color. A scaled rect would be measured on pointerdown and shift the menu. */
 .trigger[data-state="open"] { border-color: var(--border-strong); background: var(--surface-muted); box-shadow: none; }
-.trigger:active { border-color: var(--border-strong); background: color-mix(in oklch, var(--surface-muted), var(--border) 55%); box-shadow: none; }
+.trigger:active { border-color: var(--border-strong); background: color-mix(in oklab, var(--surface-muted), var(--border) 55%); box-shadow: none; }
 .trigger:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .item:focus-visible { outline: none; }
 .triggerIcon { display: inline-flex; flex: none; color: var(--text-secondary); }
@@ -24,7 +24,7 @@
 /* Radix unmounts when the exit animation ends, so a no-op keyframe times the exit while the transition does the visual work. */
 .menu[data-state="closed"] { opacity: 0; transform: translate(calc(var(--menu-x) * .5), calc(var(--menu-y) * .5)) scale(.985); transition: opacity 130ms var(--ease-standard), transform 130ms var(--ease-standard); animation: menu-exit 130ms linear both; pointer-events: none; }
 .highlight { position: absolute; top: 0; right: 5px; left: 5px; border-radius: calc(var(--radius-panel) - 6px); background: var(--surface-muted); opacity: 0; pointer-events: none; transition: background-color var(--duration-fast) var(--ease-standard); }
-.highlight[data-tone="danger"] { background: color-mix(in oklch, var(--danger) 8%, var(--surface)); }
+.highlight[data-tone="danger"] { background: color-mix(in oklab, var(--danger) 8%, var(--surface)); }
 .item { position: relative; display: flex; min-height: 36px; align-items: center; gap: 10px; padding: 0 11px; border-radius: calc(var(--radius-panel) - 6px); color: var(--foreground); font-size: var(--text-sm); cursor: pointer; outline: none; transition: color var(--duration-fast) var(--ease-standard), opacity var(--duration-standard) var(--ease-enter) calc(min(var(--i, 0), 4) * 35ms), transform var(--duration-standard) var(--ease-enter) calc(min(var(--i, 0), 4) * 35ms); }
 .icon { display: inline-flex; width: 17px; color: var(--text-secondary); }
 .separator { height: 1px; margin: var(--space-1) calc(var(--space-1) * -1); background: var(--border-subtle); }

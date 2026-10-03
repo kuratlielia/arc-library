@@ -2,6 +2,20 @@
 
 New free components and blocks ship regularly. Every entry links to its live preview on uiarc.dev.
 
+## 2026-10-03
+
+### Added
+
+- [Money input](https://uiarc.dev/components/money-input) (component): A currency field with live grouping, stable width, rolling digits, and minor-unit output.
+
+## 2026-10-02
+
+### Added
+
+- [Button group](https://uiarc.dev/components/button-group) (component): Related actions joined into one surface with hairline dividers: a hover highlight glides between segments, the pressed one answers in place, and an attached menu can close the row.
+- [Floating button group](https://uiarc.dev/components/floating-button-group) (component): Separate soft buttons in a quiet tray, with one shared highlight that morphs from button to button as you move, and a pressed state that settles in place.
+- [Expanding button group](https://uiarc.dev/components/expanding-button-group) (component): Icon buttons in a compact group: the one you point at or focus grows to reveal its label while its neighbours slide aside, and an action confirms in place.
+
 ## 2026-10-01
 
 ### Added

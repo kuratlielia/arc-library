@@ -5,7 +5,7 @@
 .surface:has(> .list:empty) { display: none; }
 /* Pulled down one pixel so the last separator tucks under the frame, instead of toggling with :last-child while rows leave. */
 .list { margin: 0 0 -1px; padding: 0; list-style: none; }
-.list:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: -2px; }
+.list:focus-visible { outline: none; }
 .row { position: relative; isolation: isolate; overflow: hidden; }
 /* The content follows the finger by transform only; vertical pans stay with the page. */
 .content { position: relative; z-index: 10; display: flex; min-height: 64px; align-items: center; gap: var(--space-2); padding: var(--space-3) var(--space-2) var(--space-3) var(--space-4); background: var(--surface); touch-action: pan-y; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
@@ -15,7 +15,7 @@
 .more { display: grid; width: 32px; height: 32px; flex: none; place-items: center; border: 0; border-radius: calc(var(--radius-control) - 6px); background: transparent; color: var(--text-muted); cursor: pointer; -webkit-tap-highlight-color: transparent; transition: color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard); }
 /* The button anchors a menu, so a press answers with colour, never scale. */
 .more:active, .more[data-state="open"] { background: var(--surface-muted); color: var(--foreground); }
-.more:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 0; }
+.more:focus-visible { outline: none; }
 @media (hover: hover) and (pointer: fine) {
   .content { cursor: grab; }
   .more:hover { background: var(--surface-muted); color: var(--foreground); }
@@ -24,7 +24,7 @@
 .row[data-dragging] .more { background: transparent; color: var(--text-muted); }
 
 /* Each action spans the full row from the edge it hides behind and slides in by transform. Outer actions stack above inner ones. */
-.layer { position: absolute; top: 0; bottom: 0; width: 100%; padding: 0; border: 0; background: color-mix(in oklch, var(--foreground) 20%, var(--surface)); color: var(--foreground); font: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.layer { position: absolute; top: 0; bottom: 0; width: 100%; padding: 0; border: 0; background: color-mix(in oklab, var(--foreground) 20%, var(--surface)); color: var(--foreground); font: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .layer[data-side="trailing"] { left: 100%; }
 .layer[data-side="leading"] { right: 100%; }
 .layer[data-tone="accent"] { background: var(--accent); color: var(--accent-foreground); }
@@ -36,18 +36,18 @@
 .glyph { position: absolute; top: 0; bottom: 0; left: calc(var(--swipe-action-width) / -2); display: flex; width: var(--swipe-action-width); flex-direction: column; align-items: center; justify-content: center; gap: 3px; }
 .icon { display: grid; place-items: center; }
 .icon svg { width: 20px; height: 20px; }
-.label { font-size: var(--text-xs); font-weight: 500; letter-spacing: var(--tracking-body); line-height: 1.2; white-space: nowrap; }
+.label { font-size: var(--text-xs); font-weight: 500; letter-spacing: var(--tracking-body); line-height: var(--leading-body); white-space: nowrap; }
 
 /* The menu grows from its trigger, matching the library dropdown. */
 .menu { --menu-x: 0px; --menu-y: -5px; position: relative; z-index: 60; min-width: 11rem; padding: 5px; border: 1px solid var(--border); border-radius: var(--radius-panel); background: var(--surface-raised); box-shadow: var(--shadow-floating); transform-origin: var(--radix-dropdown-menu-content-transform-origin); }
 .menu[data-side="top"] { --menu-y: 5px; }
 .menu[data-state="open"] { animation: menu-fade-in var(--duration-fast) var(--ease-enter) both, menu-rise-in var(--duration-spring) var(--ease-spring) both; }
-.menu[data-state="closed"] { animation: menu-out 130ms var(--ease-standard) both; }
+.menu[data-state="closed"] { animation: menu-out var(--duration-instant) var(--ease-standard) both; }
 .menu[data-state="open"] .item { animation: menu-item-in var(--duration-standard) var(--ease-enter) both; animation-delay: calc(min(var(--i, 0), 4) * 35ms); }
 .item { position: relative; display: flex; min-height: 36px; align-items: center; gap: 10px; padding: 0 11px; border-radius: calc(var(--radius-panel) - 6px); color: var(--foreground); font-size: var(--text-sm); cursor: pointer; outline: none; transition: background-color var(--duration-instant) var(--ease-standard); }
 .item[data-highlighted] { background: var(--surface-muted); }
 .item[data-tone="danger"] { color: var(--danger); }
-.item[data-tone="danger"][data-highlighted] { background: color-mix(in oklch, var(--danger) 8%, var(--surface-raised)); }
+.item[data-tone="danger"][data-highlighted] { background: color-mix(in oklab, var(--danger) 8%, var(--surface-raised)); }
 .itemIcon { display: inline-flex; width: 17px; color: var(--text-secondary); }
 .itemIcon svg { width: 16px; height: 16px; }
 .item[data-tone="danger"] .itemIcon { color: var(--danger); }
@@ -59,6 +59,6 @@
 @media (prefers-reduced-motion: reduce) {
   .surface, .more, .item { transition: none; }
   .menu[data-state="open"] { animation: menu-fade-in var(--duration-instant) linear both; }
-  .menu[data-state="closed"] { animation: menu-fade-out 100ms linear both; }
+  .menu[data-state="closed"] { animation: menu-fade-out var(--duration-instant) linear both; }
   .menu[data-state="open"] .item { animation: none; }
 }

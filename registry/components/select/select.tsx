@@ -61,26 +61,26 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
             </AnimatePresence>
           </span>
           <SelectPrimitive.Icon className={styles.chevron}>
-            <ChevronDown size={16} strokeWidth={1.8} aria-hidden="true" />
+            <ChevronDown size={16} strokeWidth={1.75} aria-hidden="true" />
           </SelectPrimitive.Icon>
         </SelectPrimitive.Trigger>
         <SelectPrimitive.Portal>
           <SelectPrimitive.Content className={styles.content} position="popper" sideOffset={4} collisionPadding={12}>
             <SelectPrimitive.ScrollUpButton className={styles.scrollButton}>
-              <ChevronUp size={15} strokeWidth={1.8} aria-hidden="true" />
+              <ChevronUp size={16} strokeWidth={1.75} aria-hidden="true" />
             </SelectPrimitive.ScrollUpButton>
             <SelectPrimitive.Viewport className={styles.viewport}>
               {options.map((option) => (
                 <SelectPrimitive.Item key={option.value} value={option.value} disabled={option.disabled} className={styles.item}>
                   <SelectPrimitive.ItemText>{option.label}</SelectPrimitive.ItemText>
                   <SelectPrimitive.ItemIndicator className={styles.indicator}>
-                    <Check size={16} strokeWidth={2} aria-hidden="true" />
+                    <Check size={16} strokeWidth={1.75} aria-hidden="true" />
                   </SelectPrimitive.ItemIndicator>
                 </SelectPrimitive.Item>
               ))}
             </SelectPrimitive.Viewport>
             <SelectPrimitive.ScrollDownButton className={styles.scrollButton}>
-              <ChevronDown size={15} strokeWidth={1.8} aria-hidden="true" />
+              <ChevronDown size={16} strokeWidth={1.75} aria-hidden="true" />
             </SelectPrimitive.ScrollDownButton>
           </SelectPrimitive.Content>
         </SelectPrimitive.Portal>

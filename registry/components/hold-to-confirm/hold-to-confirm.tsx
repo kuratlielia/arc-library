@@ -23,7 +23,8 @@ export interface HoldToConfirmProps extends Omit<ButtonHTMLAttributes<HTMLButton
   /** Hold length in milliseconds. */
   duration?: number;
   icon?: ReactNode;
-  tone?: "danger" | "neutral";
+  /** `accent` (default) fills with the selected accent; `danger` is for an irreversible action; `neutral` fills with the foreground. */
+  tone?: "accent" | "danger" | "neutral";
   /** Controls the done state. Set it back to false to reset the button; leave it undefined to let the button keep its own state. */
   confirmed?: boolean;
   /** Reports when a hold starts and ends, for surrounding hints such as “Keep holding”. */
@@ -34,11 +35,11 @@ const enter = [...motionTokens.ease.enter] as [number, number, number, number];
 const standard = [...motionTokens.ease.standard] as [number, number, number, number];
 const rest: TargetAndTransition = { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" };
 const textIn: TargetAndTransition = { opacity: 0, y: "0.3em", filter: `blur(${motionTokens.blur.soft}px)` };
-const textOut: TargetAndTransition = { opacity: 0, y: "-0.3em", filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: .15, ease: standard } };
+const textOut: TargetAndTransition = { opacity: 0, y: "-0.3em", filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: motionTokens.duration.fast, ease: standard } };
 const iconIn: TargetAndTransition = { opacity: 0, scale: .6, filter: `blur(${motionTokens.blur.subtle}px)` };
-const iconOut: TargetAndTransition = { ...iconIn, transition: { duration: .15, ease: standard } };
+const iconOut: TargetAndTransition = { ...iconIn, transition: { duration: motionTokens.duration.fast, ease: standard } };
 const fadeIn: TargetAndTransition = { opacity: 0 };
-const fadeOut: TargetAndTransition = { opacity: 0, transition: { duration: .1 } };
+const fadeOut: TargetAndTransition = { opacity: 0, transition: { duration: motionTokens.duration.instant } };
 /** Scale rides the spring; opacity and blur tween so the blur never overshoots below zero. */
 const iconEnter = { ...motionTokens.spring.snappy, opacity: { duration: motionTokens.duration.fast, ease: enter }, filter: { duration: motionTokens.duration.fast, ease: enter } };
 
@@ -56,7 +57,7 @@ function Face({ icon, text, done, width, reduced, measure }: FaceProps) {
   return <span className={styles.face}>
     <span className={styles.iconSlot}>
       <AnimatePresence initial={false}>
-        <motion.span key={done ? "done" : "idle"} className={styles.iconPhase} initial={reduced ? fadeIn : iconIn} animate={rest} exit={reduced ? fadeOut : iconOut} transition={reduced ? { duration: .15 } : iconEnter}>
+        <motion.span key={done ? "done" : "idle"} className={styles.iconPhase} initial={reduced ? fadeIn : iconIn} animate={rest} exit={reduced ? fadeOut : iconOut} transition={reduced ? { duration: motionTokens.duration.fast } : iconEnter}>
           {done ? <DrawnCheck reduced={reduced} /> : icon}
         </motion.span>
       </AnimatePresence>
@@ -64,7 +65,7 @@ function Face({ icon, text, done, width, reduced, measure }: FaceProps) {
     <motion.span className={styles.labelFrame} style={{ width }}>
       {measure && <span ref={measure} className={styles.measure}>{text}</span>}
       <AnimatePresence mode="popLayout" initial={false}>
-        <motion.span key={text} className={styles.label} initial={reduced ? fadeIn : textIn} animate={rest} exit={reduced ? fadeOut : textOut} transition={{ duration: reduced ? .15 : .22, ease: enter }}>{text}</motion.span>
+        <motion.span key={text} className={styles.label} initial={reduced ? fadeIn : textIn} animate={rest} exit={reduced ? fadeOut : textOut} transition={{ duration: reduced ? motionTokens.duration.fast : motionTokens.duration.standard, ease: enter }}>{text}</motion.span>
       </AnimatePresence>
     </motion.span>
   </span>;
@@ -94,7 +95,7 @@ function useLabelWidth(reduced: boolean) {
   return [width, setNode] as const;
 }
 
-export function HoldToConfirm({ label, confirmedLabel = "Done", onConfirm, duration = 1200, icon = <Trash2 strokeWidth={1.75} />, tone = "danger", confirmed, onHoldChange, className, disabled, ...props }: HoldToConfirmProps) {
+export function HoldToConfirm({ label, confirmedLabel = "Done", onConfirm, duration = 1200, icon = <Trash2 strokeWidth={1.75} />, tone = "accent", confirmed, onHoldChange, className, disabled, ...props }: HoldToConfirmProps) {
   const reduced = useReducedMotion() ?? false;
   const hintId = useId();
   const [ownDone, setOwnDone] = useState(false);

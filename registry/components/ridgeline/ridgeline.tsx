@@ -116,7 +116,8 @@ export function Ridgeline({ series, label, unit = "", formatValue, domain, overl
   const cross = useRef<HTMLDivElement>(null);
   useImperativeHandle(ref, () => figure.current as HTMLElement);
   const inView = useInView(figure, { once: true, amount: .3 });
-  const format = (value: number) => formatValue ? formatValue(value) : `${grouped.format(value)}${unit}`;
+  // A true minus sign keeps negative values tight and lined up with the tabular digits.
+  const format = (value: number) => formatValue ? formatValue(value) : `${grouped.format(value).replace("-", "\u2212")}${unit}`;
 
   const [width, setWidth] = useState(0);
   useLayoutEffect(() => {
@@ -234,6 +235,12 @@ export function Ridgeline({ series, label, unit = "", formatValue, domain, overl
   const activeStats = current ? model.stats.get(current) : undefined;
   const activeSeries = current ? series.find(entry => entry.id === current) : undefined;
   const reading = cursor && activeStats ? { value: cursor.value, below: activeStats.n ? activeStats.sorted.filter(value => value <= cursor.value).length / activeStats.n : 0 } : null;
+  // The tooltip keeps its last content while it fades out, so it never collapses to an empty box on leave.
+  const [held, setHeld] = useState<{ id: string; value: number | null } | null>(null);
+  if (current && (held?.id !== current || held.value !== (reading?.value ?? null))) setHeld({ id: current, value: reading?.value ?? null });
+  const tipSeries = held ? series.find(entry => entry.id === held.id) : undefined;
+  const tipStats = held ? model.stats.get(held.id) : undefined;
+  const tipBelow = held && held.value !== null && tipStats?.n ? tipStats.sorted.filter(value => value <= held.value!).length / tipStats.n : 0;
 
   // The tooltip trails the pointer or the keyboard cursor and stays inside the chart.
   const tipX = useMotionValue(0), tipY = useMotionValue(0);
@@ -289,7 +296,7 @@ export function Ridgeline({ series, label, unit = "", formatValue, domain, overl
 
   const empty = !series.length || series.every(entry => !entry.values.length);
   /** Ridge tone: one hue, the first series color, from a light tint (low median) to full strength (high median), so the scale never passes through a muddy middle. */
-  const toneOf = (t: number) => `color-mix(in oklch, var(--series-1) ${Math.round(38 + clamp(t, 0, 1) * 62)}%, var(--surface))`;
+  const toneOf = (t: number) => `color-mix(in oklab, var(--series-1) ${Math.round(38 + clamp(t, 0, 1) * 62)}%, var(--surface))`;
   const ridgeColor = (value: number) => tint ? toneOf((value - model.lo) / (model.hi - model.lo || 1)) : "var(--series-1)";
   const describe = (entry: RidgelineSeries) => { const s = model.stats.get(entry.id)!; return `${entry.label}: median ${format(s.median)}, middle half ${format(s.q1)} to ${format(s.q3)}, range ${format(s.min)} to ${format(s.max)}, ${s.n} values`; };
 
@@ -309,7 +316,7 @@ export function Ridgeline({ series, label, unit = "", formatValue, domain, overl
           <line ref={element => { if (element) medians.current.set(entry.id, element); else medians.current.delete(entry.id); }} className={styles.median} />
           <path ref={element => { if (element) lines.current.set(entry.id, element); else lines.current.delete(entry.id); }} className={styles.line} />
         </g>)}
-        <g ref={element => { lifted.current.group = element; }} className={styles.lens} data-on={current ? true : undefined} style={activeStats ? { "--ridge": ridgeColor(activeStats.median) } as CSSProperties : undefined}>
+        <g ref={element => { lifted.current.group = element; }} className={styles.lens} data-on={current ? true : undefined} style={tipStats ? { "--ridge": ridgeColor(tipStats.median) } as CSSProperties : undefined}>
           <path ref={element => { lifted.current.fill = element; }} className={styles.lensFill} />
           <path ref={element => { lifted.current.band = element; }} className={styles.lensBand} />
           <line ref={element => { lifted.current.median = element; }} className={styles.lensMedian} />
@@ -321,12 +328,12 @@ export function Ridgeline({ series, label, unit = "", formatValue, domain, overl
       </div>
       {empty && <p className={styles.message}>{emptyLabel}</p>}
       <motion.div ref={tip} className={styles.tooltip} style={{ x: reduced ? tipX : tipSpringX, y: reduced ? tipY : tipSpringY }} aria-hidden="true">
-        {activeSeries && activeStats && <>
-          <p className={styles.tipTitle}>{activeSeries.label}</p>
-          <p className={styles.tipValue}><span className={styles.tipKey}>Median</span><span>{format(activeStats.median)}</span></p>
-          <p className={styles.tipRow}><span className={styles.tipKey}>Middle half</span><span>{format(activeStats.q1)} to {format(activeStats.q3)}</span></p>
-          <p className={styles.tipRow}><span className={styles.tipKey}>Range</span><span>{format(activeStats.min)} to {format(activeStats.max)}</span></p>
-          {reading && <p className={styles.tipNote}>{percent.format(reading.below)} at or below {format(reading.value)}</p>}
+        {tipSeries && tipStats && <>
+          <p className={styles.tipTitle}>{tipSeries.label}</p>
+          <p className={styles.tipValue}><span className={styles.tipKey}>Median</span><span>{format(tipStats.median)}</span></p>
+          <p className={styles.tipRow}><span className={styles.tipKey}>Middle half</span><span>{format(tipStats.q1)} to {format(tipStats.q3)}</span></p>
+          <p className={styles.tipRow}><span className={styles.tipKey}>Range</span><span>{format(tipStats.min)} to {format(tipStats.max)}</span></p>
+          {held?.value != null && <p className={styles.tipNote}>{percent.format(tipBelow)} at or below {format(held.value)}</p>}
         </>}
       </motion.div>
     </div>

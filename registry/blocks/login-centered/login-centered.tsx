@@ -63,6 +63,9 @@ const swap = (reduce: boolean) => ({
   exit: reduce ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: -4, filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: motionTokens.duration.fast } },
   transition: (reduce ? { duration: motionTokens.duration.instant } : { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] }) as Transition,
 });
+/** Both header labels share one cell and cross-fade in place, so the switch never changes width when the mode flips. */
+const labelState = (active: boolean, reduce: boolean) => active ? { opacity: 1, y: 0, filter: "blur(0px)" } : { opacity: 0, y: reduce ? 0 : -6, filter: `blur(${reduce ? 0 : motionTokens.blur.subtle}px)` };
+const labelTransition = (reduce: boolean): Transition => reduce ? { duration: motionTokens.duration.instant } : { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] };
 /** Seconds roll down while the timer runs and back up when a new code restarts it. */
 const roll: Variants = {
   enter: (direction: number) => ({ opacity: 0, y: `${-0.7 * direction}em`, filter: `blur(${motionTokens.blur.subtle}px)` }),
@@ -363,8 +366,8 @@ export function LoginCentered({ demoCode = "482913", fullScreen = false, demoEma
       <header className={styles.bar}>
         <span className={styles.mark}><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 15a7 7 0 0 1 14 0" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /><circle cx="10" cy="15" r="1.75" fill="currentColor" /></svg>Arc</span>
         <p className={styles.switch}>
-          <span className={styles.switchPrompt}><AnimatePresence mode="popLayout" initial={false}><motion.span key={mode} {...swap(reduce)}>{signingUp ? "Have an account?" : "No account?"}</motion.span></AnimatePresence></span>
-          <button type="button" className={styles.switchButton} onClick={switchMode}><AnimatePresence mode="popLayout" initial={false}><motion.span key={mode} {...swap(reduce)}>{signingUp ? "Sign in" : "Sign up"}</motion.span></AnimatePresence></button>
+          <span className={styles.switchPrompt}>{(["sign-in", "sign-up"] as const).map(option => <motion.span key={option} aria-hidden={option !== mode || undefined} initial={false} animate={labelState(option === mode, reduce)} transition={labelTransition(reduce)}>{option === "sign-up" ? "Have an account?" : "No account?"}</motion.span>)}</span>
+          <button type="button" className={styles.switchButton} aria-label={signingUp ? "Sign in" : "Sign up"} onClick={switchMode}>{(["sign-in", "sign-up"] as const).map(option => <motion.span key={option} aria-hidden="true" initial={false} animate={labelState(option === mode, reduce)} transition={labelTransition(reduce)}>{option === "sign-up" ? "Sign in" : "Sign up"}</motion.span>)}</button>
         </p>
       </header>
 

@@ -5,12 +5,12 @@
 /* Tabs: equal columns while there is room, never narrower than a label. The highlight glides under the labels. */
 .tabs { isolation: isolate; display: grid; grid-template-columns: repeat(4, minmax(max-content, 1fr)); gap: 2px; width: min(100%, 460px); overflow-x: auto; padding: 3px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-muted); scrollbar-width: none; }
 .tabs::-webkit-scrollbar { display: none; }
-.tab { position: relative; min-height: 30px; padding: 0 clamp(8px, 2.6cqi, 14px); border: 0; border-radius: 9px; background: transparent; color: var(--text-muted); font: inherit; font-size: 13px; font-weight: 500; white-space: nowrap; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: color var(--duration-fast) var(--ease-standard); }
+.tab { position: relative; min-height: 30px; padding: 0 clamp(8px, 2.6cqi, 14px); border: 0; border-radius: 9px; background: transparent; color: var(--text-muted); font: inherit; font-size: var(--text-sm); font-weight: 500; line-height: var(--leading-body); white-space: nowrap; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: color var(--duration-fast) var(--ease-standard); }
 .tab[aria-selected="true"] { color: var(--foreground); }
 @media (hover: hover) and (pointer: fine) { .tab:hover { color: var(--foreground); } }
 .highlight { position: absolute; inset: 0; z-index: -1; border: 1px solid var(--border); border-radius: inherit; background: var(--surface); box-shadow: var(--shadow-resting); }
 .tabLabel { position: relative; }
-@container (max-width: 380px) { .tab { padding: 0 6px; font-size: 12px; } }
+@container (max-width: 420px) { .tab { padding: 0 6px; font-size: var(--text-xs); } }
 
 .panel { display: flex; flex-direction: column; align-items: center; gap: var(--space-5); width: 100%; max-width: 480px; }
 
@@ -40,9 +40,9 @@
 .copy { display: flex; flex-direction: column; align-items: center; gap: var(--space-4); width: 100%; text-align: center; }
 .copyFrame { width: 100%; }
 .copyInner { display: grid; gap: 6px; padding-inline: var(--space-2); }
-.title { position: relative; margin: 0; font-size: var(--text-lg); font-weight: 500; line-height: 1.3; letter-spacing: -.02em; text-wrap: balance; }
+.title { position: relative; margin: 0; font-variant-numeric: tabular-nums; font-size: var(--text-lg); font-weight: 500; line-height: var(--leading-body); letter-spacing: var(--tracking-body); text-wrap: balance; }
 @container (min-width: 560px) { .title { font-size: var(--text-xl); } }
-.line { position: relative; max-width: 40ch; margin: 0 auto; color: var(--text-secondary); font-size: var(--text-sm); line-height: 1.5; text-wrap: pretty; }
+.line { position: relative; max-width: 40ch; margin: 0 auto; color: var(--text-secondary); font-size: var(--text-sm); line-height: var(--leading-body); text-wrap: pretty; }
 .swap { display: block; }
 
 .srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }

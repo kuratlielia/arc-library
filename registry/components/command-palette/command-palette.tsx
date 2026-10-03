@@ -4,20 +4,20 @@ import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "re
 import type { KeyboardEvent as ReactKeyboardEvent, ReactNode } from "react";
 import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } from "motion/react";
 import type { Transition, ValueAnimationTransition, Variants } from "motion/react";
-import { ArrowRight, Command as CommandIcon, CornerDownLeft, Search, X } from "lucide-react";
+import { Command as CommandIcon, Search, X } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
 import styles from "./command-palette.module.css";
 
 export interface CommandItem { id: string; label: string; description?: string; group?: string; keywords?: string[]; icon?: ReactNode; shortcut?: string; }
-export interface CommandPaletteProps { items: CommandItem[]; placeholder?: string; onSelect?: (item: CommandItem) => void; onClose?: () => void; label?: string; }
+export interface CommandPaletteProps { items: CommandItem[]; placeholder?: string; onSelect?: (item: CommandItem) => void; onClose?: () => void; label?: string; /** Focus the search field on mount, for a palette that opens on demand. */ autoFocus?: boolean; }
 
 const enter: Transition = { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] };
-const leave: Transition = { duration: .1, ease: [...motionTokens.ease.standard] };
+const leave: Transition = { duration: motionTokens.duration.instant, ease: [...motionTokens.ease.standard] };
 const GLIDE_ROWS = 6;
 /** Rows fade out while the rest glide into their place; when the list snaps they leave at once so nothing overlaps the new rows. */
 const rowExit: Variants = { exit: (glide: boolean) => ({ opacity: 0, transition: glide ? leave : { duration: 0 } }) };
 
-export function CommandPalette({ items, placeholder = "Search commands", onSelect, onClose, label = "Command palette" }: CommandPaletteProps) {
+export function CommandPalette({ items, placeholder = "Search commands", onSelect, onClose, label = "Command palette", autoFocus = false }: CommandPaletteProps) {
   const inputId = useId();
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
@@ -57,6 +57,10 @@ export function CommandPalette({ items, placeholder = "Search commands", onSelec
     ? -1
     : Math.min(activeIndex, Math.max(filtered.length - 1, 0));
   const activeId = filtered[safeActiveIndex]?.id;
+
+  useEffect(() => {
+    if (autoFocus) inputRef.current?.focus({ preventScroll: true });
+  }, [autoFocus]);
 
   useEffect(() => {
     const focusShortcut = (event: KeyboardEvent) => {
@@ -125,7 +129,7 @@ export function CommandPalette({ items, placeholder = "Search commands", onSelec
 
   return <motion.div className={styles.palette} initial={reduced ? false : { opacity: 0, y: 6, scale: .98 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={reduced ? { duration: 0 } : { default: motionTokens.spring.smooth, opacity: { duration: motionTokens.duration.fast, ease: [...motionTokens.ease.enter] } }}>
     <div className={styles.searchRow}>
-      <span className={styles.searchIcon}><Search width={18} height={18} strokeWidth={1.8} aria-hidden="true"/></span>
+      <span className={styles.searchIcon}><Search width={18} height={18} strokeWidth={1.75} aria-hidden="true"/></span>
       <label className={styles.visuallyHidden} htmlFor={inputId}>{label}</label>
       <input ref={inputRef} id={inputId} role="combobox" aria-autocomplete="list" aria-expanded="true" aria-controls={`${inputId}-results`} aria-activedescendant={activeId ? `${inputId}-${activeId}` : undefined} value={query} onChange={event => { setQuery(event.target.value); setActiveIndex(null); }} onKeyDown={handleKeyDown} placeholder={placeholder} autoComplete="off"/>
       <AnimatePresence mode="popLayout" initial={false}>
@@ -149,16 +153,13 @@ export function CommandPalette({ items, placeholder = "Search commands", onSelec
                   if (event.clientX === lastPointer.current.x && event.clientY === lastPointer.current.y) return;
                   lastPointer.current = { x: event.clientX, y: event.clientY };
                   if (index !== safeActiveIndex) { pointer.current = true; setActiveIndex(index); }
-                }} variants={rowExit} initial={reduced ? false : { opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit="exit" transition={reduced ? { duration: 0 } : { default: enter, layout: motionTokens.spring.smooth }}><span className={styles.itemIcon} aria-hidden="true">{item.icon ?? <CommandIcon width={17} height={17}/>}</span><span className={styles.resultCopy}><strong>{item.label}</strong>{item.description && <small>{item.description}</small>}</span>{item.shortcut && <kbd className={styles.shortcut}>{item.shortcut}</kbd>}<ArrowRight className={styles.resultArrow} width={16} height={16} aria-hidden="true"/></motion.button>)}</AnimatePresence>
+                }} variants={rowExit} initial={reduced ? false : { opacity: 0 }} animate={{ opacity: 1 }} exit="exit" transition={reduced ? { duration: 0 } : { default: enter, layout: motionTokens.spring.smooth }}><span className={styles.itemIcon} aria-hidden="true">{item.icon ?? <CommandIcon width={16} height={16}/>}</span><span className={styles.resultCopy}><strong>{item.label}</strong>{item.description && <small>{item.description}</small>}</span>{item.shortcut && <kbd className={styles.shortcut}>{item.shortcut}</kbd>}</motion.button>)}</AnimatePresence>
               </motion.div>)}
             </AnimatePresence>
           </motion.div> : <motion.div key="empty" className={styles.empty} initial={reduced ? false : { opacity: 0, y: 6, filter: `blur(${motionTokens.blur.subtle}px)` }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: -4, transition: leave }} transition={enter}><span><Search width={20} height={20} aria-hidden="true"/></span><strong>No matching actions</strong><small>Try a different word or clear the search.</small></motion.div>}
         </AnimatePresence>
       </motion.div>
     </motion.div>
-    <div className={styles.hint}><span><kbd>↑</kbd><kbd>↓</kbd> Navigate</span><span><kbd><CornerDownLeft width={11} height={11} aria-hidden="true"/></kbd> Select</span>
-      <AnimatePresence mode="popLayout" initial={false}>{query && <motion.span key="clear-hint" initial={reduced ? false : { opacity: 0, y: 3, filter: `blur(${motionTokens.blur.subtle}px)` }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, filter: `blur(${motionTokens.blur.subtle}px)`, transition: leave }} transition={enter}><kbd>esc</kbd> Clear</motion.span>}</AnimatePresence>
-    </div>
   </motion.div>;
 }
 

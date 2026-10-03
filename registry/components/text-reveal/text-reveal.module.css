@@ -10,4 +10,4 @@
 @keyframes rise { from { transform: translateY(.62em); } }
 @keyframes fade { from { opacity: 0; } }
 @keyframes focus { from { filter: blur(var(--reveal-blur, 4px)); } }
-@media (prefers-reduced-motion: reduce) { .clip { mask-image: none; } .word { animation: fade .15s linear backwards; } }
+@media (prefers-reduced-motion: reduce) { .clip { mask-image: none; } .word { animation: fade var(--duration-fast) var(--ease-standard) backwards; } }

@@ -13,6 +13,10 @@
 @media (hover: hover) and (pointer: fine) { .filter[aria-pressed="false"]:hover { color: var(--foreground); } }
 .filterHighlight { position: absolute; z-index: -1; inset: 0; border-radius: inherit; background: var(--foreground); }
 
+/* Page and pagination share one measured box, so a shorter filter or page closes its gap on a spring. It only clips while it moves. */
+.clip { min-width: 0; }
+.clip[data-clip] { overflow: hidden; }
+.stack { display: grid; gap: var(--space-8); }
 .page { display: grid; gap: var(--space-12); }
 .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-12) var(--space-6); }
 

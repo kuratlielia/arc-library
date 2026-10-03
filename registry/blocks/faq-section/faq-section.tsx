@@ -49,6 +49,7 @@ export interface FaqSectionProps {
 type Bezier = [number, number, number, number];
 const enter = [...motionTokens.ease.enter] as Bezier;
 const standard = [...motionTokens.ease.standard] as Bezier;
+const { duration } = motionTokens;
 
 export const faqExampleItems: FaqItem[] = [
   { question: "What is Arc?", answer: "Arc is a library of React components and blocks built on Motion and Radix. You copy the source into your project, so every line is yours to change.", category: "General" },
@@ -91,12 +92,12 @@ function snippet(answer: string, query: string) {
 }
 
 const panelVariants: Variants = {
-  open: { height: "auto", opacity: 1, transition: { height: motionTokens.spring.smooth, opacity: { duration: .2, ease: enter } } },
-  closed: { height: 0, opacity: 0, transition: { height: motionTokens.spring.smooth, opacity: { duration: .12, ease: standard } } },
+  open: { height: "auto", opacity: 1, transition: { height: motionTokens.spring.smooth, opacity: { duration: duration.fast, ease: enter } } },
+  closed: { height: 0, opacity: 0, transition: { height: motionTokens.spring.smooth, opacity: { duration: duration.instant, ease: standard } } },
 };
 const contentVariants: Variants = {
-  open: { y: 0, filter: "blur(0px)", transition: { y: motionTokens.spring.smooth, filter: { duration: .22, ease: enter } } },
-  closed: { y: -6, filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: .12, ease: standard } },
+  open: { y: 0, filter: "blur(0px)", transition: { y: motionTokens.spring.smooth, filter: { duration: duration.fast, ease: enter } } },
+  closed: { y: -6, filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: duration.instant, ease: standard } },
 };
 const reducedPanel: Variants = { open: { height: "auto", opacity: 1, transition: { duration: 0 } }, closed: { height: 0, opacity: 0, transition: { duration: 0 } } };
 
@@ -119,8 +120,8 @@ function Question({ item, open, onToggle, query = "", reduced, baseId, layout }:
     layout={layout && !reduced ? "position" : false}
     initial={layout ? (reduced ? { opacity: 0 } : { opacity: 0, height: 0 }) : false}
     animate={{ opacity: 1, height: "auto" }}
-    exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, height: 0, transition: { height: motionTokens.spring.smooth, opacity: { duration: .12 } } }}
-    transition={reduced ? { duration: 0 } : { height: motionTokens.spring.smooth, opacity: { duration: .2 }, layout: motionTokens.spring.smooth }}>
+    exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, height: 0, transition: { height: motionTokens.spring.smooth, opacity: { duration: duration.instant } } }}
+    transition={reduced ? { duration: 0 } : { height: motionTokens.spring.smooth, opacity: { duration: duration.fast }, layout: motionTokens.spring.smooth }}>
     <h3 className={styles.heading}>
       <button type="button" id={`${safe}-q`} className={styles.trigger} data-faq-trigger="" aria-expanded={open} aria-controls={`${safe}-a`} onClick={onToggle}>
         <span className={styles.question}><Highlight text={item.question} query={query} /></span>
@@ -128,7 +129,7 @@ function Question({ item, open, onToggle, query = "", reduced, baseId, layout }:
       </button>
     </h3>
     <AnimatePresence initial={false}>
-      {hint && <motion.p key="hint" className={styles.hint} initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={reduced ? { duration: 0 } : { height: motionTokens.spring.smooth, opacity: { duration: .16 } }}>
+      {hint && <motion.p key="hint" className={styles.hint} initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={reduced ? { duration: 0 } : { height: motionTokens.spring.smooth, opacity: { duration: duration.fast } }}>
         <Highlight text={hint} query={query} />
       </motion.p>}
     </AnimatePresence>
@@ -229,8 +230,8 @@ export const FaqSection = forwardRef<HTMLElement, FaqSectionProps>(function FaqS
           <motion.div key={activeCategory} className={styles.stageFace} custom={direction}
             initial={reduced ? { opacity: 0 } : { opacity: 0, y: direction * 16, filter: `blur(${motionTokens.blur.subtle}px)` }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: direction * -12, filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: .14, ease: standard } }}
-            transition={reduced ? { duration: 0 } : { y: motionTokens.spring.smooth, opacity: { duration: .22, ease: enter }, filter: { duration: .22, ease: enter } }}>
+            exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: direction * -12, filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: duration.instant, ease: standard } }}
+            transition={reduced ? { duration: 0 } : { y: motionTokens.spring.smooth, opacity: { duration: duration.fast, ease: enter }, filter: { duration: duration.fast, ease: enter } }}>
             {list(items.filter(item => (item.category ?? "General") === activeCategory))}
           </motion.div>
         </AnimatePresence>
@@ -246,8 +247,8 @@ export const FaqSection = forwardRef<HTMLElement, FaqSectionProps>(function FaqS
       {list(results, true)}
       <AnimatePresence initial={false}>
         {needle && results.length === 0 && <motion.div key="empty" className={styles.empty}
-          initial={reduced ? { opacity: 0 } : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: .1 } }}
-          transition={{ duration: reduced ? 0 : .26, ease: enter }}>
+          initial={reduced ? { opacity: 0 } : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: duration.instant } }}
+          transition={{ duration: reduced ? 0 : duration.standard, ease: enter }}>
           <p>No answers mention “{query.trim()}”.</p>
           <button type="button" className={styles.clear} onClick={() => setQuery("")}>Clear search</button>
         </motion.div>}

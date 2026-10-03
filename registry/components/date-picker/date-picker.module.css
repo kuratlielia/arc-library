@@ -18,13 +18,13 @@
 .trigger[aria-expanded="true"] .chevron { transform: rotate(180deg); }
 /* Grows out of the trigger's calendar icon and returns there on close. */
 .popover { position: absolute; z-index: 20; top: calc(100% + 8px); left: 0; width: min(320px, calc(100vw - 32px)); overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-panel); padding: 16px; background: var(--surface-raised); box-shadow: var(--shadow-floating); transform-origin: 22px -8px; will-change: transform, opacity; }
-/* On phone widths the calendar matches the field instead of running past the screen edge. */
-@media (max-width: 360px) { .popover { right: 0; width: auto; } }
+/* On phone widths the calendar matches the field instead of running past the screen edge, and a tighter inset keeps the month and its controls on one row. */
+@media (max-width: 360px) { .popover { right: 0; width: auto; padding: 12px; } }
 .footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 14px; border-top: 1px solid var(--border-subtle); padding-top: 11px; color: var(--text-muted); font-size: var(--text-xs); }
 /* Old and new status lines share one cell, pinned to the trailing edge so a shorter line never shifts. */
 .status { display: grid; min-width: 0; justify-items: end; }
 .status > span { grid-area: 1 / 1; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.footer button { border: 0; border-radius: 18px; padding: 4px 8px; background: transparent; color: var(--text-secondary); font: inherit; cursor: pointer; transition: background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard), transform var(--duration-spring) var(--ease-spring); }
+.footer button { border: 0; border-radius: var(--radius-control); padding: 4px 8px; background: transparent; color: var(--text-secondary); font: inherit; cursor: pointer; transition: background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard), transform var(--duration-spring) var(--ease-spring); }
 @media (hover: hover) and (pointer: fine) { .footer button:hover:not(:disabled) { background: var(--surface-muted); color: var(--foreground); } }
 .footer button:active:not(:disabled) { transform: scale(.97); transition-duration: var(--duration-fast), var(--duration-fast), 100ms; transition-timing-function: var(--ease-standard); }
 .footer button:disabled { cursor: not-allowed; opacity: .4; }

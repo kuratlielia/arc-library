@@ -9,7 +9,6 @@
   .themeSwitch:hover:not(:disabled) { border-color: var(--border-strong); }
   .iconOnly:hover:not(:disabled) { background: var(--surface-muted); box-shadow: none; }
 }
-.themeSwitch:focus-visible { outline-offset: 3px; }
 .iconWrap {
   position: relative;
   display: inline-grid;

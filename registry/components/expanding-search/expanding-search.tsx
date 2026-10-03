@@ -101,7 +101,7 @@ function Panel({ width, reduced, children }: { width: MotionValue<number>; reduc
   return <motion.div ref={panelRef} className={styles.panel} style={{ width, height: reduced ? "auto" : height }}
     initial={{ opacity: 0 }}
     animate={{ opacity: 1, transition: { duration: reduced ? .15 : motionTokens.duration.fast, ease: enter } }}
-    exit={{ opacity: 0, transition: { duration: reduced ? .1 : .12, ease: standard } }}>
+    exit={{ opacity: 0, transition: { duration: reduced ? .1 : motionTokens.duration.instant, ease: standard } }}>
     <div ref={bodyRef} className={styles.body}>{children}</div>
   </motion.div>;
 }
@@ -143,7 +143,7 @@ function Listbox({ id, label, groups, query, activeIndex, optionId, reduced, key
     } else {
       // Nothing was highlighted, or new results arrived: it fades in on its row, without travel.
       travel.jump(0);
-      if (reduced) fade.jump(1); else { fade.jump(0); animate(fade, 1, { duration: .12, ease: enter }); }
+      if (reduced) fade.jump(1); else { fade.jump(0); animate(fade, 1, { duration: motionTokens.duration.instant, ease: enter }); }
     }
     if (keyboard.current) row.scrollIntoView({ block: "nearest" });
   }, [activeId, layoutKey, reduced, travel, fade, keyboard]);

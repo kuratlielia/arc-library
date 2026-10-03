@@ -20,9 +20,9 @@ export const userStatuses: { value: UserStatus; label: string }[] = [
 ];
 
 const themes: { value: ThemePreference; label: string; icon: ReactNode }[] = [
-  { value: "light", label: "Light", icon: <Sun size={15} strokeWidth={1.75} aria-hidden="true" /> },
-  { value: "dark", label: "Dark", icon: <Moon size={15} strokeWidth={1.75} aria-hidden="true" /> },
-  { value: "system", label: "System", icon: <Monitor size={15} strokeWidth={1.75} aria-hidden="true" /> },
+  { value: "light", label: "Light", icon: <Sun size={16} strokeWidth={1.75} aria-hidden="true" /> },
+  { value: "dark", label: "Dark", icon: <Moon size={16} strokeWidth={1.75} aria-hidden="true" /> },
+  { value: "system", label: "System", icon: <Monitor size={16} strokeWidth={1.75} aria-hidden="true" /> },
 ];
 
 export interface UserMenuUser { name: string; email: string; plan?: string; avatarSrc?: string; avatarSrcSet?: string }
@@ -77,15 +77,15 @@ const exitEase = [0.4, 0, 1, 1] as [number, number, number, number];
 /** The panel grows out of the trigger on a critically damped spring; rows follow a beat later. Closing is a short fade. */
 const panelMotion: Variants = {
   closed: { opacity: 0, scale: .94 },
-  open: { opacity: 1, scale: 1, transition: { type: "spring", visualDuration: .3, bounce: 0, opacity: { duration: .14, ease: enter }, delayChildren: .03, staggerChildren: .016 } },
-  exit: { opacity: 0, scale: .97, transition: { duration: .12, ease: exitEase } },
+  open: { opacity: 1, scale: 1, transition: { type: "spring", visualDuration: .3, bounce: 0, opacity: { duration: motionTokens.duration.fast, ease: enter }, delayChildren: .03, staggerChildren: .016 } },
+  exit: { opacity: 0, scale: .97, transition: { duration: motionTokens.duration.instant, ease: exitEase } },
 };
 const sheetMotion: Variants = {
   closed: { y: "100%" },
   open: { y: 0, transition: { ...motionTokens.spring.smooth, visualDuration: .36, delayChildren: .06, staggerChildren: .02 } },
   exit: { y: "100%", transition: { duration: .22, ease: exitEase } },
 };
-const stillMotion: Variants = { closed: { opacity: 0 }, open: { opacity: 1, transition: { duration: .12 } }, exit: { opacity: 0, transition: { duration: .1 } } };
+const stillMotion: Variants = { closed: { opacity: 0 }, open: { opacity: 1, transition: { duration: motionTokens.duration.instant } }, exit: { opacity: 0, transition: { duration: motionTokens.duration.instant } } };
 const rowMotion: Variants = { closed: { opacity: 0, y: 3 }, open: { opacity: 1, y: 0, transition: { duration: .2, ease: enter } } };
 
 /** A presence mark that morphs between statuses: the color crossfades while a hole opens for away and a bar slides in for busy. */
@@ -363,7 +363,7 @@ export function UserMenu({ user, status: statusProp, defaultStatus = "available"
     <div ref={listRef} className={styles.list} onFocus={onListFocus} onPointerMove={onListPointerMove} onPointerLeave={onListPointerLeave}>
       <motion.span className={styles.highlight} data-tone={highlight?.tone} aria-hidden="true" initial={false}
         animate={highlight ? { y: highlight.top, height: highlight.height, opacity: 1 } : { opacity: 0 }}
-        transition={{ default: glide, opacity: { duration: reduced ? 0 : .1 } }} />
+        transition={{ default: glide, opacity: { duration: reduced ? 0 : motionTokens.duration.instant } }} />
       {items.length > 0 && <>
         <div className={styles.separator} role="separator" />
         {items.map(item => <motion.button key={item.label} type="button" role="menuitem" tabIndex={-1} className={styles.item} data-stop="item" data-label={item.label} variants={row}
@@ -412,7 +412,7 @@ export function UserMenu({ user, status: statusProp, defaultStatus = "available"
       aria-haspopup="menu" aria-expanded={open} aria-controls={open ? menuId : undefined} aria-label={`Account menu, ${user.name}${showStatus ? `, ${statusLabel(status)}` : ""}`}
       onClick={onTriggerClick} onKeyDown={onTriggerKeyDown}>
       <Face user={user} status={showStatus ? status : undefined} size="sm" />
-      {showName && <><span className={styles.triggerName}>{user.name}</span><ChevronDown className={styles.chevron} size={15} strokeWidth={1.75} aria-hidden="true" /></>}
+      {showName && <><span className={styles.triggerName}>{user.name}</span><ChevronDown className={styles.chevron} size={16} strokeWidth={1.75} aria-hidden="true" /></>}
     </button>
     {sheet ? createPortal(bottomSheet, document.body) : inline ? panel : hydrated ? createPortal(panel, document.body) : null}
   </span>;

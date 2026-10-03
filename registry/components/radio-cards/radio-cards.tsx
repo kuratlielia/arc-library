@@ -83,7 +83,7 @@ export const RadioCards = forwardRef<HTMLDivElement, RadioCardsProps>(function R
     const box = [node.offsetLeft, node.offsetTop, node.offsetWidth, node.offsetHeight];
     if (!spring || !placed.current || reduced) {
       x.jump(box[0]); y.jump(box[1]); w.jump(box[2]); h.jump(box[3]);
-      if (!placed.current && !reduced && spring) { o.jump(0); animate(o, 1, { duration: .18, ease: standard }); } else o.jump(1);
+      if (!placed.current && !reduced && spring) { o.jump(0); animate(o, 1, { duration: motionTokens.duration.fast, ease: standard }); } else o.jump(1);
       placed.current = true;
       return;
     }

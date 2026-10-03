@@ -4,7 +4,9 @@
 @container (max-width: 259px) { .heading, .navigation { grid-column: 1 / -1; } .navigation { justify-self: end; } }
 .heading { min-width: 0; margin: 0; font-family: var(--font-body); font-size: var(--text-base); font-weight: 500; line-height: var(--leading-body); letter-spacing: var(--tracking-body); }
 /* The global heading rule forces a tight line-height on h2, so the title row sets its own to center with the controls. */
-.title { display: flex; line-height: var(--leading-body); }
+.title { display: grid; line-height: var(--leading-body); }
+/* Old and new titles share one cell while they cross, so the heading never changes height or jumps. */
+.title > .titleRow { grid-area: 1 / 1; justify-self: start; }
 .titleRow { display: inline-block; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .srOnly { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .navigation { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 2px; margin-right: -6px; }
@@ -20,7 +22,7 @@
 .weekdays span { min-width: 0; overflow: hidden; }
 /* Months sit on one strip inside a clipped window. Every pane shares one grid cell and has six weeks, so the height never changes. */
 .monthViewport { position: relative; display: grid; overflow: hidden; contain: paint; }
-.monthBody { grid-area: 1 / 1; min-width: 0; will-change: transform; }
+.monthBody { position: relative; grid-area: 1 / 1; min-width: 0; will-change: transform; }
 .monthBody[inert] { pointer-events: none; }
 .grid { display: grid; row-gap: 4px; }
 .placeholderDay { aspect-ratio: 1; }
@@ -28,10 +30,11 @@
 /* The inner circle carries hover and press; the grid cell itself never moves, so the hit area stays put. */
 .day::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: transparent; transition: background-color var(--duration-fast) var(--ease-standard), scale var(--duration-spring) var(--ease-spring); }
 .dayNumber { position: relative; transition: opacity var(--duration-fast) var(--ease-standard) var(--number-delay, 0ms), scale var(--duration-spring) var(--ease-spring); }
-/* The selected disc is one shared element that glides to the new day. Press uses the separate scale property so it never fights the glide. */
-.highlight { position: absolute; inset: 0; border-radius: 50%; background: var(--accent); transition: background-color var(--duration-fast) var(--ease-standard), scale var(--duration-spring) var(--ease-spring); }
-@media (hover: hover) and (pointer: fine) { .day:hover:not(:disabled):not(.selected)::before { background: var(--surface-muted); } .day.selected:hover .highlight { background: var(--accent-strong); } }
-.day:active:not(:disabled)::before, .day:active:not(:disabled) .highlight, .day:active:not(:disabled) .dayNumber { scale: .94; transition-duration: var(--duration-fast), 100ms; transition-timing-function: var(--ease-standard); }
+/* The selected disc is one element per month, one cell in size, placed by week and weekday under the day buttons. It glides on a transform, so the strip sliding around it never bends its path. Press scales the inner fill so it never fights the glide. */
+.highlight { position: absolute; top: 0; left: 0; width: calc((100% - 24px) / 7); aspect-ratio: 1; pointer-events: none; will-change: transform; }
+.highlightFill { position: absolute; inset: 0; border-radius: 50%; background: var(--accent); transition: background-color var(--duration-fast) var(--ease-standard), scale var(--duration-spring) var(--ease-spring); }
+@media (hover: hover) and (pointer: fine) { .day:hover:not(:disabled):not(.selected)::before { background: var(--surface-muted); } .monthBody:has(.day.selected:hover) .highlightFill { background: var(--accent-strong); } }
+.day:active:not(:disabled)::before, .day:active:not(:disabled) .dayNumber, .monthBody:has(.day.selected:active:not(:disabled)) .highlightFill { scale: .94; transition-duration: var(--duration-fast), 100ms; transition-timing-function: var(--ease-standard); }
 /* Outside days dim their number, not the button, so a disc gliding onto one keeps its full strength. */
 .day.outside { color: var(--text-muted); }
 .day.outside:not(.selected) .dayNumber { opacity: .8; }
@@ -43,6 +46,6 @@
 .day:disabled .dayNumber { opacity: .42; }
 .day.outside:disabled .dayNumber { opacity: .3; }
 @media (prefers-reduced-motion: reduce) {
-  .navButton, .todayButton, .day, .day::before, .dayNumber, .highlight { transition: none; }
-  .navButton:active, .todayButton:active, .day:active::before, .day:active .highlight, .day:active .dayNumber { scale: none; }
+  .navButton, .todayButton, .day, .day::before, .dayNumber, .highlightFill { transition: none; }
+  .navButton:active, .todayButton:active, .day:active::before, .monthBody:has(.day.selected:active) .highlightFill, .day:active .dayNumber { scale: none; }
 }

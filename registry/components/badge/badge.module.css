@@ -18,7 +18,7 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .badge:hover { border-color: color-mix(in oklch, var(--badge-color, var(--foreground)) 32%, var(--border)); background: color-mix(in oklch, var(--badge-color, var(--foreground)) 10%, var(--surface)); }
+  .badge:hover { border-color: color-mix(in oklab, var(--badge-color, var(--foreground)) 32%, var(--border)); background: color-mix(in oklab, var(--badge-color, var(--foreground)) 10%, var(--surface)); }
 }
 .sm { min-height: 22px; padding: 0 8px; font-size: 11px; }
 .md { font-size: var(--text-xs); }
@@ -42,10 +42,10 @@
 }
 
 .neutral { --badge-color: var(--text-secondary); --badge-foreground: var(--text-secondary); --badge-background: var(--surface-muted); --badge-border: var(--border); }
-.success { --badge-color: var(--success); --badge-foreground: var(--success); --badge-background: color-mix(in oklch, var(--success) 10%, var(--surface)); --badge-border: color-mix(in oklch, var(--success) 25%, var(--border)); }
-.info { --badge-color: var(--accent); --badge-foreground: var(--accent-strong); --badge-background: var(--accent-subtle); --badge-border: color-mix(in oklch, var(--accent) 24%, var(--border)); }
-.warning { --badge-color: var(--warning); --badge-foreground: var(--warning); --badge-background: color-mix(in oklch, var(--warning) 11%, var(--surface)); --badge-border: color-mix(in oklch, var(--warning) 27%, var(--border)); }
-.danger { --badge-color: var(--danger); --badge-foreground: var(--danger); --badge-background: color-mix(in oklch, var(--danger) 10%, var(--surface)); --badge-border: color-mix(in oklch, var(--danger) 26%, var(--border)); }
+.success { --badge-color: var(--success); --badge-foreground: var(--success); --badge-background: color-mix(in oklab, var(--success) 10%, var(--surface)); --badge-border: color-mix(in oklab, var(--success) 25%, var(--border)); }
+.info { --badge-color: var(--accent); --badge-foreground: var(--accent-strong); --badge-background: var(--accent-subtle); --badge-border: color-mix(in oklab, var(--accent) 24%, var(--border)); }
+.warning { --badge-color: var(--warning); --badge-foreground: var(--warning); --badge-background: color-mix(in oklab, var(--warning) 11%, var(--surface)); --badge-border: color-mix(in oklab, var(--warning) 27%, var(--border)); }
+.danger { --badge-color: var(--danger); --badge-foreground: var(--danger); --badge-background: color-mix(in oklab, var(--danger) 10%, var(--surface)); --badge-border: color-mix(in oklab, var(--danger) 26%, var(--border)); }
 
 @media (prefers-reduced-motion: reduce) {
   .badge { transition-duration: var(--duration-instant); }

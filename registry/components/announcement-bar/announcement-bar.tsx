@@ -74,10 +74,10 @@ const RISE = physical(.46, .1), HEIGHT = physical(.42, 0), COLLAPSE = physical(.
 /** Next rises from below and leaves upward; previous runs the other way. */
 const faceVariants: Variants = {
   hidden: (direction: number) => ({ opacity: 0, y: `${direction * 70}%`, filter: `blur(${motionTokens.blur.soft}px)` }),
-  shown: { opacity: 1, y: "0%", filter: "blur(0px)", transition: { y: RISE, opacity: { duration: .24, ease: enter }, filter: { duration: .28, ease: enter } } },
-  gone: (direction: number) => ({ opacity: 0, y: `${direction * -60}%`, filter: `blur(${motionTokens.blur.soft}px)`, transition: { y: RISE, opacity: { duration: .16, ease: standard }, filter: { duration: .16, ease: standard } } }),
+  shown: { opacity: 1, y: "0%", filter: "blur(0px)", transition: { y: RISE, opacity: { duration: motionTokens.duration.standard, ease: enter }, filter: { duration: motionTokens.duration.standard, ease: enter } } },
+  gone: (direction: number) => ({ opacity: 0, y: `${direction * -60}%`, filter: `blur(${motionTokens.blur.soft}px)`, transition: { y: RISE, opacity: { duration: motionTokens.duration.fast, ease: standard }, filter: { duration: motionTokens.duration.fast, ease: standard } } }),
 };
-const fadeVariants: Variants = { hidden: { opacity: 0 }, shown: { opacity: 1, transition: { duration: .2 } }, gone: { opacity: 0, transition: { duration: .12 } } };
+const fadeVariants: Variants = { hidden: { opacity: 0 }, shown: { opacity: 1, transition: { duration: motionTokens.duration.standard, ease: standard } }, gone: { opacity: 0, transition: { duration: motionTokens.duration.instant, ease: standard } } };
 
 function parts(ms: number) {
   const total = Math.max(0, Math.floor(ms / 1000));
@@ -95,7 +95,7 @@ function Digit({ char, reduced }: { char: string; reduced: boolean }) {
     <AnimatePresence initial={false}>
       <motion.span key={char} className={styles.digitFace}
         initial={reduced ? { opacity: 0 } : { y: "-70%", opacity: 0 }} animate={{ y: "0%", opacity: 1 }} exit={reduced ? { opacity: 0 } : { y: "70%", opacity: 0 }}
-        transition={reduced ? { duration: .12 } : { y: physical(.32, .08), opacity: { duration: .16 } }}>{char}</motion.span>
+        transition={reduced ? { duration: motionTokens.duration.instant } : { y: physical(.32, .08), opacity: { duration: motionTokens.duration.fast, ease: standard } }}>{char}</motion.span>
     </AnimatePresence>
   </span>;
 }
@@ -249,8 +249,8 @@ export const AnnouncementBar = forwardRef<HTMLElement, AnnouncementBarProps>(fun
     {open ? <motion.section key="bar" ref={ref} className={[styles.collapse, className].filter(Boolean).join(" ")} aria-label={label}
       aria-roledescription={total > 1 ? "carousel" : undefined}
       initial={reduced ? { opacity: 0 } : { height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
-      exit={reduced ? { opacity: 0, transition: { duration: .16 } } : { height: 0, opacity: 0, transition: { height: COLLAPSE, opacity: { duration: .2, ease: standard } } }}
-      transition={reduced ? { duration: .16 } : { height: COLLAPSE, opacity: { duration: .24, ease: enter } }}
+      exit={reduced ? { opacity: 0, transition: { duration: motionTokens.duration.fast } } : { height: 0, opacity: 0, transition: { height: COLLAPSE, opacity: { duration: motionTokens.duration.exit, ease: standard } } }}
+      transition={reduced ? { duration: motionTokens.duration.fast } : { height: COLLAPSE, opacity: { duration: motionTokens.duration.standard, ease: enter } }}
       onPointerEnter={event => { if (event.pointerType === "mouse") setHovered(true); }} onPointerLeave={() => setHovered(false)}
       onFocus={() => setFocused(true)} onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setFocused(false); }}>
       <div className={styles.bar} data-tone={tone} style={{ "--controls": controlCount } as CSSProperties}>

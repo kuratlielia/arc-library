@@ -1,6 +1,6 @@
 .root { display: flex; width: 100%; min-width: 0; align-items: flex-start; gap: var(--space-4); }
 /* A calm, finite pulse: each block dims a beat after the one above it, then rests after about 20 seconds. */
-.avatar, .line { display: block; flex: 0 0 auto; border-radius: var(--radius-control); background: color-mix(in oklch, var(--border-strong) 38%, var(--surface)); animation: skeleton-pulse 1.8s var(--ease-in-out) calc(var(--index, 0) * 90ms) 11 both; }
+.avatar, .line { display: block; flex: 0 0 auto; border-radius: var(--radius-control); background: color-mix(in oklab, var(--border-strong) 38%, var(--surface)); animation: skeleton-pulse 1.8s var(--ease-in-out) calc(var(--index, 0) * 90ms) 11 both; }
 .avatar { width: var(--control-height-md); height: var(--control-height-md); border-radius: var(--radius-pill); }
 .lines { display: grid; flex: 1; gap: var(--space-3); padding-top: var(--space-1); }
 .line { width: 100%; height: var(--space-3); }

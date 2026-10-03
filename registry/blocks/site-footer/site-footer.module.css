@@ -40,7 +40,7 @@
 .inline { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-4); }
 .copyright { color: var(--text-muted); font-size: var(--text-sm); }
 .status { display: inline-flex; align-items: center; gap: var(--space-2); border: 0; padding: 2px 0; background: none; color: var(--text-secondary); font: inherit; font-size: var(--text-sm); text-decoration: none; cursor: pointer; }
-.statusDot { --tone: var(--success); width: 7px; height: 7px; border-radius: 50%; background: var(--tone); box-shadow: 0 0 0 3px color-mix(in oklch, var(--tone) 18%, transparent); }
+.statusDot { --tone: var(--success); width: 7px; height: 7px; border-radius: 50%; background: var(--tone); box-shadow: 0 0 0 3px color-mix(in oklab, var(--tone) 18%, transparent); }
 .status[data-tone="warning"] .statusDot { --tone: var(--warning); }
 .status[data-tone="danger"] .statusDot { --tone: var(--danger); }
 @media (hover: hover) and (pointer: fine) { .status:hover { color: var(--foreground); } }
@@ -66,7 +66,8 @@
 
 .preview { display: grid; width: 100%; justify-items: center; gap: var(--space-4); }
 .frame { width: 100%; overflow: hidden; border: 1px solid var(--border); border-radius: 20px; background: var(--background); }
-.frame > .footer { border-top: 0; }
+.frameBody { overflow: hidden; }
+.frame .footer { border-top: 0; }
 .previewNote { min-height: 20px; margin: 0; color: var(--text-muted); font-size: var(--text-xs); }
 
 @media (prefers-reduced-motion: reduce) {

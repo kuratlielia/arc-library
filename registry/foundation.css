@@ -35,7 +35,7 @@
   --control-thumb: oklch(100% 0 0);
   --control-thumb-on: oklch(100% 0 0);
   --control-thumb-shadow: 0 0 0 .5px oklch(0% 0 0 / .07), 0 1px 2px oklch(0% 0 0 / .14), 0 2px 6px oklch(0% 0 0 / .06);
-  --control-on-subtle: color-mix(in oklch, var(--control-on) 10%, transparent);
+  --control-on-subtle: color-mix(in oklab, var(--control-on) 10%, transparent);
   /* Slider fills. Same as --control-on except neutral dark, where a mid grey keeps the white thumb distinct. */
   --control-fill: var(--control-on);
   /* Product decision: no focus rings anywhere. Kept as a token so existing rules resolve to nothing. */

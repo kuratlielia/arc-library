@@ -31,10 +31,13 @@ export const Switch = forwardRef<ElementRef<typeof SwitchPrimitive.Root>, Switch
   // A brief stretch along the travel, so the thumb reads as moving mass rather than a sliding dot.
   const scaleX = useMotionValue(1);
   const shown = useRef(on);
+  // A pointer or Space press already stretched the thumb, so its release should not add a second stretch on top.
+  const releasedAt = useRef(-Infinity);
   useEffect(() => {
     if (shown.current === on) return;
     shown.current = on;
-    if (reduceMotion) return;
+    const fromPress = performance.now() - releasedAt.current < 250;
+    if (reduceMotion || fromPress) return;
     const controls = animate(scaleX, [1, 1.16, 1], { duration: 0.34, times: [0, 0.4, 1], ease: ["easeOut", "easeInOut"] });
     return () => controls.stop();
   }, [on, reduceMotion, scaleX]);
@@ -48,11 +51,11 @@ export const Switch = forwardRef<ElementRef<typeof SwitchPrimitive.Root>, Switch
       checked={on}
       onCheckedChange={next => { if (checked === undefined) setInternal(next); onCheckedChange?.(next); }}
       onPointerDown={event => { onPointerDown?.(event); if (event.button === 0) setPressed(true); }}
-      onPointerUp={event => { onPointerUp?.(event); setPressed(false); }}
+      onPointerUp={event => { onPointerUp?.(event); if (pressed && !props.disabled) releasedAt.current = performance.now(); setPressed(false); }}
       onPointerLeave={event => { onPointerLeave?.(event); setPressed(false); }}
       onPointerCancel={event => { onPointerCancel?.(event); setPressed(false); }}
       onKeyDown={event => { onKeyDown?.(event); if (event.key === " ") setPressed(true); }}
-      onKeyUp={event => { onKeyUp?.(event); setPressed(false); }}
+      onKeyUp={event => { onKeyUp?.(event); if (pressed && !props.disabled) releasedAt.current = performance.now(); setPressed(false); }}
       onBlur={event => { onBlur?.(event); setPressed(false); }}
       className={classes}
       aria-label={props["aria-label"] ?? label}

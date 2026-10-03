@@ -165,7 +165,7 @@ export function CodeBlock({ code, filename, language = "tsx", maxLines }: CodeBl
         {/* Both labels reserve the cell, so the chevron never moves when the words change. */}
         <span className={styles.swap} aria-hidden="true">{expandLabels.map(text => <span key={text} className={styles.reserve}>{text}</span>)}<span className={styles.swapStack}><SwapText value={expandLabels[expanded ? 1 : 0]} reduced={reduced} /></span></span>
         <span className={styles.srOnly}>{expandLabels[expanded ? 1 : 0]}</span>
-        <motion.span className={styles.chevron} aria-hidden="true" initial={false} animate={{ rotate: expanded ? 180 : 0 }} transition={reduced ? { duration: 0 } : motionTokens.spring.snappy}><ChevronDown size={16} strokeWidth={1.8} /></motion.span>
+        <motion.span className={styles.chevron} aria-hidden="true" initial={false} animate={{ rotate: expanded ? 180 : 0 }} transition={reduced ? { duration: 0 } : motionTokens.spring.snappy}><ChevronDown size={16} strokeWidth={1.75} /></motion.span>
       </button>}
     </section>
   );

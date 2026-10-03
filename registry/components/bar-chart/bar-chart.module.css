@@ -24,11 +24,11 @@
 .cursor { stroke: var(--border-strong); stroke-width: 1; shape-rendering: crispEdges; }
 .mean { stroke: var(--text-secondary); stroke-width: 1; stroke-dasharray: 3 3; shape-rendering: crispEdges; }
 /* The series is drawn in a soft step of the accent; the scrubbed bar takes the full accent while its neighbours step back. */
-.bar { fill: color-mix(in oklch, var(--accent) 62%, var(--surface)); transition: fill var(--duration-fast) var(--ease-standard); }
-.chart[data-scrubbing] .bar { fill: color-mix(in oklch, var(--accent) 24%, var(--surface)); }
+.bar { fill: color-mix(in oklab, var(--accent) 62%, var(--surface)); transition: fill var(--duration-fast) var(--ease-standard); }
+.chart[data-scrubbing] .bar { fill: color-mix(in oklab, var(--accent) 24%, var(--surface)); }
 /* On a dark surface a lighter mix keeps the hue clear instead of turning muddy. */
-:global([data-theme="dark"]) .bar { fill: color-mix(in oklch, var(--accent) 76%, var(--surface)); }
-:global([data-theme="dark"]) .chart[data-scrubbing] .bar { fill: color-mix(in oklch, var(--accent) 34%, var(--surface)); }
+:global([data-theme="dark"]) .bar { fill: color-mix(in oklab, var(--accent) 76%, var(--surface)); }
+:global([data-theme="dark"]) .chart[data-scrubbing] .bar { fill: color-mix(in oklab, var(--accent) 34%, var(--surface)); }
 :global([data-theme="dark"]) .chart .bar[data-active] { fill: var(--accent); }
 .chart .bar[data-active] { fill: var(--accent); }
 
@@ -42,7 +42,6 @@
 
 /* The scrubber covers the plot and its axes. Horizontal drags scrub, vertical swipes still scroll the page. */
 .scrubber { position: absolute; inset: 0; border-radius: calc(var(--radius-control) / 2); outline: none; touch-action: pan-y; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
-.scrubber:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 6px; }
 
 .srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 @media (prefers-reduced-motion: reduce) { .bar { transition: none; } }
