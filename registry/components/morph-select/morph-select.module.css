@@ -1,0 +1,86 @@
+/* The root lays out the label and the anchor. The anchor holds the closed trigger's place; the shape floats over it and grows past it when open. */
+.root { --ms-h: var(--control-height-md); --ms-trigger-w: 0px; position: relative; display: inline-grid; justify-items: start; gap: var(--space-2); min-width: 0; color: var(--foreground); font-family: var(--font-body); font-size: var(--text-sm); letter-spacing: var(--tracking-body); line-height: var(--leading-body); }
+.root[data-align="end"] { justify-items: end; }
+.root[data-open] { z-index: 30; }
+.label { color: var(--text-secondary); font-size: var(--text-sm); font-weight: 500; }
+
+.anchor { position: relative; height: var(--ms-h); max-width: 100%; }
+
+/* One material for both states. The border is an overlay so it never changes a measurement. */
+.shape { position: absolute; top: 0; left: 0; overflow: clip; background: var(--surface); box-shadow: var(--shadow-resting); transition: box-shadow var(--duration-considered) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard); }
+.shape::after { content: ""; position: absolute; inset: 0; z-index: 2; border: 1px solid var(--border); border-radius: inherit; pointer-events: none; transition: border-color var(--duration-fast) var(--ease-standard); }
+.root[data-align="end"] .shape { right: 0; left: auto; }
+.root[data-open] .shape { background: var(--surface-raised); box-shadow: var(--shadow-floating); }
+.root[data-disabled] .shape { opacity: .55; }
+@media (hover: hover) and (pointer: fine) {
+  .root:not([data-open], [data-disabled]) .shape:hover { background: var(--surface-muted); }
+  .root:not([data-open], [data-disabled]) .shape:hover::after { border-color: var(--border-strong); }
+}
+
+/* The lid is the trigger row. It stays at the top of the surface in both states and sits above the list, so a lifted label passes over it. */
+.lid { position: absolute; z-index: 1; top: 0; right: 0; left: 0; height: var(--ms-h); }
+
+.trigger { box-sizing: border-box; display: flex; height: var(--ms-h); align-items: center; gap: var(--space-2); padding: 0 36px 0 14px; font-size: var(--text-sm); font-weight: 500; white-space: nowrap; }
+.lid .trigger { position: absolute; inset: 0; width: 100%; margin: 0; border: 0; background: transparent; color: inherit; cursor: pointer; font-family: inherit; letter-spacing: inherit; text-align: left; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+.lid .trigger:disabled { cursor: not-allowed; }
+/* An invisible copy that says how wide the closed trigger wants to be. It sits in flow until the first measurement lands, so the server render already has the right size. */
+.measure { position: static; visibility: hidden; pointer-events: none; width: max-content; max-width: min(20rem, calc(100vw - 2rem)); }
+.root[data-ready] .measure { position: absolute; top: 0; left: 0; }
+.root[data-align="end"][data-ready] .measure { right: 0; left: auto; }
+
+.slot { position: relative; display: block; min-width: 0; height: 100%; flex: 1; }
+.slot[data-hidden] { opacity: 0; transition: opacity var(--duration-instant) var(--ease-standard); }
+.layer { position: absolute; inset: 0; display: flex; align-items: center; gap: var(--space-2); min-width: 0; }
+.valueText { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.placeholder { color: var(--text-muted); font-weight: 400; }
+.icon { display: grid; width: 20px; height: 20px; flex: none; place-items: center; color: var(--text-secondary); }
+.icon > svg { width: 16px; height: 16px; }
+.icon > img { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; }
+
+.chevron { position: absolute; top: 50%; right: 12px; display: grid; width: 16px; height: 16px; margin-top: -8px; place-items: center; color: var(--text-muted); pointer-events: none; }
+
+/* Search takes the lid's place when the list is long. */
+.searchRow { position: absolute; inset: 0; display: flex; align-items: center; gap: var(--space-2); padding: 0 2px 0 14px; }
+.searchRow[inert] { pointer-events: none; }
+.searchIcon { flex: none; color: var(--text-muted); }
+.input { min-width: 0; height: 100%; flex: 1; padding: 0; border: 0; background: transparent; color: var(--foreground); font: inherit; font-size: var(--text-sm); letter-spacing: var(--tracking-body); outline: none; }
+.input::placeholder { color: var(--text-muted); }
+.clear { display: grid; width: 24px; height: 24px; flex: none; place-items: center; padding: 0; border: 0; border-radius: var(--radius-pill); background: color-mix(in oklab, var(--foreground) 8%, transparent); color: var(--text-secondary); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+/* Sits exactly over the shared chevron, so the chevron closes the list in both lid states. */
+.closeHit { width: 36px; height: 36px; flex: none; padding: 0; border: 0; border-radius: var(--radius-pill); background: transparent; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: background-color var(--duration-fast) var(--ease-standard); }
+@media (hover: hover) and (pointer: fine) {
+  .closeHit:hover, .clear:hover { background: color-mix(in oklab, var(--foreground) 8%, transparent); }
+  .clear:hover { color: var(--foreground); }
+}
+
+/* The list hangs under the lid at its own width, so it measures the same whatever size the surface is mid spring. */
+.listFace { position: absolute; top: var(--ms-h); left: 0; box-sizing: border-box; width: max(var(--ms-trigger-w), min(var(--ms-panel-w), calc(100vw - 2rem))); padding: 0 6px 6px; }
+.root[data-align="end"] .listFace { right: 0; left: auto; }
+.listFace::before { content: ""; position: absolute; top: 0; right: 14px; left: 14px; height: 1px; background: var(--border-subtle); }
+.listFace[inert] { pointer-events: none; }
+.scroll { max-height: var(--ms-list-max); overflow-y: auto; overscroll-behavior: contain; padding-top: 6px; scrollbar-width: thin; }
+.options { position: relative; display: grid; gap: 2px; }
+.highlight { position: absolute; top: 0; right: 0; left: 0; border-radius: 16px; background: color-mix(in oklab, var(--foreground) 6.5%, transparent); pointer-events: none; }
+
+.group { display: grid; gap: 2px; }
+.group + .group { margin-top: 4px; }
+.groupLabel { padding: 8px 10px 4px; color: var(--text-muted); font-size: var(--text-xs); font-weight: 400; }
+
+.option { position: relative; display: flex; min-height: 36px; box-sizing: border-box; align-items: center; gap: var(--space-2); padding: 0 10px 0 8px; border-radius: 16px; color: var(--text-secondary); cursor: pointer; user-select: none; -webkit-user-select: none; transition: color var(--duration-fast) var(--ease-standard); }
+.option[data-active], .option[aria-selected="true"] { color: var(--foreground); }
+.option[aria-disabled="true"] { color: var(--text-muted); cursor: not-allowed; opacity: .6; }
+/* Lid padding minus list inset, so a lifted label starts exactly level with where it lands. */
+.optionValue { display: flex; min-width: 0; flex: 1; align-items: center; gap: var(--space-2); font-weight: 500; }
+.meta { flex: none; color: var(--text-muted); font-size: var(--text-xs); font-variant-numeric: tabular-nums; }
+.check { display: grid; width: 16px; height: 16px; flex: none; place-items: center; color: var(--foreground); opacity: 0; transform: scale(.6); transition: opacity var(--duration-fast) var(--ease-standard), transform var(--duration-spring) var(--ease-spring); }
+.check[data-on] { opacity: 1; transform: none; }
+.empty { margin: 0; padding: 12px 10px 14px; color: var(--text-muted); font-size: var(--text-sm); }
+
+.srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) {
+  .shape, .check, .slot { transition-duration: 0ms; }
+}
+@media (prefers-contrast: more) {
+  .shape::after { border-color: var(--border-strong); }
+}

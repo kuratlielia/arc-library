@@ -3403,6 +3403,45 @@
       }
     },
     {
+      "name": "morph-select",
+      "type": "registry:ui",
+      "title": "Morph select",
+      "description": "A select whose trigger grows into the list, with a gliding highlight and type-ahead.",
+      "categories": [
+        "inputs"
+      ],
+      "dependencies": [
+        "lucide-react",
+        "motion"
+      ],
+      "registryDependencies": [
+        "https://uiarc.dev/r/arc-foundation.json"
+      ],
+      "files": [
+        {
+          "path": "registry/components/morph-select/morph-select.tsx",
+          "type": "registry:component",
+          "target": "@components/arc/morph-select/morph-select.tsx"
+        },
+        {
+          "path": "registry/components/morph-select/morph-select.module.css",
+          "type": "registry:component",
+          "target": "@components/arc/morph-select/morph-select.module.css"
+        }
+      ],
+      "docs": "Docs and live preview: https://uiarc.dev/components/morph-select",
+      "meta": {
+        "tier": "free",
+        "kind": "component",
+        "docs": "https://uiarc.dev/components/morph-select",
+        "markdown": "https://uiarc.dev/components/morph-select/markdown",
+        "tags": [
+          "inputs",
+          "new"
+        ]
+      }
+    },
+    {
       "name": "line-chart",
       "type": "registry:ui",
       "title": "Line chart",

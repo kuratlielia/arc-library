@@ -2,6 +2,12 @@
 
 New free components and blocks ship regularly. Every entry links to its live preview on uiarc.dev.
 
+## 2026-10-05
+
+### Added
+
+- [Morph select](https://uiarc.dev/components/morph-select) (component): A select whose trigger grows into the list, with a gliding highlight and type-ahead.
+
 ## 2026-10-03
 
 ### Added
