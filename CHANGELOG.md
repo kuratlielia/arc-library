@@ -2,6 +2,12 @@
 
 New free components and blocks ship regularly. Every entry links to its live preview on uiarc.dev.
 
+## 2026-10-06
+
+### Added
+
+- [Countdown](https://uiarc.dev/components/countdown) (component): A launch countdown with rolling digits that morphs into a live state at zero.
+
 ## 2026-10-05
 
 ### Added

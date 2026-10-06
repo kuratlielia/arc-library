@@ -3752,6 +3752,44 @@
       }
     },
     {
+      "name": "countdown",
+      "type": "registry:ui",
+      "title": "Countdown",
+      "description": "A launch countdown with rolling digits that morphs into a live state at zero.",
+      "categories": [
+        "feedback"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "registryDependencies": [
+        "https://uiarc.dev/r/arc-foundation.json"
+      ],
+      "files": [
+        {
+          "path": "registry/components/countdown/countdown.tsx",
+          "type": "registry:component",
+          "target": "@components/arc/countdown/countdown.tsx"
+        },
+        {
+          "path": "registry/components/countdown/countdown.module.css",
+          "type": "registry:component",
+          "target": "@components/arc/countdown/countdown.module.css"
+        }
+      ],
+      "docs": "Docs and live preview: https://uiarc.dev/components/countdown",
+      "meta": {
+        "tier": "free",
+        "kind": "component",
+        "docs": "https://uiarc.dev/components/countdown",
+        "markdown": "https://uiarc.dev/components/countdown/markdown",
+        "tags": [
+          "feedback",
+          "new"
+        ]
+      }
+    },
+    {
       "name": "announcement-bar",
       "type": "registry:ui",
       "title": "Announcement bar",
