@@ -109,16 +109,16 @@ const focusVisible = (element: Element) => { try { return element.matches(":focu
  * The list is the hover target and is sized to cover the gaps, so moving between open toasts never collapses the stack.
  */
 function layoutStack(toasts: ToastRecord[], heights: Record<string, number>, expanded: boolean, visibleToasts: number) {
-  const front = toasts.length ? heights[toasts[0].id] ?? 0 : 0;
-  const tops = toasts.reduce<number[]>((sum, item, index) => [...sum, sum[index] + (index < visibleToasts ? (heights[item.id] ?? 0) + GAP : 0)], [0]);
+  const front = toasts.length ? heights[toasts[0]!.id] ?? 0 : 0;
+  const tops = toasts.reduce<number[]>((sum, item, index) => [...sum, sum[index]! + (index < visibleToasts ? (heights[item.id] ?? 0) + GAP : 0)], [0]);
   const targets = toasts.map((item, index): Target => {
     const visible = index < visibleToasts;
     const depth = Math.min(index, visibleToasts);
     return expanded
-      ? { y: -tops[index], scale: 1, height: heights[item.id] ?? 0, opacity: visible ? 1 : 0, content: 1 }
+      ? { y: -tops[index]!, scale: 1, height: heights[item.id] ?? 0, opacity: visible ? 1 : 0, content: 1 }
       : { y: -PEEK * depth, scale: 1 - STEP * depth, height: index === 0 ? heights[item.id] ?? 0 : front, opacity: visible ? 1 : 0, content: index === 0 ? 1 : 0 };
   });
-  const listHeight = !toasts.length ? 0 : expanded ? tops[toasts.length] - GAP : front + PEEK * (Math.min(toasts.length, visibleToasts) - 1);
+  const listHeight = !toasts.length ? 0 : expanded ? tops[toasts.length]! - GAP : front + PEEK * (Math.min(toasts.length, visibleToasts) - 1);
   return { targets, listHeight };
 }
 
@@ -315,7 +315,7 @@ function ToastItem({ toast, target, expanded, front, hidden, paused, reduce, sto
     // Right follows the finger 1:1; left is the wrong way, so it resists like an overscroll.
     x.set(raw >= 0 ? raw : -rubberBand(-raw, event.currentTarget.offsetWidth));
     current.samples.push({ t: event.timeStamp, x: raw });
-    while (current.samples.length > 2 && event.timeStamp - current.samples[0].t > 100) current.samples.shift();
+    while (current.samples.length > 2 && event.timeStamp - current.samples[0]!.t > 100) current.samples.shift();
   }
 
   function onPointerEnd(event: ReactPointerEvent<HTMLDivElement>, cancelled: boolean) {
@@ -409,7 +409,7 @@ export function ToastStack({ label = "Notifications", position = "bottom-right",
   const paused = expanded || dragging || pageHidden;
 
   const measure = useCallback((id: string, height: number) => setHeights(current => current[id] === height ? current : { ...current, [id]: height }), []);
-  const prune = useCallback(() => setHeights(current => Object.fromEntries(store.getSnapshot().filter(item => item.id in current).map(item => [item.id, current[item.id]]))), [store]);
+  const prune = useCallback(() => setHeights(current => Object.fromEntries(store.getSnapshot().filter(item => item.id in current).map(item => [item.id, current[item.id]!]))), [store]);
   const toggleTap = useCallback(() => setTapped(open => !open), []);
 
   /** Keyboard users land on the next toast; with none left they return to where they were before entering the stack. */
@@ -462,7 +462,7 @@ export function ToastStack({ label = "Notifications", position = "bottom-right",
   return <section ref={regionRef} className={[styles.viewport, styles[position], contained && styles.contained, className].filter(Boolean).join(" ")} aria-label={hotkey ? `${label} (Alt+T)` : label} aria-live="polite" aria-relevant="additions text" aria-atomic="false" onFocus={onFocus} onBlur={onBlur}>
     <ol ref={listRef} className={styles.list} style={{ height: listHeight }} data-expanded={expanded} onPointerEnter={event => { if (event.pointerType === "mouse") setHovered(true); }} onPointerMove={event => { if (event.pointerType === "mouse" && !hovered) setHovered(true); }} onPointerLeave={event => { if (event.pointerType === "mouse") setHovered(false); }}>
       <AnimatePresence onExitComplete={prune}>
-        {toasts.map((item, index) => <ToastItem key={item.id} toast={item} target={targets[index]} expanded={expanded} front={index === 0} hidden={index >= visibleToasts} paused={paused} reduce={reduce} store={store} onMeasure={measure} onDragChange={setDragging} onTap={toggleTap} onHandOff={handOff} />)}
+        {toasts.map((item, index) => <ToastItem key={item.id} toast={item} target={targets[index]!} expanded={expanded} front={index === 0} hidden={index >= visibleToasts} paused={paused} reduce={reduce} store={store} onMeasure={measure} onDragChange={setDragging} onTap={toggleTap} onHandOff={handOff} />)}
       </AnimatePresence>
     </ol>
   </section>;

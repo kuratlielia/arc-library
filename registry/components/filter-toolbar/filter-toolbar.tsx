@@ -57,6 +57,7 @@ function MorphText({ text }: { text: string }) {
     let last: string | null = null;
     // The observer reports the layout size, so an entering chip's scale never shrinks the measurement.
     const observer = new ResizeObserver(([entry]) => {
+      if (!entry) return;
       const next = Math.ceil(entry.borderBoxSize?.[0]?.inlineSize ?? node.offsetWidth), changed = last !== null && last !== node.textContent;
       last = node.textContent;
       // Only a new value morphs; the first measure and font swaps settle at once.

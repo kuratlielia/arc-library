@@ -18,7 +18,6 @@
 /* While editing, a single line keeps a little extra room, so the next character never has to wait for the box. */
 .root[data-editing]:not([data-multiline]) .display { min-width: 5em; padding-inline-end: calc(var(--pad-x) + 16px); }
 .display[aria-disabled="true"] { cursor: progress; }
-.display:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .layer { position: relative; display: block; transition: opacity var(--duration-standard) var(--ease-standard); }
 .layer[data-empty] { color: var(--text-muted); }
 /* An optimistic save shows the new text at once, a little quieter until the save lands; then it settles to full strength. */
@@ -56,7 +55,6 @@ textarea.control { white-space: pre-wrap; overflow-wrap: break-word; }
 .cancel { border-color: var(--border); background: var(--surface); color: var(--text-secondary); }
 .save:active, .cancel:active { transform: scale(.96); }
 @media (hover: hover) and (pointer: fine) { .save:hover { background: color-mix(in oklab, var(--foreground) 86%, var(--background)); } .cancel:hover { border-color: var(--border-strong); background: var(--surface-muted); color: var(--foreground); } }
-.save:focus-visible, .cancel:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .pencil { margin-left: 2px; color: var(--text-muted); cursor: pointer; }
 .spinner { display: block; width: 14px; height: 14px; margin-left: 2px; border: 1.5px solid var(--text-muted); border-right-color: transparent; border-radius: var(--radius-pill); animation: spin .7s linear infinite; }
 .saved { display: grid; margin-left: 1px; place-items: center; color: var(--success); }
@@ -70,7 +68,6 @@ textarea.control { white-space: pre-wrap; overflow-wrap: break-word; }
 .messageIcon { flex: none; margin-top: 2px; color: var(--danger); }
 .retry { margin: 0 0 0 2px; padding: 0; border: 0; border-radius: 4px; background: none; color: var(--foreground); font: inherit; font-weight: 500; text-decoration: underline; text-decoration-color: var(--border-strong); text-underline-offset: 3px; cursor: pointer; }
 @media (hover: hover) and (pointer: fine) { .retry:hover { text-decoration-color: currentColor; } }
-.retry:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .spinner { animation: none; border-right-color: var(--text-muted); border-top-color: transparent; } .layer, .save, .cancel, .pencil { transition: none; } }

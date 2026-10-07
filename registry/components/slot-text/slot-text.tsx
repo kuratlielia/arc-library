@@ -94,7 +94,7 @@ function Reel({ char, order, entering, rising, duration, stagger, spins, reduced
   if (reel.char !== char) {
     const current = pos.get();
     const index = Math.max(0, Math.min(reel.strip.length - 1, Math.round(current)));
-    const visible = reel.strip[index];
+    const visible = reel.strip[index]!;
     setReel({
       char,
       strip: reduced ? [char] : buildStrip(visible, char, spins, rising, char.charCodeAt(0) * 31 + visible.charCodeAt(0) * 7 + order + reel.strip.length),

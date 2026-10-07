@@ -81,6 +81,7 @@ function Reveal({ id, message, reduced }: { id: string; message: { key: string; 
     if (!node || typeof ResizeObserver === "undefined") return;
     let measured = false;
     const observer = new ResizeObserver(([entry]) => {
+      if (!entry) return;
       const next = entry.borderBoxSize?.[0]?.blockSize ?? node.offsetHeight;
       if (!measured || reduced) { measured = true; height.jump(next); return; }
       animate(height, next, motionTokens.spring.smooth);

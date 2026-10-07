@@ -322,7 +322,7 @@ export function PageHeader() {
     later(() => {
       const index = counters.current.update++;
       const key = `draft-${index}`;
-      setUpdates(list => [{ id: key, author: "jasmine", date: "Just now", tone: "success", status: "On track", body: draftUpdates[index % draftUpdates.length], fresh: true }, ...list]);
+      setUpdates(list => [{ id: key, author: "jasmine", date: "Just now", tone: "success", status: "On track", body: draftUpdates[index % draftUpdates.length]!, fresh: true }, ...list]);
       setSharing("sent");
       selectSection("updates", true);
       notify("Update shared with the project team");
@@ -334,7 +334,7 @@ export function PageHeader() {
   function createIssue() {
     if (archived) return;
     const index = counters.current.issue++;
-    const issue: Issue = { id: `CHK-${139 + index}`, title: draftIssues[index % draftIssues.length], owner: "jasmine", label: "Triage", fresh: true };
+    const issue: Issue = { id: `CHK-${139 + index}`, title: draftIssues[index % draftIssues.length]!, owner: "jasmine", label: "Triage", fresh: true };
     setIssues(list => [issue, ...list]);
     selectSection("issues", true);
     notify(`${issue.id} created and assigned to you`);

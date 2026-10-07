@@ -28,8 +28,6 @@
 .sortHint, .sortArrow { position: absolute; inset: 0; display: grid; place-items: center; }
 .sortHint { color: var(--text-muted); opacity: 0; transition: opacity var(--duration-fast) var(--ease-standard); }
 .sortArrow { color: var(--foreground); }
-.sortButton:focus-visible { outline: none; }
-.sortButton:focus-visible .sortInner { outline: 2px solid var(--focus-ring); outline-offset: 4px; }
 .sortButton:focus-visible .sortHint { opacity: .6; }
 .table th[data-sorted] .sortHint { opacity: 0; }
 
@@ -41,7 +39,8 @@
 .selectBox[data-on] { border-color: var(--control-on); }
 .selectFill { position: absolute; inset: -1px; border-radius: inherit; background: var(--control-on); }
 .selectMark { position: absolute; inset: -1px; width: 18px; height: 18px; overflow: visible; }
-.selectInput:focus-visible + .selectBox { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+/* The native checkbox is hidden, so its keyboard focus outline is drawn on the visible box. */
+.selectInput:focus-visible + .selectBox { outline: var(--focus-outline-width, 2px) solid var(--focus-outline, color-mix(in oklab, var(--accent-strong) 72%, transparent)); outline-offset: 2px; }
 .selectInput:active + .selectBox { transform: scale(.95); transition: border-color var(--duration-fast) var(--ease-standard), transform 110ms var(--ease-standard); }
 
 .footer { display: flex; height: 44px; align-items: center; justify-content: space-between; gap: var(--space-3); padding: 0 var(--space-2) 0 var(--space-4); border-top: 1px solid var(--border); color: var(--text-muted); font-size: var(--text-sm); line-height: var(--leading-body); letter-spacing: var(--tracking-body); }
@@ -52,7 +51,6 @@
 .swapText { display: inline-block; white-space: nowrap; }
 .number { font-variant-numeric: tabular-nums; }
 .clear { height: 30px; flex: none; border: 0; border-radius: var(--radius-control); padding: 0 var(--space-3); background: transparent; color: var(--foreground); font: inherit; font-weight: 500; letter-spacing: inherit; cursor: pointer; transition: background-color var(--duration-fast) var(--ease-standard); -webkit-tap-highlight-color: transparent; }
-.clear:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 
 .empty { height: 120px !important; color: var(--text-muted) !important; text-align: center !important; }
 
@@ -84,8 +82,7 @@
   .table th .sortButton, .table[data-selectable] th[data-primary] .sortButton { width: auto; height: 32px; border-radius: var(--radius-control); padding: 0 10px; transition: background-color var(--duration-standard) var(--ease-standard), color var(--duration-standard) var(--ease-standard); }
   .table th[data-sorted] .sortButton { background: var(--surface-muted); }
   .table th[data-numeric] .sortInner { flex-direction: row; }
-  .sortButton:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 1px; }
-  .sortButton:focus-visible .sortInner { outline: none; }
+  .sortButton:focus-visible { --focus-outline-offset: 1px; }
   .table tbody { display: block; width: 100%; }
   /* Rows fold into two lines: the first column with its number, then the remaining details. */
   .table tbody tr { --row-fill: var(--surface); position: relative; display: flex; width: 100%; min-height: 64px; box-sizing: border-box; flex-wrap: wrap; align-items: baseline; align-content: center; gap: 2px var(--space-2); padding: 10px var(--space-4); border-bottom: 1px solid var(--border-subtle); background-color: var(--row-fill); transition: background-color var(--duration-standard) var(--ease-standard); }

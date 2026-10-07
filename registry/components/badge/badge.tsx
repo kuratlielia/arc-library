@@ -52,6 +52,7 @@ export function Badge({ tone = "neutral", size = "md", icon, className, children
     let controls: AnimationPlaybackControls | undefined;
     const settle = () => { width.jump("auto"); if (body.current) body.current.style.width = "auto"; };
     const observer = new ResizeObserver(([entry]) => {
+      if (!entry) return;
       const next = entry.borderBoxSize?.[0]?.inlineSize ?? node.offsetWidth;
       const current = width.get();
       const from = typeof current === "number" ? current : last;

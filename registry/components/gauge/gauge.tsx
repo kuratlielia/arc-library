@@ -81,6 +81,7 @@ export function Gauge({ value, min = 0, max = 100, label, detail, tone = "accent
     if (!node || typeof ResizeObserver === "undefined") return;
     let measured: string | null = null;
     const observer = new ResizeObserver(([entry]) => {
+      if (!entry) return;
       const next = entry.borderBoxSize?.[0]?.inlineSize ?? node.offsetWidth;
       if (measured !== null && measured !== node.textContent && !reduceMotion) animate(digitsWidth, next, motionTokens.spring.smooth);
       else digitsWidth.jump(next);

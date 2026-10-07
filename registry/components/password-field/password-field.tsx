@@ -4,7 +4,15 @@ import type { InputHTMLAttributes } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
 import styles from "./password-field.module.css";
-export interface PasswordFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "type"> { label: string; description?: string }
+/** The toggle's names. Both have English defaults; pass the ones you translate. */
+export interface PasswordFieldMessages { showPassword: string; hidePassword: string }
+export const defaultPasswordFieldMessages: PasswordFieldMessages = { showPassword: "Show password", hidePassword: "Hide password" };
+export interface PasswordFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "type"> {
+  label: string;
+  description?: string;
+  /** Translated or reworded toggle names. */
+  messages?: Partial<PasswordFieldMessages>;
+}
 /** One eye that a slash draws across, cutting the outline beneath it, instead of swapping two icons. */
 function EyeMorph({ slashed }: { slashed: boolean }) {
   const reduced = useReducedMotion(); const maskId = `eye-${useId().replace(/[^a-zA-Z0-9_-]/g, "")}`;
@@ -27,19 +35,19 @@ function MotionText({ text }: { text: string }) {
 }
 
 /** Helper and error copy: the row opens its height on a spring, then the words settle in. */
-function FieldMessage({ id, text, className, alert }: { id?: string; text?: string; className: string; alert?: boolean }) {
+function FieldMessage({ id, text, className, alert }: { id?: string; text?: string; className?: string; alert?: boolean }) {
   return <AnimatePresence initial={false}>{text ? <MessageRow key="message" id={id} text={text} className={className} alert={alert} /> : null}</AnimatePresence>;
 }
 
 /** The row tracks the measured copy, so a longer message that wraps opens its next line instead of snapping. */
-function MessageRow({ id, text, className, alert }: { id?: string; text: string; className: string; alert?: boolean }) {
+function MessageRow({ id, text, className, alert }: { id?: string; text: string; className?: string; alert?: boolean }) {
   const reduced = useReducedMotion();
   const copyRef = useRef<HTMLSpanElement>(null);
   const [height, setHeight] = useState<number | "auto">("auto");
   useEffect(() => {
     const node = copyRef.current;
     if (!node || typeof ResizeObserver === "undefined") return;
-    const observer = new ResizeObserver(([entry]) => setHeight(entry.borderBoxSize?.[0]?.blockSize ?? node.offsetHeight));
+    const observer = new ResizeObserver(([entry]) => { if (entry) setHeight(entry.borderBoxSize?.[0]?.blockSize ?? node.offsetHeight); });
     observer.observe(node);
     return () => observer.disconnect();
   }, []);
@@ -48,9 +56,10 @@ function MessageRow({ id, text, className, alert }: { id?: string; text: string;
   </motion.span>;
 }
 
-export const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(function PasswordField({ label, description, id, className, ...props }, ref) {
+export const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(function PasswordField({ label, description, messages: messagesProp, id, className, ...props }, ref) {
+  const messages = { ...defaultPasswordFieldMessages, ...messagesProp };
   const generated = useId(); const controlId = id ?? generated; const [visible, setVisible] = useState(false); const [toggled, setToggled] = useState(false);
   const hintId = description ? `${controlId}-description` : undefined;
   // data-reveal only appears after the first toggle, so the value resolves on each change but never on mount.
-  return <div className={styles.field}><label htmlFor={controlId}>{label}</label><div className={styles.shell}><input {...props} ref={ref} id={controlId} type={visible ? "text" : "password"} data-reveal={toggled ? (visible ? "shown" : "hidden") : undefined} aria-describedby={[props["aria-describedby"], hintId].filter(Boolean).join(" ") || undefined} className={[styles.input, className].filter(Boolean).join(" ")} /><button type="button" onClick={() => { setVisible(current => !current); setToggled(true); }} aria-label={visible ? "Hide password" : "Show password"} aria-pressed={visible}><EyeMorph slashed={visible} /></button></div><FieldMessage id={hintId} text={description} className={styles.hint} /></div>;
+  return <div className={styles.field}><label htmlFor={controlId}>{label}</label><div className={styles.shell}><input {...props} ref={ref} id={controlId} type={visible ? "text" : "password"} data-reveal={toggled ? (visible ? "shown" : "hidden") : undefined} aria-describedby={[props["aria-describedby"], hintId].filter(Boolean).join(" ") || undefined} className={[styles.input, className].filter(Boolean).join(" ")} /><button type="button" onClick={() => { setVisible(current => !current); setToggled(true); }} aria-label={visible ? messages.hidePassword : messages.showPassword} aria-pressed={visible}><EyeMorph slashed={visible} /></button></div><FieldMessage id={hintId} text={description} className={styles.hint} /></div>;
 });

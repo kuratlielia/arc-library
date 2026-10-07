@@ -126,7 +126,7 @@ export function SlopeChart({ data, label, startLabel, endLabel, formatValue, for
   const r0 = rankOf("start"), r1 = rankOf("end");
   const l0 = spread(data.map(item => yOf(item.start)), LABEL_GAP, 8, plotHeight - 8);
   const l1 = spread(data.map(item => yOf(item.end)), LABEL_GAP, 8, plotHeight - 8);
-  const rows: Row[] = data.map((item, i) => ({ item, y0: yOf(item.start), y1: yOf(item.end), l0: l0[i], l1: l1[i], rank0: r0(item), rank1: r1(item), order: 0 }));
+  const rows: Row[] = data.map((item, i) => ({ item, y0: yOf(item.start), y1: yOf(item.end), l0: l0[i]!, l1: l1[i]!, rank0: r0(item), rank1: r1(item), order: 0 }));
   const byEnd = [...rows].sort((a, b) => a.rank1 - b.rank1);
   byEnd.forEach((row, k) => { row.order = k; });
 
@@ -180,7 +180,7 @@ export function SlopeChart({ data, label, startLabel, endLabel, formatValue, for
     const moves: Record<string, number> = { ArrowDown: at + 1, ArrowRight: at + 1, ArrowUp: at < 0 ? 0 : at - 1, ArrowLeft: at < 0 ? 0 : at - 1, Home: 0, End: byEnd.length - 1 };
     if (!(event.key in moves)) return;
     event.preventDefault();
-    setActive(byEnd[clamp(moves[event.key], 0, byEnd.length - 1)].item.key);
+    setActive(byEnd[clamp(moves[event.key]!, 0, byEnd.length - 1)]!.item.key);
   };
 
   const format = (value: number) => formatValue ? formatValue(value) : grouped.format(value);
@@ -196,7 +196,7 @@ export function SlopeChart({ data, label, startLabel, endLabel, formatValue, for
       role="group" tabIndex={empty ? -1 : 0} aria-roledescription="slope chart" aria-label={`${label}. Use up and down arrows to move between items in ${endLabel} order.`}
       onPointerMove={onPointerMove} onPointerDown={event => { if (event.pointerType !== "mouse") { event.currentTarget.setPointerCapture?.(event.pointerId); setActive(nearest(event.clientX, event.clientY)); } }}
       onPointerUp={event => { if (event.pointerType !== "mouse") setActive(null); }} onPointerCancel={() => setActive(null)} onPointerLeave={event => { if (event.pointerType === "mouse") setActive(null); }}
-      onKeyDown={onKeyDown} onBlur={() => setActive(null)} onFocus={event => { if (event.currentTarget.matches(":focus-visible") && !empty && !active) setActive(byEnd[0].item.key); }}>
+      onKeyDown={onKeyDown} onBlur={() => setActive(null)} onFocus={event => { if (event.currentTarget.matches(":focus-visible") && !empty && !active) setActive(byEnd[0]!.item.key); }}>
       {width > 0 && <>
         <div className={styles.columns} aria-hidden="true">
           <span className={styles.column} style={{ left: x0, translate: "-50% 0" }}>{startLabel}</span>

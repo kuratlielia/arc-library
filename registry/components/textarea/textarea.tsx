@@ -36,19 +36,19 @@ function MotionText({ text }: { text: string }) {
 }
 
 /** Helper and error copy: the row opens its height on a spring, then the words settle in. */
-function FieldMessage({ id, text, className, alert }: { id?: string; text?: string; className: string; alert?: boolean }) {
+function FieldMessage({ id, text, className, alert }: { id?: string; text?: string; className?: string; alert?: boolean }) {
   return <AnimatePresence initial={false}>{text ? <MessageRow key="message" id={id} text={text} className={className} alert={alert} /> : null}</AnimatePresence>;
 }
 
 /** The row tracks the measured copy, so a longer message that wraps opens its next line instead of snapping. */
-function MessageRow({ id, text, className, alert }: { id?: string; text: string; className: string; alert?: boolean }) {
+function MessageRow({ id, text, className, alert }: { id?: string; text: string; className?: string; alert?: boolean }) {
   const reduced = useReducedMotion();
   const copyRef = useRef<HTMLSpanElement>(null);
   const [height, setHeight] = useState<number | "auto">("auto");
   useEffect(() => {
     const node = copyRef.current;
     if (!node || typeof ResizeObserver === "undefined") return;
-    const observer = new ResizeObserver(([entry]) => setHeight(entry.borderBoxSize?.[0]?.blockSize ?? node.offsetHeight));
+    const observer = new ResizeObserver(([entry]) => { if (entry) setHeight(entry.borderBoxSize?.[0]?.blockSize ?? node.offsetHeight); });
     observer.observe(node);
     return () => observer.disconnect();
   }, []);

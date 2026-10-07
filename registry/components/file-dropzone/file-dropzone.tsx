@@ -97,7 +97,7 @@ function ErrorRow({ text }: { text: string }) {
   useEffect(() => {
     const node = copyRef.current;
     if (!node || typeof ResizeObserver === "undefined") return;
-    const observer = new ResizeObserver(([entry]) => setHeight(entry.borderBoxSize?.[0]?.blockSize ?? node.offsetHeight));
+    const observer = new ResizeObserver(([entry]) => { if (entry) setHeight(entry.borderBoxSize?.[0]?.blockSize ?? node.offsetHeight); });
     observer.observe(node);
     return () => observer.disconnect();
   }, []);
@@ -316,7 +316,7 @@ export function FileDropzone({ accept, multiple = true, maxFiles = 5, onFilesCha
     });
     const rejected = matching.length !== list.length;
     const overflow = fresh.length > added.length;
-    setError(rejected ? (list.length - matching.length === 1 && list.length === 1 ? `${list[0].name} is not an accepted file type.` : "Some files were not added because their type is not accepted.") : overflow ? `You can add up to ${maxFiles} ${maxFiles === 1 ? "file" : "files"}.` : "");
+    setError(rejected ? (list.length - matching.length === 1 && list.length === 1 ? `${list[0]!.name} is not an accepted file type.` : "Some files were not added because their type is not accepted.") : overflow ? `You can add up to ${maxFiles} ${maxFiles === 1 ? "file" : "files"}.` : "");
     if (rejected || overflow) shakeZone();
     if (!added.length) return;
     if (!multiple) { controllers.current.forEach(controller => controller.abort()); controllers.current.clear(); }
@@ -370,7 +370,7 @@ export function FileDropzone({ accept, multiple = true, maxFiles = 5, onFilesCha
     const nextRow = rows[rows.indexOf(row) + (event.key === "ArrowDown" ? 1 : -1)];
     if (!nextRow) return;
     event.preventDefault();
-    (nextRow.querySelector<HTMLButtonElement>(`.${button.classList.contains(styles.retry) ? styles.retry : styles.remove}`) ?? nextRow.querySelector<HTMLButtonElement>(`.${styles.remove}`))?.focus();
+    (nextRow.querySelector<HTMLButtonElement>(`.${button.classList.contains(styles.retry!) ? styles.retry : styles.remove}`) ?? nextRow.querySelector<HTMLButtonElement>(`.${styles.remove}`))?.focus();
   }
 
   // Paste works while the pointer is over the target or focus is inside it, so a screenshot on the clipboard is one keystroke away.

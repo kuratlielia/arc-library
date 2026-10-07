@@ -71,7 +71,7 @@ export function PlanComparison() {
     if (!node) return;
     const measure = (width: number) => setSize(width <= 340 ? "xs" : width <= 540 ? "sm" : width <= 720 ? "md" : "lg");
     measure(node.getBoundingClientRect().width);
-    const observer = new ResizeObserver(([entry]) => measure(entry.contentRect.width));
+    const observer = new ResizeObserver(([entry]) => { if (entry) measure(entry.contentRect.width); });
     observer.observe(node);
     return () => observer.disconnect();
   }, []);

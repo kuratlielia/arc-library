@@ -106,13 +106,13 @@ function Sheet({ title, description, detents = [.45, .92], initialDetent = 0, on
 
   const offset = useCallback((stop: Stop) => {
     const full = height.get();
-    return stop === "closed" ? full + CLOSED_GAP : full * (1 - stops[stop] / stops[top]);
+    return stop === "closed" ? full + CLOSED_GAP : full * (1 - stops[stop]! / stops[top]!);
   }, [height, stops, top]);
 
   // The backdrop is a function of where the sheet is, so it darkens and clears with a drag instead of on a timer.
-  const backdrop = useTransform([y, height, presence], ([offsetY, full, shown]: number[]) => {
+  const backdrop = useTransform([y, height, presence], ([offsetY = 0, full = 0, shown = 0]: number[]) => {
     if (!full) return 0;
-    const low = full * (1 - stops[0] / stops[top]), closed = full + CLOSED_GAP;
+    const low = full * (1 - stops[0]! / stops[top]!), closed = full + CLOSED_GAP;
     const dim = offsetY <= low ? 1 - (1 - LOW_DIM) * (low ? offsetY / low : 0) : LOW_DIM * (1 - (offsetY - low) / (closed - low));
     return clamp(dim, 0, 1) * shown;
   });
@@ -132,7 +132,7 @@ function Sheet({ title, description, detents = [.45, .92], initialDetent = 0, on
       detentRef.current = stop;
       setDetent(stop);
       onDetentChange?.(stop);
-      setAnnouncement(stop === top ? "Sheet expanded" : stop === 0 ? "Sheet collapsed" : `Sheet at ${Math.round(stops[stop] * 100)} percent height`);
+      setAnnouncement(stop === top ? "Sheet expanded" : stop === 0 ? "Sheet collapsed" : `Sheet at ${Math.round(stops[stop]! * 100)} percent height`);
     }
     // Collapsing takes the content back to its start, so the peek always shows the top of it.
     const body = bodyRef.current;

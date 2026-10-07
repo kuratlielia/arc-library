@@ -166,8 +166,8 @@ export function Slider<T extends SliderValue = number>({ label, value, defaultVa
   const pct = (input: number) => ((input - min) / span) * 100;
   const valueAt = (percent: number) => min + (percent / 100) * span;
   const snap = (input: number) => Number((min + Math.round((input - min) / step) * step).toFixed(decimals));
-  const lowOf = (index: number, current: number[]) => index === 1 ? current[0] + gap : min;
-  const highOf = (index: number, current: number[]) => index === 0 && isRange ? current[1] - gap : max;
+  const lowOf = (index: number, current: number[]) => index === 1 ? current[0]! + gap : min;
+  const highOf = (index: number, current: number[]) => index === 0 && isRange ? current[1]! - gap : max;
   const settle = (index: number, input: number, current: number[]) => clamp(snap(clamp(input, min, max)), lowOf(index, current), highOf(index, current));
 
   const trackRef = useRef<HTMLDivElement>(null);
@@ -185,7 +185,7 @@ export function Slider<T extends SliderValue = number>({ label, value, defaultVa
 
   // Each thumb is a committed position plus a catch-up offset: a pressed track springs the offset to zero while the pointer moves the
   // position 1:1, so the thumb glides to the finger and never lags behind it.
-  const pos0 = useMotionValue(pct(values[0])), pos1 = useMotionValue(pct(values[1] ?? values[0]));
+  const pos0 = useMotionValue(pct(values[0]!)), pos1 = useMotionValue(pct(values[1] ?? values[0]!));
   const lag0 = useMotionValue(0), lag1 = useMotionValue(0);
   const shown0 = useTransform(() => pos0.get() + lag0.get());
   const shown1 = useTransform(() => pos1.get() + lag1.get());
@@ -206,7 +206,7 @@ export function Slider<T extends SliderValue = number>({ label, value, defaultVa
   useLayoutEffect(() => {
     latest.current = values;
     values.forEach((item, index) => {
-      const target = pct(item), thumb = thumbs[index];
+      const target = pct(item), thumb = thumbs[index]!;
       if (drag.current?.index === index || goal.current[index] === target) return;
       goal.current[index] = target;
       const from = thumb.pos.get() + thumb.lag.get();
@@ -230,8 +230,8 @@ export function Slider<T extends SliderValue = number>({ label, value, defaultVa
   const trackWidth = () => trackRef.current?.getBoundingClientRect().width || 1;
   function nearest(at: number, current: number[]) {
     if (!isRange) return 0;
-    const low = Math.abs(at - pct(current[0])), high = Math.abs(at - pct(current[1]));
-    return low === high ? (at < pct(current[0]) ? 0 : 1) : low < high ? 0 : 1;
+    const low = Math.abs(at - pct(current[0]!)), high = Math.abs(at - pct(current[1]!));
+    return low === high ? (at < pct(current[0]!) ? 0 : 1) : low < high ? 0 : 1;
   }
   function holdBubble(index: number) {
     window.clearTimeout(lingerTimer.current);
@@ -241,7 +241,7 @@ export function Slider<T extends SliderValue = number>({ label, value, defaultVa
 
   /** Starts tracking one thumb. A press on the track springs the thumb over from where it was; a grabbed thumb keeps its grab offset. */
   function begin(state: Drag, index: number, at: number, press: boolean) {
-    const thumb = thumbs[index];
+    const thumb = thumbs[index]!;
     const from = thumb.pos.get() + thumb.lag.get();
     state.index = index;
     state.grab = press ? 0 : at - from;
@@ -258,7 +258,7 @@ export function Slider<T extends SliderValue = number>({ label, value, defaultVa
   function follow(state: Drag, at: number, time: number, press = false) {
     const index = state.index;
     if (index === null) return;
-    const thumb = thumbs[index], current = latest.current, width = trackWidth();
+    const thumb = thumbs[index]!, current = latest.current, width = trackWidth();
     const raw = at - state.grab;
     const low = pct(lowOf(index, current)), high = pct(highOf(index, current));
     const edge = clamp(raw, low, high);
@@ -288,7 +288,7 @@ export function Slider<T extends SliderValue = number>({ label, value, defaultVa
     // Stacked range thumbs wait for the first movement to decide which one the pointer means.
     if (grabbed && isRange && current[0] === current[1]) { focusFromPointer(Number(grabbed.dataset.index)); return; }
     begin(state, grabbed ? Number(grabbed.dataset.index) : nearest(at, current), at, !grabbed);
-    state.samples = [{ t: event.timeStamp, p: thumbs[state.index ?? 0].pos.get() }];
+    state.samples = [{ t: event.timeStamp, p: thumbs[state.index ?? 0]!.pos.get() }];
   }
   function onPointerMove(event: PointerEvent<HTMLDivElement>) {
     const state = drag.current;
@@ -309,12 +309,12 @@ export function Slider<T extends SliderValue = number>({ label, value, defaultVa
     drag.current = null;
     const index = state.index;
     if (index === null) return;
-    const thumb = thumbs[index], current = latest.current, width = trackWidth();
+    const thumb = thumbs[index]!, current = latest.current, width = trackWidth();
     // Velocity from the last few frames, in percent per second; a pointer that paused before letting go carries none.
     const samples = state.samples, first = samples[0], last = samples[samples.length - 1];
     const elapsed = last && first ? (last.t - first.t) / 1000 : 0;
     // A release during the catch-up spring keeps that spring's speed too.
-    const velocity = (elapsed > .008 && event.timeStamp - last.t < 60 ? (last.p - first.p) / elapsed : 0) + thumb.lag.getVelocity();
+    const velocity = (last && first && elapsed > .008 && event.timeStamp - last.t < 60 ? (last.p - first.p) / elapsed : 0) + thumb.lag.getVelocity();
     // On a coarse grid the release momentum may carry the thumb one step further, never more.
     const stepPct = (step / span) * 100;
     const carry = event.type === "pointerup" && (stepPct / 100) * width >= SNAP_PX ? clamp(project(velocity), -stepPct, stepPct) : 0;
@@ -332,13 +332,13 @@ export function Slider<T extends SliderValue = number>({ label, value, defaultVa
 
   function onKeyDown(index: number, event: KeyboardEvent<HTMLDivElement>) {
     if (disabled) return;
-    const current = latest.current, now = current[index];
+    const current = latest.current, now = current[index]!;
     const large = largeStep ?? Math.max(step, snap(min + span / 10) - min);
     const moves: Record<string, number> = { ArrowRight: step, ArrowUp: step, ArrowLeft: -step, ArrowDown: -step, PageUp: large, PageDown: -large };
     let wanted: number;
     if (event.key === "Home") wanted = lowOf(index, current);
     else if (event.key === "End") wanted = highOf(index, current);
-    else if (event.key in moves) wanted = now + (event.shiftKey && /^Arrow/.test(event.key) ? Math.sign(moves[event.key]) * large : moves[event.key]);
+    else if (event.key in moves) wanted = now + (event.shiftKey && /^Arrow/.test(event.key) ? Math.sign(moves[event.key]!) * large : moves[event.key]!);
     else return;
     event.preventDefault();
     setKeyFocus(index);
@@ -348,7 +348,7 @@ export function Slider<T extends SliderValue = number>({ label, value, defaultVa
     // At a limit the thumb strains toward the press and springs home, so the key still answers.
     if (next === now) {
       const toward = Math.sign(wanted - now);
-      if (toward && !reduced) animate(thumbs[index].pos, goal.current[index], { ...kickSpring, velocity: (toward * BUMP_PX / trackWidth()) * 100 });
+      if (toward && !reduced) animate(thumbs[index]!.pos, goal.current[index]!, { ...kickSpring, velocity: (toward * BUMP_PX / trackWidth()) * 100 });
       return;
     }
     commit(index, next);
@@ -369,15 +369,15 @@ export function Slider<T extends SliderValue = number>({ label, value, defaultVa
   const markList = (marks ?? []).map(mark => typeof mark === "number" ? { value: mark } as SliderMark : mark).filter(mark => mark.value >= min && mark.value <= max);
   const ticks = markList.filter(mark => mark.value > min && mark.value < max);
   const labelled = markList.filter(mark => mark.label);
-  const inRange = (mark: number) => isRange ? mark >= values[0] && mark <= values[1] : mark <= values[0];
+  const inRange = (mark: number) => isRange ? mark >= values[0]! && mark <= values[1]! : mark <= values[0]!;
   const names = thumbLabels ?? [`${label}, minimum`, `${label}, maximum`];
 
   return <div className={[styles.root, className].filter(Boolean).join(" ")} data-disabled={disabled || undefined} data-dragging={dragging !== null || undefined} data-marks={labelled.length > 0 || undefined}>
     <div className={styles.header}>
       <span id={labelId} className={styles.label}>{label}</span>
       {showValue && <span className={styles.readout} aria-hidden="true">
-        <RollingNumber value={values[0]} text={formatValue(values[0])} />
-        {isRange && <><span className={styles.dash}>–</span><RollingNumber value={values[1]} text={formatValue(values[1])} /></>}
+        <RollingNumber value={values[0]!} text={formatValue(values[0]!)} />
+        {isRange && <><span className={styles.dash}>–</span><RollingNumber value={values[1]!} text={formatValue(values[1]!)} /></>}
       </span>}
     </div>
     <div className={styles.body}>
@@ -388,7 +388,7 @@ export function Slider<T extends SliderValue = number>({ label, value, defaultVa
           <motion.div className={styles.fill} style={{ clipPath }}>{ticks.map(mark => <span key={mark.value} className={styles.tick} style={{ left: `${pct(mark.value)}%` }} />)}</motion.div>
         </div>
         <div ref={thumbsRef} className={styles.thumbs}>
-          {values.map((item, index) => <Thumb key={index} quiet={quiet === index} index={index} shown={thumbs[index].shown} value={item} text={formatValue(item)} low={lowOf(index, values)} high={highOf(index, values)}
+          {values.map((item, index) => <Thumb key={index} quiet={quiet === index} index={index} shown={thumbs[index]!.shown} value={item} text={formatValue(item)} low={lowOf(index, values)} high={highOf(index, values)}
             ariaLabel={isRange ? names[index] : undefined} labelledBy={labelId} active={lastActive === index} lifted={dragging === index} bubble={dragging === index || keyFocus === index || linger === index} disabled={disabled}
             onKeyDown={event => onKeyDown(index, event)} onFocus={event => { if (!pointerFocus.current && event.currentTarget.matches(":focus-visible")) setKeyFocus(index); }} onBlur={() => { setKeyFocus(current => current === index ? null : current); setQuiet(current => current === index ? null : current); }} />)}
         </div>

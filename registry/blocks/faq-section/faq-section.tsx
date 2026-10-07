@@ -109,7 +109,7 @@ function onListKeyDown(event: KeyboardEvent<HTMLElement>) {
   if (index < 0) return;
   event.preventDefault();
   const next = event.key === "Home" ? 0 : event.key === "End" ? triggers.length - 1 : (index + (event.key === "ArrowDown" ? 1 : -1) + triggers.length) % triggers.length;
-  triggers[next].focus();
+  triggers[next]!.focus();
 }
 
 function Question({ item, open, onToggle, query = "", reduced, baseId, layout }: { item: FaqItem; open: boolean; onToggle: () => void; query?: string; reduced: boolean; baseId: string; layout?: boolean }) {

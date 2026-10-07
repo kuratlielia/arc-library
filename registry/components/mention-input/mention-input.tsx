@@ -130,7 +130,7 @@ function findTrigger(text: string, caret: number, mentions: Mention[], kinds: Re
     if (char !== "@" && char !== "#") continue;
     const kind: MentionKind = char === "@" ? "person" : "channel";
     if (!kinds[kind]) return null;
-    if (index > 0 && !/[\s([{"']/.test(text[index - 1])) return null;
+    if (index > 0 && !/[\s([{"']/.test(text[index - 1]!)) return null;
     if (mentions.some(mention => index >= mention.start && index < mention.end)) return null;
     const query = text.slice(index + 1, caret);
     const shape = kind === "person" ? /^[^\s@#]*( [^\s@#]*)?$/ : /^[^\s@#]*$/;

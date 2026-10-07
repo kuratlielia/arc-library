@@ -113,7 +113,7 @@ function timeTicks(start: number, end: number, width: number) {
 /** First index at or after t. */
 function lowerBound(points: Point[], t: number) {
   let low = 0, high = points.length;
-  while (low < high) { const middle = (low + high) >> 1; if (points[middle].t < t) low = middle + 1; else high = middle; }
+  while (low < high) { const middle = (low + high) >> 1; if (points[middle]!.t < t) low = middle + 1; else high = middle; }
   return low;
 }
 
@@ -171,10 +171,10 @@ export function BrushChart({ data, label, unit = "", formatValue = value => grou
   const points = useMemo(() => data.map(item => ({ t: time(item.date), value: item.value })), [data]);
   // Zoomed out, a centred seven point average and its low to high band replace the raw line, so weekly noise reads as texture instead of a solid block.
   const smooth = useMemo(() => {
-    const around = (index: number, read: (at: number) => number[]) => { const out: number[][] = []; for (let at = Math.max(0, index - 3); at <= Math.min(points.length - 1, index + 3); at++) out.push(read(at)); return out; };
-    const raw = points.map((_, index) => { const values = around(index, at => [points[at].value]).map(([value]) => value); return { value: values.reduce((sum, value) => sum + value, 0) / values.length, low: Math.min(...values), high: Math.max(...values) }; });
+    const around = <T,>(index: number, read: (at: number) => T) => { const out: T[] = []; for (let at = Math.max(0, index - 3); at <= Math.min(points.length - 1, index + 3); at++) out.push(read(at)); return out; };
+    const raw = points.map((_, index) => { const values = around(index, (at): [number] => [points[at]!.value]).map(([value]) => value); return { value: values.reduce((sum, value) => sum + value, 0) / values.length, low: Math.min(...values), high: Math.max(...values) }; });
     // The band is averaged once more so its edges ease instead of stepping.
-    return points.map((point, index) => { const near = around(index, at => [raw[at].low, raw[at].high]); return { t: point.t, value: raw[index].value, low: near.reduce((sum, [low]) => sum + low, 0) / near.length, high: near.reduce((sum, [, high]) => sum + high, 0) / near.length }; });
+    return points.map((point, index) => { const near = around(index, (at): [number, number] => [raw[at]!.low, raw[at]!.high]); return { t: point.t, value: raw[index]!.value, low: near.reduce((sum, [low]) => sum + low, 0) / near.length, high: near.reduce((sum, [, high]) => sum + high, 0) / near.length }; });
   }, [points]);
   const events = useMemo(() => annotations.map(item => ({ ...item, t: time(item.date) })).sort((a, b) => a.t - b.t), [annotations]);
   const empty = points.length < 2;
@@ -215,7 +215,7 @@ export function BrushChart({ data, label, unit = "", formatValue = value => grou
   const span = Math.max(1, end - start);
   const from = Math.max(0, lowerBound(points, start) - 1), to = Math.min(points.length, lowerBound(points, end) + 1);
   let peak = 0;
-  for (let index = from; index < to; index++) peak = Math.max(peak, points[index].value);
+  for (let index = from; index < to; index++) peak = Math.max(peak, points[index]!.value);
   const scale = niceTop(peak * 1.04);
 
   // The value axis springs to the tallest point in view, so zooming into a quiet stretch fills the plot.
@@ -236,7 +236,7 @@ export function BrushChart({ data, label, unit = "", formatValue = value => grou
   const topNow = reduced ? scale.top : top;
   const y = (value: number) => TOP + (1 - value / (topNow || 1)) * (plotH - TOP);
   const line = width && !empty ? linePath(points, from, to, x, y, width) : "";
-  const area = line ? `${line}L${x(points[to - 1].t).toFixed(1)},${plotH}L${x(points[from].t).toFixed(1)},${plotH}Z` : "";
+  const area = line ? `${line}L${x(points[to - 1]!.t).toFixed(1)},${plotH}L${x(points[from]!.t).toFixed(1)},${plotH}Z` : "";
   const trend = width && !empty ? linePath(smooth, from, to, x, y, width * 4) : "";
   const band = trend ? `${linePath(smooth.map(point => ({ t: point.t, value: point.high })), from, to, x, y, width * 4)}L${linePath(smooth.map(point => ({ t: point.t, value: point.low })), from, to, x, y, width * 4).slice(1).split("L").reverse().join("L")}Z` : "";
   // How much of the raw line shows: all of it past about four pixels a point, none below about three.
@@ -252,7 +252,7 @@ export function BrushChart({ data, label, unit = "", formatValue = value => grou
     const max = niceTop(smooth.reduce((m, point) => Math.max(m, point.value), 0)).top || 1;
     const oy = (value: number) => 4 + (1 - value / max) * (overviewHeight - 4);
     const path = linePath(smooth, 0, smooth.length, ox, oy, stripWidth * 4);
-    const marks = events.map(event => { const at = clamp(lowerBound(smooth, event.t), 0, smooth.length - 1); return { t: event.t, x: ox(event.t), y: oy(smooth[at].value) }; });
+    const marks = events.map(event => { const at = clamp(lowerBound(smooth, event.t), 0, smooth.length - 1); return { t: event.t, x: ox(event.t), y: oy(smooth[at]!.value) }; });
     return { line: path, area: `${path}L${stripWidth},${overviewHeight}L0,${overviewHeight}Z`, marks };
   }, [smooth, events, stripWidth, overviewHeight, empty]); // eslint-disable-line react-hooks/exhaustive-deps
   const wx0 = ox(start), wx1 = ox(end);
@@ -277,10 +277,10 @@ export function BrushChart({ data, label, unit = "", formatValue = value => grou
     if (!rect?.width || empty) return null;
     const t = start + ((clientX - rect.left) / rect.width) * span;
     const at = clamp(lowerBound(points, t), 1, points.length - 1);
-    return clamp(t - points[at - 1].t < points[at].t - t ? at - 1 : at, Math.max(0, from), to - 1);
+    return clamp(t - points[at - 1]!.t < points[at]!.t - t ? at - 1 : at, Math.max(0, from), to - 1);
   };
-  const cx = index === null ? 0 : x(points[index].t), cy = index === null ? 0 : y(smooth[index].value + (points[index].value - smooth[index].value) * detail);
-  const eventAt = index === null ? null : events.find(event => Math.abs(event.t - points[index].t) < DAY / 2) ?? null;
+  const cx = index === null ? 0 : x(points[index]!.t), cy = index === null ? 0 : y(smooth[index]!.value + (points[index]!.value - smooth[index]!.value) * detail);
+  const eventAt = index === null ? null : events.find(event => Math.abs(event.t - points[index]!.t) < DAY / 2) ?? null;
   const shownEvent = hoverEvent !== null ? events[hoverEvent] : null;
   const tipX = useMotionValue(0), tipY = useMotionValue(0);
   const tipSpringX = useSpring(tipX, follow), tipSpringY = useSpring(tipY, follow);
@@ -375,9 +375,9 @@ export function BrushChart({ data, label, unit = "", formatValue = value => grou
   const labelled = new Map<number, boolean>();
   let edge = -Infinity;
   inWindow.forEach((event, at) => {
-    const px = x(event.t), w = event.label.length * 6.2 + 4, next = at + 1 < inWindow.length ? x(inWindow[at + 1].t) - 10 : width;
+    const px = x(event.t), w = event.label.length * 6.2 + 4, next = at + 1 < inWindow.length ? x(inWindow[at + 1]!.t) - 10 : width;
     if (px + 14 >= edge && px + 14 + w <= next) { labelled.set(event.t, false); edge = px + 14 + w + 8; return; }
-    if (px - 14 - w >= Math.max(0, edge) && (at === 0 || px - 14 - w >= x(inWindow[at - 1].t) + 12)) { labelled.set(event.t, true); edge = px + 12; return; }
+    if (px - 14 - w >= Math.max(0, edge) && (at === 0 || px - 14 - w >= x(inWindow[at - 1]!.t) + 12)) { labelled.set(event.t, true); edge = px + 12; return; }
     edge = Math.max(edge, px + 12);
   });
   const announce = reading ? `${formatDate(new Date(reading.t))}, ${format(reading.value)}${eventAt ? `. ${eventAt.label}` : ""}` : "";
@@ -416,7 +416,7 @@ export function BrushChart({ data, label, unit = "", formatValue = value => grou
           </> : reading ? <>
             <p className={styles.tipTitle}>{formatDate(new Date(reading.t))}</p>
             <p className={styles.tipValue}>{format(reading.value)}</p>
-            {detail < 1 && index !== null && <p className={styles.tipNote}>{`${formatValue(Math.round(smooth[index].value))} seven day average`}</p>}
+            {detail < 1 && index !== null && <p className={styles.tipNote}>{`${formatValue(Math.round(smooth[index]!.value))} seven day average`}</p>}
             {change !== null && <p className={styles.tipNote}>{`${change >= 0 ? "+" : "\u2212"}${Math.abs(change * 100).toFixed(1)}% vs a week earlier`}</p>}
             {eventAt && <p className={styles.tipEvent}><span className={styles.tipEventDot} />{eventAt.label}</p>}
           </> : null}

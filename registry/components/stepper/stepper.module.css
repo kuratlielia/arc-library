@@ -13,7 +13,7 @@
 .horizontal .head { width: fit-content; max-width: 100%; justify-items: start; row-gap: var(--space-3); }
 .vertical .head { width: 100%; grid-template-columns: var(--marker) minmax(0, 1fr); column-gap: var(--space-3); align-items: start; }
 .compact.vertical .head { grid-template-columns: var(--marker); column-gap: 0; }
-.head:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 4px; }
+.head:focus-visible { --focus-outline-offset: 4px; }
 .head:focus:not(:focus-visible) { outline: none; }
 
 /* The ring sits behind the disc and grows out of it; the disc carries the state color and the glyph. */

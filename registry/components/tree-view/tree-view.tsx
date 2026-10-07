@@ -119,14 +119,14 @@ export function TreeView({ nodes, defaultExpandedIds = [], expandedIds, onExpand
 
   function onKeyDown(event: KeyboardEvent<HTMLButtonElement>, item: VisibleNode, index: number) {
     const { node } = item;
-    if (event.key === "ArrowDown") { event.preventDefault(); focus(visible[Math.min(index + 1, visible.length - 1)].node.id); return; }
-    if (event.key === "ArrowUp") { event.preventDefault(); focus(visible[Math.max(index - 1, 0)].node.id); return; }
-    if (event.key === "Home") { event.preventDefault(); focus(visible[0].node.id); return; }
-    if (event.key === "End") { event.preventDefault(); focus(visible[visible.length - 1].node.id); return; }
+    if (event.key === "ArrowDown") { event.preventDefault(); focus(visible[Math.min(index + 1, visible.length - 1)]!.node.id); return; }
+    if (event.key === "ArrowUp") { event.preventDefault(); focus(visible[Math.max(index - 1, 0)]!.node.id); return; }
+    if (event.key === "Home") { event.preventDefault(); focus(visible[0]!.node.id); return; }
+    if (event.key === "End") { event.preventDefault(); focus(visible[visible.length - 1]!.node.id); return; }
     if (event.key === "ArrowRight" && node.children?.length) {
       event.preventDefault();
       if (!expanded.has(node.id)) toggle(node);
-      else if (visible[index + 1]?.parentId === node.id) focus(visible[index + 1].node.id);
+      else if (visible[index + 1]?.parentId === node.id) focus(visible[index + 1]!.node.id);
       return;
     }
     if (event.key === "ArrowLeft") {

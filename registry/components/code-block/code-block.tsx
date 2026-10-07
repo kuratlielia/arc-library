@@ -142,7 +142,7 @@ export function CodeBlock({ code, filename, language = "tsx", maxLines }: CodeBl
     return () => observer.disconnect();
   }, [height, maxLines]);
   useLayoutEffect(() => { target.current = { open, reduced }; settleRef.current(false); }, [open, reduced]);
-  const expandLabels = [`Show all ${lineCount} lines`, "Show fewer lines"];
+  const expandLabels = [`Show all ${lineCount} lines`, "Show fewer lines"] as const;
 
   return (
     <section className={styles.block} aria-label={filename ? `${filename} source code` : `${displayLanguage} source code`} style={maxLines ? { "--code-lines": maxLines } as CSSProperties : undefined}>

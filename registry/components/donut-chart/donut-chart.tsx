@@ -363,7 +363,7 @@ export function DonutChart({ data, label, unit = "", formatValue = value => grou
     const next = step(event.key, index < 0 ? (event.key.endsWith("Up") || event.key.endsWith("Left") ? 0 : -1) : index, visible.length);
     if (next === undefined) return;
     event.preventDefault();
-    const item = visible[(next + visible.length) % visible.length];
+    const item = visible[(next + visible.length) % visible.length]!;
     setPreview(item.key);
     setAnnouncement(describe(item));
   };

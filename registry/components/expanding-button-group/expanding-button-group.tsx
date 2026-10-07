@@ -329,7 +329,7 @@ export function ExpandingButtonGroup({ items, label, size = "md", defaultExpande
         : event.key === "Home" ? 0 : event.key === "End" ? last : -1;
     if (target < 0) return;
     event.preventDefault();
-    list[target].focus();
+    list[target]!.focus();
   };
 
   const m = metrics[size];

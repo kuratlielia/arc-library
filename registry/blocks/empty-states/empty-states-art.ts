@@ -37,7 +37,7 @@ const polar = (c: Pt, r: number, deg: number): Pt => [c[0] + r * Math.cos(deg * 
 
 const chain = (points: Pt[], closed = false) => {
   const segs: Seg[] = [];
-  for (let i = 0; i < (closed ? points.length : points.length - 1); i++) segs.push(seg(points[i], points[(i + 1) % points.length]));
+  for (let i = 0; i < (closed ? points.length : points.length - 1); i++) segs.push(seg(points[i]!, points[(i + 1) % points.length]!));
   return segs;
 };
 
@@ -45,25 +45,25 @@ const chain = (points: Pt[], closed = false) => {
 function curve(points: Pt[]): Seg {
   const dense: Pt[] = [];
   for (let i = 0; i < points.length - 1; i++) {
-    const p0 = points[Math.max(0, i - 1)], p1 = points[i], p2 = points[i + 1], p3 = points[Math.min(points.length - 1, i + 2)];
+    const p0 = points[Math.max(0, i - 1)]!, p1 = points[i]!, p2 = points[i + 1]!, p3 = points[Math.min(points.length - 1, i + 2)]!;
     for (let s = 0; s < 16; s++) {
       const t = s / 16, t2 = t * t, t3 = t2 * t;
       const axis = (k: 0 | 1) => .5 * (2 * p1[k] + (p2[k] - p0[k]) * t + (2 * p0[k] - 5 * p1[k] + 4 * p2[k] - p3[k]) * t2 + (3 * p1[k] - p0[k] - 3 * p2[k] + p3[k]) * t3);
       dense.push([axis(0), axis(1)]);
     }
   }
-  dense.push(points[points.length - 1]);
+  dense.push(points[points.length - 1]!);
   const cum = [0];
-  for (let i = 1; i < dense.length; i++) cum.push(cum[i - 1] + Math.hypot(dense[i][0] - dense[i - 1][0], dense[i][1] - dense[i - 1][1]));
-  const len = cum[cum.length - 1];
+  for (let i = 1; i < dense.length; i++) cum.push(cum[i - 1]! + Math.hypot(dense[i]![0] - dense[i - 1]![0], dense[i]![1] - dense[i - 1]![1]));
+  const len = cum[cum.length - 1]!;
   return {
     len,
     at: t => {
       const goal = t * len;
       let i = 1;
-      while (i < cum.length - 1 && cum[i] < goal) i++;
-      const u = (goal - cum[i - 1]) / (cum[i] - cum[i - 1] || 1);
-      return [dense[i - 1][0] + (dense[i][0] - dense[i - 1][0]) * u, dense[i - 1][1] + (dense[i][1] - dense[i - 1][1]) * u];
+      while (i < cum.length - 1 && cum[i]! < goal) i++;
+      const a = dense[i - 1]!, b = dense[i]!, u = (goal - cum[i - 1]!) / (cum[i]! - cum[i - 1]! || 1);
+      return [a[0] + (b[0] - a[0]) * u, a[1] + (b[1] - a[1]) * u];
     },
   };
 }
@@ -73,17 +73,17 @@ function allot(lens: number[], n: number) {
   const total = lens.reduce((sum, len) => sum + len, 0);
   if (total < 1e-6) return lens.map((_, i) => (i === 0 ? n : 0));
   const exact = lens.map(len => (len / total) * n);
-  const counts = exact.map((value, i) => (lens[i] > 1e-6 ? Math.max(1, Math.floor(value)) : 0));
+  const counts = exact.map((value, i) => (lens[i]! > 1e-6 ? Math.max(1, Math.floor(value)) : 0));
   let sum = counts.reduce((a, b) => a + b, 0);
   while (sum < n) {
     let best = -1;
-    for (let i = 0; i < counts.length; i++) if (lens[i] > 1e-6 && (best < 0 || exact[i] - counts[i] > exact[best] - counts[best])) best = i;
-    counts[best]++; sum++;
+    for (let i = 0; i < counts.length; i++) if (lens[i]! > 1e-6 && (best < 0 || exact[i]! - counts[i]! > exact[best]! - counts[best]!)) best = i;
+    counts[best]!++; sum++;
   }
   while (sum > n) {
     let best = -1;
-    for (let i = 0; i < counts.length; i++) if (counts[i] > 1 && (best < 0 || counts[i] - exact[i] > counts[best] - exact[best])) best = i;
-    counts[best]--; sum--;
+    for (let i = 0; i < counts.length; i++) if (counts[i]! > 1 && (best < 0 || counts[i]! - exact[i]! > counts[best]! - exact[best]!)) best = i;
+    counts[best]!--; sum--;
   }
   return counts;
 }
@@ -91,12 +91,12 @@ function allot(lens: number[], n: number) {
 function sample(segs: Seg[], n: number, open: boolean) {
   const counts = allot(segs.map(s => s.len), open ? n - 1 : n);
   const out: number[] = [];
-  segs.forEach((s, i) => { for (let j = 0; j < counts[i]; j++) { const [x, y] = s.at(j / counts[i]); out.push(x, y); } });
-  if (open) { const [x, y] = segs[segs.length - 1].at(1); out.push(x, y); }
+  segs.forEach((s, i) => { for (let j = 0; j < counts[i]!; j++) { const [x, y] = s.at(j / counts[i]!); out.push(x, y); } });
+  if (open) { const [x, y] = segs[segs.length - 1]!.at(1); out.push(x, y); }
   return out;
 }
 
-function rrect(x: number, y: number, w: number, h: number, radius: number | number[]): Seg[] {
+function rrect(x: number, y: number, w: number, h: number, radius: number | [number, number, number, number]): Seg[] {
   const [tl, tr, br, bl] = typeof radius === "number" ? [radius, radius, radius, radius] : radius;
   return [
     seg([x + tl, y], [x + w - tr, y]), arcDeg([x + w - tr, y + tr], tr, -90, 0),
@@ -116,11 +116,11 @@ function cloud(lobes: { c: Pt; r: number }[], base: number): Seg[] {
     return p[1] < q[1] ? p : q;
   };
   const angle = (c: Pt, p: Pt) => Math.atan2(p[1] - c[1], p[0] - c[0]);
-  const joins = lobes.slice(1).map((lobe, i) => meet(lobes[i], lobe));
-  const first = lobes[0], last = lobes[lobes.length - 1];
-  const segs = [arc(first.c, first.r, -Math.PI / 2, angle(first.c, joins[0]))];
-  for (let i = 1; i < lobes.length - 1; i++) segs.push(arc(lobes[i].c, lobes[i].r, angle(lobes[i].c, joins[i - 1]), angle(lobes[i].c, joins[i])));
-  segs.push(arc(last.c, last.r, angle(last.c, joins[joins.length - 1]), Math.PI / 2));
+  const joins = lobes.slice(1).map((lobe, i) => meet(lobes[i]!, lobe));
+  const first = lobes[0]!, last = lobes[lobes.length - 1]!;
+  const segs = [arc(first.c, first.r, -Math.PI / 2, angle(first.c, joins[0]!))];
+  for (let i = 1; i < lobes.length - 1; i++) { const lobe = lobes[i]!; segs.push(arc(lobe.c, lobe.r, angle(lobe.c, joins[i - 1]!), angle(lobe.c, joins[i]!))); }
+  segs.push(arc(last.c, last.r, angle(last.c, joins[joins.length - 1]!), Math.PI / 2));
   segs.push(seg([last.c[0], base], [first.c[0], base]));
   segs.push(arc(first.c, first.r, Math.PI / 2, Math.PI * 1.5));
   return segs;
@@ -244,8 +244,8 @@ function move(frame: Frame, dx: number, dy: number): Frame {
     ...frame,
     prims: frame.prims.map(p => {
       const geo = [...p.geo];
-      if (p.kind === "tile") { geo[0] += dx; geo[1] += dy; }
-      else for (let i = 0; i < geo.length - (p.kind === "body" ? 1 : 3); i += 2) { geo[i] += dx; geo[i + 1] += dy; }
+      if (p.kind === "tile") { geo[0]! += dx; geo[1]! += dy; }
+      else for (let i = 0; i < geo.length - (p.kind === "body" ? 1 : 3); i += 2) { geo[i]! += dx; geo[i + 1]! += dy; }
       return { ...p, geo };
     }),
   };
@@ -256,9 +256,9 @@ function center(frame: Frame) {
   const add = (x: number, y: number) => { x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); };
   for (const p of frame.prims) {
     if (p.fx[0] < .01) continue;
-    if (p.kind === "tile") { add(p.geo[0] - p.geo[2] / 2, p.geo[1] - p.geo[3] / 2); add(p.geo[0] + p.geo[2] / 2, p.geo[1] + p.geo[3] / 2); continue; }
+    if (p.kind === "tile") { const [cx, cy, w, h] = p.geo as [number, number, number, number]; add(cx - w / 2, cy - h / 2); add(cx + w / 2, cy + h / 2); continue; }
     if (p.kind !== "body" && p.fx[1] < .01) continue;
-    for (let i = 0; i < p.geo.length - (p.kind === "body" ? 1 : 3); i += 2) add(p.geo[i], p.geo[i + 1]);
+    for (let i = 0; i < p.geo.length - (p.kind === "body" ? 1 : 3); i += 2) add(p.geo[i]!, p.geo[i + 1]!);
   }
   return [VIEW.width / 2 - (x0 + x1) / 2, VIEW.height / 2 - (y0 + y1) / 2] as const;
 }
@@ -277,10 +277,10 @@ export const FRAMES = Object.fromEntries((Object.keys(builders) as SceneId[]).ma
 const fmt = (v: number) => String(Math.round(v * 100) / 100);
 
 function tilePath(g: ArrayLike<number>, ox: number, oy: number) {
-  const w = Math.max(0, g[2]), h = Math.max(0, g[3]);
+  const w = Math.max(0, g[2]!), h = Math.max(0, g[3]!);
   if (w < .05 || h < .05) return "";
-  const r = Math.min(Math.max(0, g[4]), w / 2, h / 2), tan = Math.tan(g[6] * RAD), cos = Math.cos(g[5] * RAD), sin = Math.sin(g[5] * RAD);
-  const px = g[0] + ox * g[7], py = g[1] + oy * g[7], hw = w / 2, hh = h / 2;
+  const r = Math.min(Math.max(0, g[4]!), w / 2, h / 2), tan = Math.tan(g[6]! * RAD), cos = Math.cos(g[5]! * RAD), sin = Math.sin(g[5]! * RAD);
+  const px = g[0]! + ox * g[7]!, py = g[1]! + oy * g[7]!, hw = w / 2, hh = h / 2;
   const corners: [number, number, number][] = [[hw - r, -hh + r, -90], [hw - r, hh - r, 0], [-hw + r, hh - r, 90], [-hw + r, -hh + r, 180]];
   let d = "";
   for (const [cx, cy, start] of corners) {
@@ -294,16 +294,16 @@ function tilePath(g: ArrayLike<number>, ox: number, oy: number) {
 
 function span(g: ArrayLike<number>, from: number, count: number) {
   let len = 0;
-  for (let i = from + 1; i < from + count; i++) len += Math.hypot(g[2 * i] - g[2 * i - 2], g[2 * i + 1] - g[2 * i - 1]);
+  for (let i = from + 1; i < from + count; i++) len += Math.hypot(g[2 * i]! - g[2 * i - 2]!, g[2 * i + 1]! - g[2 * i - 1]!);
   return len;
 }
 
 /** Draws the first `budget` units of a polyline. Each point drifts by its own depth, so a line can stretch between two layers. */
 function trace(g: ArrayLike<number>, from: number, count: number, budget: number, ox: number, oy: number, z0: number, z1: number, total: number) {
   if (budget <= .05) return "";
-  const at = (i: number) => {
+  const at = (i: number): Pt => {
     const z = z0 + (z1 - z0) * (total > 1 ? (from + i) / (total - 1) : 0);
-    return [g[2 * (from + i)] + ox * z, g[2 * (from + i) + 1] + oy * z];
+    return [g[2 * (from + i)]! + ox * z, g[2 * (from + i) + 1]! + oy * z];
   };
   let [px, py] = at(0), left = budget, d = `M${fmt(px)} ${fmt(py)}`;
   for (let i = 1; i < count; i++) {
@@ -318,12 +318,12 @@ function trace(g: ArrayLike<number>, from: number, count: number, budget: number
 export function shapePath(kind: Kind, g: ArrayLike<number>, drawn: number, ox: number, oy: number): { d: string; dash: string } {
   if (kind === "tile") return { d: tilePath(g, ox, oy), dash: "none" };
   if (kind === "body") {
-    const z = g[2 * N], dx = ox * z, dy = oy * z;
+    const z = g[2 * N]!, dx = ox * z, dy = oy * z;
     let d = "";
-    for (let i = 0; i < N; i++) d += `${i ? "L" : "M"}${fmt(g[2 * i] + dx)} ${fmt(g[2 * i + 1] + dy)}`;
+    for (let i = 0; i < N; i++) d += `${i ? "L" : "M"}${fmt(g[2 * i]! + dx)} ${fmt(g[2 * i + 1]! + dy)}`;
     return { d: `${d}Z`, dash: "none" };
   }
-  const draw = Math.min(1, Math.max(0, drawn)), count = (g.length - 3) / 2, gap = g[g.length - 3], z0 = g[g.length - 2], z1 = g[g.length - 1];
+  const draw = Math.min(1, Math.max(0, drawn)), count = (g.length - 3) / 2, gap = g[g.length - 3]!, z0 = g[g.length - 2]!, z1 = g[g.length - 1]!;
   const dash = gap > .2 ? `3 ${fmt(gap)}` : "none";
   if (kind === "stroke") return { d: trace(g, 0, count, draw * span(g, 0, count), ox, oy, z0, z1, count), dash };
   const first = span(g, 0, M), budget = draw * (first + span(g, M, M));

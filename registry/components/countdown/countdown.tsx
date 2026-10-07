@@ -55,7 +55,7 @@ export function toEpoch(target: Date | number | string, timeZone?: string) {
   if (target instanceof Date) return target.getTime();
   const wall = /^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2})(?:\.\d+)?)?)?$/.exec(target.trim());
   if (!wall) return Date.parse(target);
-  const utc = Date.UTC(+wall[1], +wall[2] - 1, +wall[3], +(wall[4] ?? 0), +(wall[5] ?? 0), +(wall[6] ?? 0));
+  const utc = Date.UTC(+wall[1]!, +wall[2]! - 1, +wall[3]!, +(wall[4] ?? 0), +(wall[5] ?? 0), +(wall[6] ?? 0));
   if (!timeZone) return utc;
   // Two passes settle the offset across a daylight saving change.
   const guess = utc - zoneOffset(utc, timeZone);
@@ -201,7 +201,7 @@ export function Countdown({ target, timeZone, units = DEFAULT_UNITS, variant = "
                   {!compact && group > 0 && <span className={styles.colon}>:</span>}
                   <span className={styles.group}>
                     <span className={styles.number}><AnimatePresence initial={false}>
-                      {[...text].map((char, index) => <Wheel key={`${part.unit}${text.length - index}`} digit={Number(char)} base={bases[index]} delay={Math.min((group * 2 + index) * stagger.item, .3)} reduced={reduced} />)}
+                      {[...text].map((char, index) => <Wheel key={`${part.unit}${text.length - index}`} digit={Number(char)} base={bases[index]!} delay={Math.min((group * 2 + index) * stagger.item, .3)} reduced={reduced} />)}
                     </AnimatePresence></span>
                     <span className={styles.name}>{NAMES[part.unit][compact ? 1 : 0]}</span>
                   </span>

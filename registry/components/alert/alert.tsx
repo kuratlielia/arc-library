@@ -47,6 +47,7 @@ function HeightFrame({ className, reduce, morphKey, children }: { className?: st
     let controls: AnimationPlaybackControls | undefined;
     const settle = () => { height.jump("auto"); if (frame.current) Object.assign(frame.current.style, { overflow: "", height: "auto" }); };
     const observer = new ResizeObserver(([entry]) => {
+      if (!entry) return;
       const next = entry.borderBoxSize?.[0]?.blockSize ?? node.offsetHeight;
       const current = height.get();
       const from = typeof current === "number" ? current : last;

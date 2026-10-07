@@ -119,7 +119,7 @@ export function HeroRelay({ primaryAction = { label: "Start building", doneLabel
     if (!node) return;
     let onScreen = false;
     const sync = () => setVisible(onScreen && document.visibilityState === "visible");
-    const io = new IntersectionObserver(([entry]) => { onScreen = entry.isIntersecting; sync(); });
+    const io = new IntersectionObserver(([entry]) => { if (!entry) return; onScreen = entry.isIntersecting; sync(); });
     io.observe(node);
     document.addEventListener("visibilitychange", sync);
     return () => { io.disconnect(); document.removeEventListener("visibilitychange", sync); };
@@ -136,7 +136,7 @@ export function HeroRelay({ primaryAction = { label: "Start building", doneLabel
   const sendTest = () => setRun(current => ({ index: (current.index + 1) % EVENTS.length, count: current.count + 1, phase: 1 }));
 
   const layout = LAYOUTS[mode];
-  const event = EVENTS[run.index];
+  const event = EVENTS[run.index]!;
   // Reduced motion: every event is shown as its finished run; the button moves to the next one at once.
   const phase = reduced ? DONE : run.phase;
   const status = (id: NodeId) => statusOf(id, phase, event);
@@ -179,7 +179,7 @@ export function HeroRelay({ primaryAction = { label: "Start building", doneLabel
                     className={styles.flow}
                     initial={false}
                     animate={{ pathLength: lit ? 1 : 0, opacity: lit ? 1 : 0 }}
-                    transition={lit && !reduced ? { pathLength: { duration: PHASES[edge.phase] / 1000, ease: ease.inOut }, opacity: { duration: .08 } } : { duration: 0 }}
+                    transition={lit && !reduced ? { pathLength: { duration: PHASES[edge.phase]! / 1000, ease: ease.inOut }, opacity: { duration: .08 } } : { duration: 0 }}
                   />
                 </g>;
               })}

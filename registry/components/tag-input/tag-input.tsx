@@ -28,19 +28,19 @@ function MotionText({ text }: { text: string }) {
 }
 
 /** Helper copy: the row opens its height on a spring, then the words settle in. */
-function FieldMessage({ id, text, className }: { id?: string; text?: string; className: string }) {
+function FieldMessage({ id, text, className }: { id?: string; text?: string; className?: string }) {
   return <AnimatePresence initial={false}>{text ? <MessageRow key="message" id={id} text={text} className={className} /> : null}</AnimatePresence>;
 }
 
 /** The row tracks the measured copy, so a longer message that wraps opens its next line instead of snapping. */
-function MessageRow({ id, text, className }: { id?: string; text: string; className: string }) {
+function MessageRow({ id, text, className }: { id?: string; text: string; className?: string }) {
   const reduced = useReducedMotion();
   const copyRef = useRef<HTMLSpanElement>(null);
   const [height, setHeight] = useState<number | "auto">("auto");
   useEffect(() => {
     const node = copyRef.current;
     if (!node || typeof ResizeObserver === "undefined") return;
-    const observer = new ResizeObserver(([entry]) => setHeight(entry.borderBoxSize?.[0]?.blockSize ?? node.offsetHeight));
+    const observer = new ResizeObserver(([entry]) => setHeight(entry?.borderBoxSize?.[0]?.blockSize ?? node.offsetHeight));
     observer.observe(node);
     return () => observer.disconnect();
   }, []);
@@ -113,8 +113,8 @@ export function TagInput({ label, value, defaultValue = [], onValueChange, place
     let handled = true;
     if (key === "Enter" || key === ",") add();
     else if ((key === "Backspace" || key === "Delete") && active !== null) remove(active);
-    else if (key === "Backspace" && atStart && tags.length) pick(tags[tags.length - 1]);
-    else if (key === "ArrowLeft" && (atStart || active !== null) && index > 0) pick(tags[index - 1]);
+    else if (key === "Backspace" && atStart && tags.length) pick(tags[tags.length - 1]!);
+    else if (key === "ArrowLeft" && (atStart || active !== null) && index > 0) pick(tags[index - 1]!);
     else if (key === "ArrowRight" && active !== null) pick(tags[index + 1] ?? null);
     else if (key === "Escape" && active !== null) pick(null);
     else handled = false;

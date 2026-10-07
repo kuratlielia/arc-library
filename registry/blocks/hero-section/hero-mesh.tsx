@@ -65,13 +65,15 @@ function hashOf(text: string) {
   return h >>> 0;
 }
 
+const UNIFORMS = ["uRes", "uBase", "uP", "uC", "uN", "uGrain"] as const;
+
 /** Resolves any CSS color (hex, oklch, color-mix) to sRGB through a one pixel 2D canvas. */
 function toRgb(color: string, scratch: CanvasRenderingContext2D): Rgb {
   scratch.clearRect(0, 0, 1, 1);
   scratch.fillStyle = "#000";
   scratch.fillStyle = color;
   scratch.fillRect(0, 0, 1, 1);
-  const [r, g, b] = scratch.getImageData(0, 0, 1, 1).data;
+  const [r = 0, g = 0, b = 0] = scratch.getImageData(0, 0, 1, 1).data;
   return [r / 255, g / 255, b / 255];
 }
 
@@ -111,7 +113,7 @@ export function HeroMesh({ points, grain = .35, speed = 1, className, style }: H
     const loc = gl.getAttribLocation(prog, "a");
     gl.enableVertexAttribArray(loc);
     gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-    const u = Object.fromEntries(["uRes", "uBase", "uP", "uC", "uN", "uGrain"].map(name => [name, gl.getUniformLocation(prog, name)]));
+    const u = Object.fromEntries(UNIFORMS.map(name => [name, gl.getUniformLocation(prog, name)])) as Record<(typeof UNIFORMS)[number], WebGLUniformLocation | null>;
 
     const pts = (JSON.parse(key) as HeroMeshPoint[]).slice(0, MAX);
     const drift = pts.map((_, i) => { const h = hashOf(`mesh-${i}`); return { ph1: (h % 628) / 100, ph2: ((h >>> 10) % 628) / 100, k1: 1 + ((h >>> 20) % 2), k2: 1 + ((h >>> 22) % 2) }; });
@@ -136,7 +138,7 @@ export function HeroMesh({ points, grain = .35, speed = 1, className, style }: H
     const draw = () => {
       const a = (2 * Math.PI * t) / PERIOD;
       pts.forEach((p, i) => {
-        const d = drift[i];
+        const d = drift[i]!;
         P[i * 4] = p.x + TRAVEL * Math.sin(a * d.k1 + d.ph1);
         P[i * 4 + 1] = p.y + TRAVEL * Math.cos(a * d.k2 + d.ph2);
         P[i * 4 + 2] = p.spread * (1 + BREATH * Math.sin(a + d.ph1 * .7));
@@ -171,7 +173,7 @@ export function HeroMesh({ points, grain = .35, speed = 1, className, style }: H
       if (run && !frame) { last = 0; frame = requestAnimationFrame(tick); }
       if (!run && frame) { cancelAnimationFrame(frame); frame = 0; }
     };
-    const io = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync(); });
+    const io = new IntersectionObserver(([entry]) => { if (!entry) return; visible = entry.isIntersecting; sync(); });
     io.observe(host);
     const ro = new ResizeObserver(() => { size(); draw(); });
     ro.observe(host);

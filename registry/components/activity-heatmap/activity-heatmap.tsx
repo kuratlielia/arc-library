@@ -65,7 +65,7 @@ function buildModel(days: ActivityDay[], weekStartsOn: 0 | 1, thresholds: [numbe
   const start = dates.length ? Math.min(...dates) : toUtc("2025-01-01");
   const length = dates.length ? Math.round((Math.max(...dates) - start) / DAY) + 1 : 0;
   const counts = new Array<number>(length).fill(0);
-  days.forEach(day => { const index = Math.round((toUtc(day.date) - start) / DAY); if (index >= 0 && index < length) counts[index] += Math.max(0, day.count); });
+  days.forEach(day => { const index = Math.round((toUtc(day.date) - start) / DAY); if (index >= 0 && index < length) counts[index]! += Math.max(0, day.count); });
   const max = counts.reduce((a, b) => Math.max(a, b), 0);
   const bounds = thresholds ?? [Math.max(1, Math.ceil(max * .25)), Math.max(2, Math.ceil(max * .5)), Math.max(3, Math.ceil(max * .75))] as [number, number, number];
   const levels = counts.map(count => count <= 0 ? 0 : count <= bounds[0] ? 1 : count <= bounds[1] ? 2 : count <= bounds[2] ? 3 : 4);
@@ -78,9 +78,9 @@ function buildModel(days: ActivityDay[], weekStartsOn: 0 | 1, thresholds: [numbe
     if (index === 0 || date.getUTCDate() === 1) months.push({ month: date.getUTCFullYear() * 12 + date.getUTCMonth(), col: Math.floor((lead + index) / 7), label: monthName.format(date) });
   }
   // A partial first month keeps its label only when there is room before the next one.
-  if (months.length > 1 && months[1].col - months[0].col < 3) months.shift();
+  if (months.length > 1 && months[1]!.col - months[0]!.col < 3) months.shift();
   const perLevel = [0, 0, 0, 0, 0];
-  levels.forEach(level => perLevel[level]++);
+  levels.forEach(level => perLevel[level]!++);
   return { start, length, lead, weeks, total: counts.reduce((a, b) => a + b, 0), counts, levels, thresholds: bounds, months, perLevel };
 }
 
@@ -214,14 +214,14 @@ export function ActivityHeatmap({ days, label, period, unit: unitProp = CONTRIBU
   const tipX = useMotionValue(0), tipY = useMotionValue(0), tipWidth = useMotionValue<number | "auto">("auto");
 
   function contentFor(index: number, anchor: HTMLElement): Tip {
-    const count = model.counts[index];
+    const count = model.counts[index]!;
     const date = new Date(model.start + index * DAY);
     return { key: `day-${toIso(date.getTime())}`, primary: count ? `${formats.number.format(count)} ${noun(count, unit)}` : `No ${unit.other}`, secondary: formats.short.format(date), value: count, anchor };
   }
   const [a, b, c] = model.thresholds;
   const ranges = [`no ${unit.other}`, a === 1 ? `1 ${unit.one}` : `1 to ${a} ${unit.other}`, `${a + 1} to ${b} ${unit.other}`, `${b + 1} to ${c} ${unit.other}`, `${c + 1} or more ${unit.other}`];
   const shortRanges = [`no ${unit.other}`, a === 1 ? `1 ${unit.one}` : `1–${a} ${unit.other}`, `${a + 1}–${b} ${unit.other}`, `${b + 1}–${c} ${unit.other}`, `${c + 1}+ ${unit.other}`];
-  const dayCount = highlight === null ? "" : `${formats.number.format(model.perLevel[highlight])} ${model.perLevel[highlight] === 1 ? "day" : "days"}`;
+  const dayCount = highlight === null ? "" : `${formats.number.format(model.perLevel[highlight]!)} ${model.perLevel[highlight] === 1 ? "day" : "days"}`;
   const caption = highlight === null ? "" : `${dayCount} with ${shortRanges[highlight]}`;
   function show(next: Tip) {
     window.clearTimeout(hideTimer.current);
@@ -292,7 +292,7 @@ export function ActivityHeatmap({ days, label, period, unit: unitProp = CONTRIBU
     const moves: Record<string, number> = { ArrowUp: hit.index - 1, ArrowDown: hit.index + 1, ArrowLeft: hit.index - 7, ArrowRight: hit.index + 7, Home: 0, End: model.length - 1 };
     if (event.key in moves) {
       event.preventDefault();
-      focusDay(Math.min(Math.max(moves[event.key], 0), model.length - 1));
+      focusDay(Math.min(Math.max(moves[event.key]!, 0), model.length - 1));
     } else if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
       onSelectDate?.(toIso(model.start + hit.index * DAY));
@@ -307,7 +307,7 @@ export function ActivityHeatmap({ days, label, period, unit: unitProp = CONTRIBU
     if (event.key === "Escape") { previewLevel(null); return; }
     if (!(event.key in moves)) return;
     event.preventDefault();
-    const next = Math.min(Math.max(moves[event.key], 0), 4);
+    const next = Math.min(Math.max(moves[event.key]!, 0), 4);
     rootRef.current?.querySelector<HTMLElement>(`[data-level-key="${next}"]`)?.focus();
   }
 
@@ -332,7 +332,7 @@ export function ActivityHeatmap({ days, label, period, unit: unitProp = CONTRIBU
       const inRange = index >= 0 && index < model.length;
       const wave = { "--wave": `${Math.round((col + row) * step)}ms`, "--wave-back": `${Math.round((maxDiagonal - col - row) * step)}ms` } as CSSProperties;
       if (!inRange) return <span key={col} className={styles.cell} data-empty="" style={wave} aria-hidden="true" />;
-      const count = model.counts[index];
+      const count = model.counts[index]!;
       const date = new Date(model.start + index * DAY);
       return <span key={col} role="gridcell" className={styles.cell} style={wave} data-index={index} data-level={model.levels[index]} tabIndex={index === tabIndexDay ? 0 : -1}
         aria-selected={onSelectDate ? index === selectedIndex : undefined} aria-label={`${count ? formats.number.format(count) : "No"} ${noun(count, unit)}, ${formats.long.format(date)}`}

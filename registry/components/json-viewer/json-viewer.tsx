@@ -381,7 +381,7 @@ export const JsonViewer = forwardRef<HTMLDivElement, JsonViewerProps>(function J
     if (!search || !matchCount) return;
     const next = ((Math.min(matchIndex, matchCount - 1) + step) % matchCount + matchCount) % matchCount;
     setMatchIndex(next);
-    moveTo(search.matches[next], false, "center");
+    moveTo(search.matches[next]!, false, "center");
   };
   const onQuery = (next: string) => {
     setQuery(next);

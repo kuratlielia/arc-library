@@ -277,6 +277,7 @@ export const SiteHeader = forwardRef<HTMLElement, SiteHeaderProps>(function Site
     const node = rootRef.current;
     if (!node || typeof ResizeObserver === "undefined") return;
     const observer = new ResizeObserver(([entry]) => {
+      if (!entry) return;
       if (entry.contentRect.width >= COLLAPSE_BELOW) { setMenuOpen(false); setExpanded(null); } else setOpen(null);
     });
     observer.observe(node);
@@ -320,7 +321,7 @@ export const SiteHeader = forwardRef<HTMLElement, SiteHeaderProps>(function Site
     if (index < 0) return;
     event.preventDefault();
     const nextIndex = (index + (event.key === "ArrowRight" ? 1 : -1) + triggers.length) % triggers.length;
-    triggers[nextIndex].focus();
+    triggers[nextIndex]!.focus();
     if (open) { const item = items[nextIndex]; openPanel(item && hasPanels && item.links?.length ? item.value : null); }
   }
   function onTriggerKeyDown(event: ReactKeyboardEvent, value: string) {

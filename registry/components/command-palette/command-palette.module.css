@@ -46,9 +46,7 @@
 .clearButton { display: grid; width: 24px; height: 24px; flex: none; place-items: center; border: 0; border-radius: 7px; background: transparent; color: var(--text-muted); cursor: pointer; transition: color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard); }
 @media (hover: hover) and (pointer: fine) { .clearButton:hover, .closeButton:hover { background: var(--surface); color: var(--foreground); } }
 .clearButton:active, .closeButton:active { background: var(--surface); color: var(--foreground); }
-.clearButton:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .closeButton { display: grid; min-width: 27px; height: 24px; flex: none; place-items: center; border: 1px solid var(--border-subtle); border-radius: 7px; background: transparent; color: var(--text-muted); padding: 0 6px; font: inherit; font-size: var(--text-xs); font-weight: 500; line-height: 1; cursor: pointer; transition: color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard); }
-.closeButton:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 
 /* The frame animates to the list height; the list keeps its own scroll. */
 .resultsFrame { overflow: hidden; }
@@ -63,7 +61,6 @@
 .result { position: relative; display: flex; width: 100%; min-height: 34px; align-items: center; gap: 10px; border: 0; border-radius: 8px; padding: 0 8px; background: transparent; color: var(--foreground); text-align: left; cursor: pointer; }
 /* The active row is drawn by the shared highlight; the row itself only tints its icon and arrow. */
 .itemIcon { transition: color var(--duration-fast) var(--ease-standard); }
-.activeResult .itemIcon, .activeResult .result:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: -2px; }
 .itemIcon { display: grid; width: 16px; height: 16px; flex: none; place-items: center; color: var(--text-muted); }
 .itemIcon svg { width: 16px; height: 16px; }
 .resultCopy { display: flex; min-width: 0; flex: 1; align-items: baseline; gap: 8px; }

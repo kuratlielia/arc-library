@@ -111,7 +111,7 @@ const THREAD_LABELS: Omit<Required<ChatThreadLabels>, "today" | "yesterday"> = {
   failed: "Not delivered",
   retry: "Retry",
   readBy: names => `Read by ${names.join(", ")}`,
-  typing: names => names.length === 1 ? `${firstName(names[0])} is typing` : names.length === 2 ? `${firstName(names[0])} and ${firstName(names[1])} are typing` : "Several people are typing",
+  typing: names => names.length === 1 ? `${firstName(names[0]!)} is typing` : names.length === 2 ? `${firstName(names[0]!)} and ${firstName(names[1]!)} are typing` : "Several people are typing",
   newMessages: count => `${count} new ${count === 1 ? "message" : "messages"}`,
   jumpToLatest: "Jump to latest",
   unknownAuthor: "Unknown",
@@ -441,7 +441,7 @@ export const ChatThread = forwardRef<ChatThreadHandle, ChatThreadProps>(function
     receipts.forEach((_, messageId) => { furthest = Math.max(furthest, messages.findIndex(message => message.id === messageId)); });
     return furthest;
   }, [messages, receipts]);
-  const lastMine = useMemo(() => { for (let index = messages.length - 1; index >= 0; index--) if (messages[index].authorId === currentUserId) return index; return -1; }, [currentUserId, messages]);
+  const lastMine = useMemo(() => { for (let index = messages.length - 1; index >= 0; index--) if (messages[index]!.authorId === currentUserId) return index; return -1; }, [currentUserId, messages]);
 
   const time = useMemo(() => new Intl.DateTimeFormat(locale, { hour: "numeric", minute: "2-digit" }), [locale]);
 
@@ -518,9 +518,10 @@ export const ChatThread = forwardRef<ChatThreadHandle, ChatThreadProps>(function
       if (message.id !== messageId) return message;
       const list = [...(message.reactions ?? [])];
       const at = list.findIndex(entry => entry.emoji === emoji);
-      if (at < 0) list.push({ emoji, count: 1, mine: true });
-      else if (list[at].mine) list[at] = { ...list[at], count: list[at].count - 1, mine: false };
-      else list[at] = { ...list[at], count: list[at].count + 1, mine: true };
+      const found = list[at];
+      if (!found) list.push({ emoji, count: 1, mine: true });
+      else if (found.mine) list[at] = { ...found, count: found.count - 1, mine: false };
+      else list[at] = { ...found, count: found.count + 1, mine: true };
       return { ...message, reactions: list.filter(entry => entry.count > 0) };
     }));
   };
@@ -622,7 +623,7 @@ export const ChatThread = forwardRef<ChatThreadHandle, ChatThreadProps>(function
                   initial={reduced ? { opacity: 0 } : { opacity: 0, scale: .9, y: 8 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={reduced ? { opacity: 0 } : { opacity: 0, scale: .9, transition: { duration: duration.exit, ease: standard } }}
                   transition={reduced ? { duration: duration.fast } : spring.snappy} style={{ transformOrigin: "0 100%" }}>
                   <div className={styles.gutter} />
-                  <div className={styles.stack}><div className={styles.line}><span className={styles.face}><Avatar person={typers[0]} size={28} /></span><div className={`${styles.bubble} ${styles.typing}`}><TypingDots /></div></div></div>
+                  <div className={styles.stack}><div className={styles.line}><span className={styles.face}><Avatar person={typers[0]!} size={28} /></span><div className={`${styles.bubble} ${styles.typing}`}><TypingDots /></div></div></div>
                 </motion.li>}
               </AnimatePresence>
             </ol>

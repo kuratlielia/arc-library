@@ -60,8 +60,8 @@ const iconEnter = { ...motionTokens.spring.snappy, opacity: { duration: motionTo
 
 function velocityOf(samples: [number, number][], now: number) {
   const recent = samples.filter(([time]) => now - time <= 90);
-  if (recent.length < 2 || now - recent[recent.length - 1][0] > 50) return 0;
-  const [firstTime, firstX] = recent[0], [lastTime, lastX] = recent[recent.length - 1];
+  if (recent.length < 2 || now - recent[recent.length - 1]![0] > 50) return 0;
+  const [firstTime, firstX] = recent[0]!, [lastTime, lastX] = recent[recent.length - 1]!;
   return lastTime > firstTime ? (lastX - firstX) / ((lastTime - firstTime) / 1000) : 0;
 }
 
@@ -177,7 +177,7 @@ export function Carousel({ label, children, index: controlledIndex, defaultIndex
   useEffect(() => {
     const root = rootRef.current;
     if (!interval || !root) return;
-    const observer = typeof IntersectionObserver === "undefined" ? null : new IntersectionObserver(([entry]) => setInView(entry.isIntersecting));
+    const observer = typeof IntersectionObserver === "undefined" ? null : new IntersectionObserver(([entry]) => { if (entry) setInView(entry.isIntersecting); });
     observer?.observe(root);
     const onVisibility = () => setPageVisible(document.visibilityState !== "hidden");
     document.addEventListener("visibilitychange", onVisibility);
@@ -313,7 +313,7 @@ export function Carousel({ label, children, index: controlledIndex, defaultIndex
         </AnimatePresence></span>
       </button>}
       <div className={styles.tabs} role="tablist" aria-label="Choose a slide">
-        {slides.map((_, i) => <Dot key={i} index={i} last={last} progress={progress} drain={drains[i]} selected={i === index} label={slideLabel(i, count)} controls={`${id}-slide-${i}`}
+        {slides.map((_, i) => <Dot key={i} index={i} last={last} progress={progress} drain={drains[i]!} selected={i === index} label={slideLabel(i, count)} controls={`${id}-slide-${i}`}
           tabRef={node => { tabRefs.current[i] = node; }} onSelect={() => select(i)} />)}
       </div>
       <div className={styles.arrows}>

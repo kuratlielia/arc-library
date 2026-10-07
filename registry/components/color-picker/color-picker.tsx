@@ -130,23 +130,23 @@ export function parseColor(input: string, hue = 0): Hsva | null {
   const text = input.trim().toLowerCase();
   let match = /^#?([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/.exec(text);
   if (match) {
-    let digits = match[1];
+    let digits = match[1]!;
     if (digits.length <= 4) digits = digits.split("").map(d => d + d).join("");
     const n = (i: number) => parseInt(digits.slice(i, i + 2), 16) / 255;
     return rgbToHsv({ r: n(0), g: n(2), b: n(4), a: digits.length === 8 ? n(6) : 1 }, hue);
   }
   match = /^rgba?\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)(?:\s*[/,]\s*([\d.]+%?))?\s*\)$/.exec(text);
-  if (match) return rgbToHsv({ r: clamp(+match[1] / 255), g: clamp(+match[2] / 255), b: clamp(+match[3] / 255), a: readAlpha(match[4]) }, hue);
+  if (match) return rgbToHsv({ r: clamp(+match[1]! / 255), g: clamp(+match[2]! / 255), b: clamp(+match[3]! / 255), a: readAlpha(match[4]) }, hue);
   match = /^hsla?\(\s*([\d.]+)(?:deg)?[\s,]+([\d.]+)%?[\s,]+([\d.]+)%?(?:\s*[/,]\s*([\d.]+%?))?\s*\)$/.exec(text);
   if (match) {
-    const h = +match[1] % 360;
-    const next = rgbToHsv(hslToRgb(h, clamp(+match[2] / 100), clamp(+match[3] / 100), readAlpha(match[4])), h);
+    const h = +match[1]! % 360;
+    const next = rgbToHsv(hslToRgb(h, clamp(+match[2]! / 100), clamp(+match[3]! / 100), readAlpha(match[4])), h);
     return { ...next, h };
   }
   match = /^oklch\(\s*([\d.]+)(%?)\s+([\d.]+)\s+([\d.]+)(?:deg)?(?:\s*\/\s*([\d.]+%?))?\s*\)$/.exec(text);
   if (match) {
-    const L = match[2] ? +match[1] / 100 : +match[1];
-    return rgbToHsv(oklchToRgb(clamp(L), +match[3], +match[4], readAlpha(match[5])), hue);
+    const L = match[2] ? +match[1]! / 100 : +match[1]!;
+    return rgbToHsv(oklchToRgb(clamp(L), +match[3]!, +match[4]!, readAlpha(match[5])), hue);
   }
   return null;
 }
@@ -212,7 +212,7 @@ function stepFor(event: ReactKeyboardEvent, axis: "x" | "y" | "both") {
   return map[event.key] ?? null;
 }
 
-interface SliderProps { label: string; value: number; valueText: string; max: number; unit: number; onChange: (value: number) => void; className: string; style?: CSSProperties; reduced: boolean; fill: string; onActive: (active: boolean) => void; active: boolean }
+interface SliderProps { label: string; value: number; valueText: string; max: number; unit: number; onChange: (value: number) => void; className?: string; style?: CSSProperties; reduced: boolean; fill: string; onActive: (active: boolean) => void; active: boolean }
 function Slider({ label, value, valueText, max, unit, onChange, className, style, reduced, fill, onActive, active }: SliderProps) {
   const x = useFollow(value / max, reduced, active);
   const left = useTransform(x, v => `${v * 100}%`);
@@ -370,7 +370,7 @@ export function ColorPicker({
   }, [morph]);
 
   function cycleFormat() {
-    const next = formats[(formats.indexOf(kind) + 1) % formats.length];
+    const next = formats[(formats.indexOf(kind) + 1) % formats.length]!;
     setKind(next); setDraft(null); setInvalid(false);
     if (!reduced) setMorph({ id: Date.now(), from: text, to: format(hsva, next), phase: 0 });
   }
@@ -399,7 +399,7 @@ export function ColorPicker({
     setFocusSwatch(entry.id);
   }
   function onSwatchKey(event: ReactKeyboardEvent<HTMLButtonElement>, index: number) {
-    const item = swatches[index];
+    const item = swatches[index]!;
     const move = event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
     if (event.key === "Delete" || event.key === "Backspace") {
       event.preventDefault();
@@ -422,8 +422,8 @@ export function ColorPicker({
       return;
     }
     const target = event.key === "Home" ? 0 : event.key === "End" ? swatches.length - 1 : (index + move + swatches.length) % swatches.length;
-    setFocusSwatch(swatches[target].id);
-    swatchRefs.current.get(swatches[target].id)?.focus({ preventScroll: true });
+    setFocusSwatch(swatches[target]!.id);
+    swatchRefs.current.get(swatches[target]!.id)?.focus({ preventScroll: true });
   }
 
   const ratioValue = useFollow(ratio, reduced);

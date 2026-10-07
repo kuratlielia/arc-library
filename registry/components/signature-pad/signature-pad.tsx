@@ -75,39 +75,43 @@ const easeOut = (t: number) => t * (2 - t);
  */
 export function getStrokeOutline(input: InkPoint[], options: OutlineOptions): Vec[] {
   const { size, thinning = .62, streamline = .42, simulatePressure = true, taperStart = 0, taperEnd = 0, last = true } = options;
-  if (!input.length) return [];
+  const [head] = input;
+  if (!head) return [];
   const usePen = !simulatePressure && input.some(point => point.p > 0);
 
   // Streamline: each point eases toward the raw input, which removes jitter without a smoothing pass.
   const pts: { at: Vec; pressure: number; length: number; vector: Vec }[] = [];
-  let prev: Vec = [input[0].x, input[0].y], length = 0;
-  pts.push({ at: prev, pressure: usePen ? input[0].p : .5, length: 0, vector: [1, 0] });
+  let prev: Vec = [head.x, head.y], length = 0;
+  const start = { at: prev, pressure: usePen ? head.p : .5, length: 0, vector: [1, 0] as Vec };
+  pts.push(start);
   for (let i = 1; i < input.length; i++) {
-    const raw: Vec = [input[i].x, input[i].y];
+    const sample = input[i]!;
+    const raw: Vec = [sample.x, sample.y];
     const at = i === input.length - 1 && last ? raw : lerp(prev, raw, 1 - streamline);
     const d = dist(at, prev);
     if (d < .4) continue;
     length += d;
-    pts.push({ at, pressure: usePen ? input[i].p : .5, length, vector: norm(sub(prev, at)) });
+    pts.push({ at, pressure: usePen ? sample.p : .5, length, vector: norm(sub(prev, at)) });
     prev = at;
   }
-  if (pts.length > 1) pts[0].vector = pts[1].vector;
+  const second = pts[1];
+  if (second) start.vector = second.vector;
   const total = length;
 
   // A dot: a round mark sized by the first pressure.
   if (pts.length === 1) {
-    const r = Math.max(.6, size * (.5 - thinning * (.5 - pts[0].pressure)) * .9);
-    return Array.from({ length: 18 }, (_, i) => add(pts[0].at, mul([Math.cos(i / 18 * Math.PI * 2), Math.sin(i / 18 * Math.PI * 2)], r)));
+    const r = Math.max(.6, size * (.5 - thinning * (.5 - start.pressure)) * .9);
+    return Array.from({ length: 18 }, (_, i) => add(start.at, mul([Math.cos(i / 18 * Math.PI * 2), Math.sin(i / 18 * Math.PI * 2)], r)));
   }
 
   const left: Vec[] = [], right: Vec[] = [];
-  let pressure = pts[0].pressure, prevVector = pts[0].vector;
+  let pressure = start.pressure, prevVector = start.vector;
   const radii: number[] = [];
   for (let i = 0; i < pts.length; i++) {
-    const point = pts[i];
+    const point = pts[i]!;
     if (!usePen) {
       // Speed thins the line: a long step between samples reads as a fast stroke.
-      const step = i === 0 ? 0 : dist(point.at, pts[i - 1].at);
+      const step = i === 0 ? 0 : dist(point.at, pts[i - 1]!.at);
       const speed = Math.min(1, step / size);
       const target = Math.min(1, 1 - speed);
       pressure = Math.min(1, pressure + (target - pressure) * speed * .3);
@@ -149,9 +153,9 @@ export function getStrokeOutline(input: InkPoint[], options: OutlineOptions): Ve
     out.push(to);
     return out;
   };
-  const first = pts[0], end = pts[pts.length - 1];
-  const endCap = cap(end.at, left[left.length - 1], right[right.length - 1], mul(end.vector, -1));
-  const startCap = cap(first.at, right[0], left[0], first.vector);
+  const end = pts[pts.length - 1]!;
+  const endCap = cap(end.at, left[left.length - 1]!, right[right.length - 1]!, mul(end.vector, -1));
+  const startCap = cap(start.at, right[0]!, left[0]!, start.vector);
   return [...left, ...endCap, ...right.reverse(), ...startCap];
 }
 
@@ -159,9 +163,9 @@ const round = (value: number) => Math.round(value * 100) / 100;
 /** Draws an outline as one smooth closed path, with quadratic curves through the midpoints of its edges. */
 export function outlineToPath(points: Vec[]) {
   if (points.length < 3) return "";
-  let d = `M${round(points[0][0])} ${round(points[0][1])} Q`;
+  let d = `M${round(points[0]![0])} ${round(points[0]![1])} Q`;
   for (let i = 0; i < points.length; i++) {
-    const [x0, y0] = points[i], [x1, y1] = points[(i + 1) % points.length];
+    const [x0, y0] = points[i]!, [x1, y1] = points[(i + 1) % points.length]!;
     d += `${round(x0)} ${round(y0)} ${round((x0 + x1) / 2)} ${round((y0 + y1) / 2)} `;
   }
   return `${d}Z`;
@@ -175,7 +179,7 @@ function strokeOptions(stroke: Pick<InkStroke, "width" | "points">, last: boolea
 /** The SVG path of a stroke, or of its first `upTo` ms while it is replayed. */
 export function strokePath(stroke: Pick<InkStroke, "width" | "points">, upTo = Infinity) {
   const all = stroke.points;
-  const done = upTo >= all[all.length - 1].t;
+  const done = upTo >= all[all.length - 1]!.t;
   const points = done ? all : all.filter(point => point.t <= upTo);
   return outlineToPath(getStrokeOutline(points, strokeOptions(stroke, done)));
 }
@@ -321,7 +325,7 @@ export function SignaturePad({ signer, hint = "Sign here", defaultColor = "black
     for (const sample of list) {
       const { x, y } = toPad(sample);
       const pen = sample.pointerType === "pen" && sample.pressure > 0;
-      current.stroke.points.push({ x, y, p: pen ? sample.pressure : -1, t: Math.max(current.stroke.points[current.stroke.points.length - 1].t, sample.timeStamp - current.stamp) });
+      current.stroke.points.push({ x, y, p: pen ? sample.pressure : -1, t: Math.max(current.stroke.points[current.stroke.points.length - 1]!.t, sample.timeStamp - current.stamp) });
     }
     paintLive();
   }
@@ -343,13 +347,13 @@ export function SignaturePad({ signer, hint = "Sign here", defaultColor = "black
   function undo() {
     if (!history.past.length || live.current) return;
     settleWipe(); stopReplay();
-    setHistory(current => current.past.length ? { past: current.past.slice(0, -1), present: current.past[current.past.length - 1], future: [current.present, ...current.future], fresh: null } : current);
+    setHistory(current => current.past.length ? { past: current.past.slice(0, -1), present: current.past[current.past.length - 1]!, future: [current.present, ...current.future], fresh: null } : current);
     setStatus("Undone");
   }
   function redo() {
     if (!history.future.length || live.current) return;
     settleWipe(); stopReplay();
-    setHistory(current => current.future.length ? { past: [...current.past, current.present], present: current.future[0], future: current.future.slice(1), fresh: null } : current);
+    setHistory(current => current.future.length ? { past: [...current.past, current.present], present: current.future[0]!, future: current.future.slice(1), fresh: null } : current);
     setStatus("Redone");
   }
 
@@ -380,12 +384,12 @@ export function SignaturePad({ signer, hint = "Sign here", defaultColor = "black
     let cursor = 0;
     strokes.forEach((stroke, index) => {
       if (index > 0) {
-        const previous = strokes[index - 1];
-        const gap = stroke.at - (previous.at + previous.points[previous.points.length - 1].t);
+        const previous = strokes[index - 1]!;
+        const gap = stroke.at - (previous.at + previous.points[previous.points.length - 1]!.t);
         cursor += Math.min(260, Math.max(90, gap));
       }
       offsets.push(cursor);
-      cursor += stroke.points[stroke.points.length - 1].t;
+      cursor += stroke.points[stroke.points.length - 1]!.t;
     });
     const speed = Math.max(1, cursor / 3200);
     const total = cursor + 120;
@@ -428,13 +432,13 @@ export function SignaturePad({ signer, hint = "Sign here", defaultColor = "black
   let nib: InkPoint | null = null, nibColor: InkColor = color;
   const visible: { stroke: InkStroke; d: string | null }[] = [];
   for (let index = 0; index < strokes.length; index++) {
-    const stroke = strokes[index];
+    const stroke = strokes[index]!;
     if (replay === null) { visible.push({ stroke, d: null }); continue; }
     const local = replay.at - (replay.offsets[index] ?? 0);
-    const lastT = stroke.points[stroke.points.length - 1].t;
+    const lastT = stroke.points[stroke.points.length - 1]!.t;
     if (local < 0) { visible.push({ stroke, d: "" }); continue; }
     if (local >= lastT) { visible.push({ stroke, d: null }); continue; }
-    nib = stroke.points.findLast(point => point.t <= local) ?? stroke.points[0];
+    nib = stroke.points.findLast(point => point.t <= local) ?? stroke.points[0]!;
     nibColor = stroke.color;
     visible.push({ stroke, d: strokePath(stroke, local) });
   }
@@ -527,7 +531,7 @@ function Choice<T extends string>({ label, options, value, onChange, render, nam
     if (!step) return;
     event.preventDefault();
     const index = (options.indexOf(value) + step + options.length) % options.length;
-    onChange(options[index]);
+    onChange(options[index]!);
     refs.current[index]?.focus();
   }
   return <div className={styles.choice} role="radiogroup" aria-label={label} onKeyDown={onKeyDown}>

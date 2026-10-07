@@ -102,24 +102,24 @@ function niceScale(low: number, high: number) {
 /** The line through every value, sampled densely on x from 0 to 1 in data units. Monotone cubic tangents keep a smooth curve from swinging past the data. */
 function curveFor(values: number[], smooth: boolean): Point[] {
   if (values.length === 0) return [];
-  if (values.length === 1) return [[0, values[0]], [1, values[0]]];
+  if (values.length === 1) return [[0, values[0]!], [1, values[0]!]];
   const last = values.length - 1, step = 1 / last;
   if (!smooth) return values.map((value, index) => [index * step, value]);
-  const slopes = values.slice(1).map((value, index) => (value - values[index]) / step);
-  const tangents = values.map((_, index) => index === 0 || index === last ? 0 : (Math.sign(slopes[index - 1]) + Math.sign(slopes[index])) * Math.min(Math.abs(slopes[index - 1]), Math.abs(slopes[index]), Math.abs(slopes[index - 1] + slopes[index]) / 4) || 0);
-  if (last > 1) { tangents[0] = (3 * slopes[0] - tangents[1]) / 2; tangents[last] = (3 * slopes[last - 1] - tangents[last - 1]) / 2; }
-  else { tangents[0] = slopes[0]; tangents[1] = slopes[0]; }
+  const slopes = values.slice(1).map((value, index) => (value - values[index]!) / step);
+  const tangents = values.map((_, index) => index === 0 || index === last ? 0 : (Math.sign(slopes[index - 1]!) + Math.sign(slopes[index]!)) * Math.min(Math.abs(slopes[index - 1]!), Math.abs(slopes[index]!), Math.abs(slopes[index - 1]! + slopes[index]!) / 4) || 0);
+  if (last > 1) { tangents[0] = (3 * slopes[0]! - tangents[1]!) / 2; tangents[last] = (3 * slopes[last - 1]! - tangents[last - 1]!) / 2; }
+  else { tangents[0] = slopes[0]!; tangents[1] = slopes[0]!; }
   const samples = Math.max(1, Math.min(16, Math.round(192 / last)));
   const points: Point[] = [];
   for (let index = 0; index < last; index++) {
-    const low = Math.min(values[index], values[index + 1]), high = Math.max(values[index], values[index + 1]);
+    const low = Math.min(values[index]!, values[index + 1]!), high = Math.max(values[index]!, values[index + 1]!);
     for (let sample = 0; sample < samples; sample++) {
       const t = sample / samples, t2 = t * t, t3 = t2 * t;
-      const value = (2 * t3 - 3 * t2 + 1) * values[index] + (t3 - 2 * t2 + t) * step * tangents[index] + (3 * t2 - 2 * t3) * values[index + 1] + (t3 - t2) * step * tangents[index + 1];
+      const value = (2 * t3 - 3 * t2 + 1) * values[index]! + (t3 - 2 * t2 + t) * step * tangents[index]! + (3 * t2 - 2 * t3) * values[index + 1]! + (t3 - t2) * step * tangents[index + 1]!;
       points.push([(index + t) * step, clamp(value, low, high)]);
     }
   }
-  points.push([1, values[last]]);
+  points.push([1, values[last]!]);
   return points;
 }
 
@@ -127,10 +127,10 @@ function curveFor(values: number[], smooth: boolean): Point[] {
 function valueAt(shape: Point[], x: number) {
   if (!shape.length) return 0;
   let low = 0, high = shape.length - 1;
-  if (x <= shape[low][0]) return shape[low][1];
-  if (x >= shape[high][0]) return shape[high][1];
-  while (high - low > 1) { const middle = (low + high) >> 1; if (shape[middle][0] < x) low = middle; else high = middle; }
-  const [x0, y0] = shape[low], [x1, y1] = shape[high];
+  if (x <= shape[low]![0]) return shape[low]![1];
+  if (x >= shape[high]![0]) return shape[high]![1];
+  while (high - low > 1) { const middle = (low + high) >> 1; if (shape[middle]![0] < x) low = middle; else high = middle; }
+  const [x0, y0] = shape[low]!, [x1, y1] = shape[high]!;
   return x1 === x0 ? y1 : y0 + ((y1 - y0) * (x - x0)) / (x1 - x0);
 }
 
@@ -299,7 +299,7 @@ export function LineChart({ data, series, label, unit = "", height = 220, format
     }
     morph.current?.stop();
     if (!moves.length) { paint(); return; }
-    morph.current = animate(0, 1, { ...settle, restDelta: .0005, onUpdate: progress => { for (const move of moves) update(move.track, { shape: move.xs.map((x, at): Point => [x, move.from[at] + (move.to[at] - move.from[at]) * progress]) }); paint(); }, onComplete: () => { for (const move of moves) update(move.track, { shape: move.target }); paint(); } });
+    morph.current = animate(0, 1, { ...settle, restDelta: .0005, onUpdate: progress => { for (const move of moves) update(move.track, { shape: move.xs.map((x, at): Point => [x, move.from[at]! + (move.to[at]! - move.from[at]!) * progress]) }); paint(); }, onComplete: () => { for (const move of moves) update(move.track, { shape: move.target }); paint(); } });
     return () => morph.current?.stop();
   }, [paint, reduced, targets]);
 
@@ -370,7 +370,7 @@ export function LineChart({ data, series, label, unit = "", height = 220, format
   const format = (value: number, line: LineChartSeries) => `${formatValue ? formatValue(value, line) : grouped.format(value)}${unit ? ` ${unit}` : ""}`;
   const reading = index === null ? null : data[index];
   const valueText = reading ? `${reading.label}: ${visible.map(line => `${line.label} ${format(reading.values[line.key] ?? 0, line)}`).join(", ")}` : empty ? emptyLabel : `${visible.length} of ${series.length} series shown`;
-  const summary = empty ? `${label}. ${emptyLabel}.` : `${label}, ${data[0].label} to ${data[last].label}. ${visible.map(line => `${line.label}, latest ${format(data[last].values[line.key] ?? 0, line)}`).join(". ")}.`;
+  const summary = empty ? `${label}. ${emptyLabel}.` : `${label}, ${data[0]!.label} to ${data[last]!.label}. ${visible.map(line => `${line.label}, latest ${format(data[last]!.values[line.key] ?? 0, line)}`).join(". ")}.`;
   const picks = axisPicks(data, plotWidth);
   const allHidden = !empty && visible.length === 0;
   const tipX = reduced ? tipTargetX : tipSpringX, tipY = reduced ? tipTargetY : tipSpringY;
@@ -417,7 +417,7 @@ export function LineChart({ data, series, label, unit = "", height = 220, format
       </div>
       <div className={styles.axis} aria-hidden="true">
         <AnimatePresence initial={false}>
-          {picks.map(at => { const share = last > 0 ? at / last : .5; return <motion.span key={`${data[at].key}:${data[at].axisLabel}`} className={styles.axisLabel} style={{ left: `${share * 100}%`, translateX: `${-share * 100}%` }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: fadeFast }} transition={{ duration: duration.standard, ease: [...ease.standard] }}>{data[at].axisLabel}</motion.span>; })}
+          {picks.map(at => { const share = last > 0 ? at / last : .5; return <motion.span key={`${data[at]!.key}:${data[at]!.axisLabel}`} className={styles.axisLabel} style={{ left: `${share * 100}%`, translateX: `${-share * 100}%` }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: fadeFast }} transition={{ duration: duration.standard, ease: [...ease.standard] }}>{data[at]!.axisLabel}</motion.span>; })}
         </AnimatePresence>
       </div>
     </div>

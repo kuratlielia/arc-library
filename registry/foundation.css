@@ -38,7 +38,8 @@
   --control-on-subtle: color-mix(in oklab, var(--control-on) 10%, transparent);
   /* Slider fills. Same as --control-on except neutral dark, where a mid grey keeps the white thumb distinct. */
   --control-fill: var(--control-on);
-  /* Product decision: no focus rings anywhere. Kept as a token so existing rules resolve to nothing. */
+  /* Pointer focus draws no ring (product decision). --focus-ring is the halo a few fields drew for any input method, so it stays transparent.
+     Keyboard focus uses the outline at the end of this file; tune it with --focus-outline, --focus-outline-width and --focus-outline-offset. */
   --focus-ring: transparent;
   --success: oklch(49% .19 150);
   --warning: oklch(58% .18 75);
@@ -175,5 +176,17 @@
   }
 }
 
-/* No focus rings or outlines for any input method (product decision). */
-:is(*:focus, *:focus-visible, *:focus-within) { outline: none !important; }
+/* Focus. Pointer focus never draws a ring (product decision). Keyboard focus (:focus-visible) draws a subtle accent outline, so keyboard users
+   can always see where they are (WCAG 2.4.7). Left out of the outline: text fields, which match :focus-visible on a mouse click too and show
+   focus with their border and caret; menu items and listbox options, whose highlight fill marks the keyboard position; and tabindex="-1"
+   targets (dialog panels, regions) that only receive focus from script.
+   Tune it on :root or any element, no !important needed:
+     --focus-outline           color (default: the accent, softened); set transparent to hide it
+     --focus-outline-width     default 2px
+     --focus-outline-offset    default 2px; components inside clipped containers set a negative offset */
+:focus:not(:focus-visible),
+:is(input:not([type="button"], [type="checkbox"], [type="color"], [type="file"], [type="image"], [type="radio"], [type="range"], [type="reset"], [type="submit"]), textarea, [contenteditable]:not([contenteditable="false"]), [role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"], [role="option"], [tabindex="-1"]):focus { outline: none !important; }
+:focus-visible:not(input:not([type="button"], [type="checkbox"], [type="color"], [type="file"], [type="image"], [type="radio"], [type="range"], [type="reset"], [type="submit"]), textarea, [contenteditable]:not([contenteditable="false"]), [role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"], [role="option"], [tabindex="-1"]) {
+  outline: var(--focus-outline-width, 2px) solid var(--focus-outline, color-mix(in oklab, var(--accent-strong) 72%, transparent)) !important;
+  outline-offset: var(--focus-outline-offset, 2px) !important;
+}

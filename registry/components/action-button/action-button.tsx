@@ -49,6 +49,7 @@ function useMorphWidth(content: RefObject<HTMLElement | null>, key: string, redu
     if (!node || !slot || typeof ResizeObserver === "undefined") return;
     let measured = false;
     const observer = new ResizeObserver(([entry]) => {
+      if (!entry) return;
       const next = entry.contentRect.width;
       if (!next || !measured || reduced || performance.now() > armedUntil.current) { measured = next > 0; width.jump(next || "auto"); delete slot.dataset.morphing; return; }
       slot.dataset.morphing = "";

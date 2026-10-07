@@ -20,9 +20,9 @@ export const userStatuses: { value: UserStatus; label: string }[] = [
 ];
 
 const themes: { value: ThemePreference; label: string; icon: ReactNode }[] = [
-  { value: "light", label: "Light", icon: <Sun size={16} strokeWidth={1.75} aria-hidden="true" /> },
-  { value: "dark", label: "Dark", icon: <Moon size={16} strokeWidth={1.75} aria-hidden="true" /> },
-  { value: "system", label: "System", icon: <Monitor size={16} strokeWidth={1.75} aria-hidden="true" /> },
+  { value: "light", label: "Light", icon: <Sun size={14} strokeWidth={1.75} aria-hidden="true" /> },
+  { value: "dark", label: "Dark", icon: <Moon size={14} strokeWidth={1.75} aria-hidden="true" /> },
+  { value: "system", label: "System", icon: <Monitor size={14} strokeWidth={1.75} aria-hidden="true" /> },
 ];
 
 export interface UserMenuUser { name: string; email: string; plan?: string; avatarSrc?: string; avatarSrcSet?: string }

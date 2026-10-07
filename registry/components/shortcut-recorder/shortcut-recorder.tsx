@@ -154,10 +154,10 @@ export function usePressedKeys(enabled = true) {
 const EMPTY: ReadonlySet<string> = new Set();
 
 /* ================================================================================================
- * Kbd and ShortcutKeys
+ * ShortcutKbd and ShortcutKeys
  * ============================================================================================== */
 
-export interface KbdProps extends HTMLAttributes<HTMLElement> {
+export interface ShortcutKbdProps extends HTMLAttributes<HTMLElement> {
   children: ReactNode;
   /** Draws the key pushed down and lit, such as while it is held. */
   pressed?: boolean;
@@ -165,10 +165,14 @@ export interface KbdProps extends HTMLAttributes<HTMLElement> {
 }
 
 /** A key cap. Use it inline in copy, in menus, or through `ShortcutKeys` for a whole combination. */
-export const Kbd = forwardRef<HTMLElement, KbdProps>(function Kbd({ children, pressed = false, size = "md", className, ...props }, ref) {
+export const ShortcutKbd = forwardRef<HTMLElement, ShortcutKbdProps>(function ShortcutKbd({ children, pressed = false, size = "md", className, ...props }, ref) {
   return <kbd ref={ref} {...props} className={[styles.kbd, className].filter(Boolean).join(" ")} data-size={size} data-pressed={pressed || undefined}>{children}</kbd>;
 });
-Kbd.displayName = "Kbd";
+ShortcutKbd.displayName = "ShortcutKbd";
+/** @deprecated Renamed to `ShortcutKbd` so it never clashes with the `kbd` component's `Kbd` in a shared index.ts. */
+export const Kbd = ShortcutKbd;
+/** @deprecated Renamed to `ShortcutKbdProps`. */
+export type KbdProps = ShortcutKbdProps;
 
 export interface ShortcutKeysProps {
   shortcut: string;
@@ -184,7 +188,7 @@ export function ShortcutKeys({ shortcut, platform: platformProp, pressed, size =
   const platform = usePlatform(platformProp);
   const tokens = shortcutTokens(shortcut, platform);
   return <span className={[styles.keys, className].filter(Boolean).join(" ")} role="img" aria-label={tokens.map(token => token.spoken).join(" ")}>
-    {tokens.map((token, index) => <Kbd key={`${index}-${token.id}`} size={size} pressed={pressed?.has(token.id)} aria-hidden="true">{token.label}</Kbd>)}
+    {tokens.map((token, index) => <ShortcutKbd key={`${index}-${token.id}`} size={size} pressed={pressed?.has(token.id)} aria-hidden="true">{token.label}</ShortcutKbd>)}
   </span>;
 }
 
@@ -367,7 +371,7 @@ export function ShortcutRecorder({
           <AnimatePresence initial={false} mode="popLayout">
             {tokens.map((token, index) => <motion.span key={`${token.id}`} layout={reduced ? false : "position"} custom={recording ? 0 : index} variants={reduced ? chipFade : chip} initial="enter" animate="rest" exit="exit"
               transition={reduced ? { duration: 0 } : { layout: motionTokens.spring.snappy }} className={styles.chipSlot}>
-              <Kbd pressed={recording || (settled > 0 && !pending)} data-tone={pending ? "warning" : undefined}>{token.label}</Kbd>
+              <ShortcutKbd pressed={recording || (settled > 0 && !pending)} data-tone={pending ? "warning" : undefined}>{token.label}</ShortcutKbd>
             </motion.span>)}
             {tokens.length === 0 && <motion.span key={recording ? "prompt" : "placeholder"} className={styles.placeholder} data-recording={recording || undefined}
               initial={reduced ? { opacity: 0 } : { opacity: 0, y: 4, filter: `blur(${motionTokens.blur.subtle}px)` }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}

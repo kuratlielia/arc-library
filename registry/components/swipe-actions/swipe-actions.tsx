@@ -81,6 +81,7 @@ export function SwipeActions({ label, children, className }: SwipeActionsProps) 
 
 function velocityOf(samples: [number, number][]) {
   const last = samples[samples.length - 1];
+  if (!last) return 0;
   const first = samples.find(sample => last[0] - sample[0] <= 80) ?? last;
   const elapsed = (last[0] - first[0]) / 1000;
   return elapsed > 0 ? (last[1] - first[1]) / elapsed : 0;
@@ -260,7 +261,7 @@ export function SwipeActionsRow({ label, leading = [], trailing = [], fullSwipe 
     if (!row) return;
     rows.set(id, row);
     width.current = row.offsetWidth;
-    const observer = new ResizeObserver(([entry]) => { width.current = entry.contentRect.width; });
+    const observer = new ResizeObserver(([entry]) => { if (entry) width.current = entry.contentRect.width; });
     observer.observe(row);
     return () => { observer.disconnect(); rows.delete(id); window.clearTimeout(restoreTimer.current); setOpenId(current => current === id ? null : current); };
   }, [id, rows, setOpenId]);
@@ -322,7 +323,7 @@ function ActionLayer({ action, side, rank, count, coverRank, x, cover, onPress }
   const direction = side === "leading" ? 1 : -1;
   const segment = useTransform(x, value => Math.max(0, value * direction) / count);
   // Distance from the row's outer edge to this layer's inner edge.
-  const inset = useTransform([x, cover], ([value, progress]: number[]) => {
+  const inset = useTransform([x, cover], ([value = 0, progress = 0]: number[]) => {
     const revealed = Math.max(0, value * direction), base = (count - rank) * revealed / count;
     if (coverRank === rank) return base + progress * (revealed - base);
     if (coverRank !== null && rank > coverRank) return base * (1 - progress);
@@ -330,13 +331,13 @@ function ActionLayer({ action, side, rank, count, coverRank, x, cover, onPress }
   });
   const shift = useTransform(inset, value => direction * value);
   // The glyph rides the centre of its share, then hugs the content edge while this action covers the row.
-  const glyphX = useTransform([segment, cover], ([share, progress]: number[]) => -direction * (coverRank === rank ? share / 2 + progress * (ACTION / 2 - share / 2) : share / 2));
-  const iconReveal = useTransform([segment, cover], ([share, progress]: number[]) => {
+  const glyphX = useTransform([segment, cover], ([share = 0, progress = 0]: number[]) => -direction * (coverRank === rank ? share / 2 + progress * (ACTION / 2 - share / 2) : share / 2));
+  const iconReveal = useTransform([segment, cover], ([share = 0, progress = 0]: number[]) => {
     const own = clamp01((share - ACTION * .25) / (ACTION * .55));
     if (coverRank === rank) return Math.max(own, progress);
     return coverRank === null ? own : own * (1 - progress);
   });
-  const labelReveal = useTransform([segment, cover], ([share, progress]: number[]) => {
+  const labelReveal = useTransform([segment, cover], ([share = 0, progress = 0]: number[]) => {
     const own = clamp01((share - ACTION * .72) / (ACTION * .24));
     if (coverRank === rank) return Math.max(own, progress);
     return coverRank === null ? own : own * (1 - progress);

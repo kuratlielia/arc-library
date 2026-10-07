@@ -2,13 +2,13 @@
  * Checks that registry.json and the prebuilt items in public/r agree with the source in this repository:
  * every listed file exists, every item has a prebuilt JSON file, every dependency is a real package name, every file
  * installs where scripts/registry-install.mjs says, and the embedded content matches the source with its imports rewritten
- * for that install layout.
+ * for that install layout. It also fails when two items export the same name, so every item can be re-exported from one index.ts.
  *
  *   npm run check:registry
  */
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
-import { importSpecifiers, installTarget, isPackageName, withRelativeImports } from "./registry-install.mjs";
+import { exportedNames, importSpecifiers, installTarget, isPackageName, withRelativeImports } from "./registry-install.mjs";
 
 const registry = JSON.parse(await readFile("registry.json", "utf8"));
 const problems = [];
@@ -44,6 +44,18 @@ for (const item of registry.items) {
     if (embedded !== await expected(file.path)) problems.push(`${item.name}: ${built} is out of date for ${file.path}`);
   }
 }
+
+// Export names are unique across items (files of one item folder may share a name), so `export *` from every item never hits TS2308.
+const exporters = new Map();
+const folderOf = file => file.match(/^registry\/(?:components|blocks)\/[a-z0-9-]+/)?.[0] ?? file;
+for (const file of new Set(registry.items.flatMap(item => item.files.map(entry => entry.path)))) {
+  if (!(await exists(file))) continue;
+  for (const name of exportedNames(file, await readFile(file, "utf8"))) {
+    if (!exporters.has(name)) exporters.set(name, new Set());
+    exporters.get(name).add(folderOf(file));
+  }
+}
+for (const [name, folders] of exporters) if (folders.size > 1) problems.push(`export name ${name} is exported by ${[...folders].sort().join(" and ")}`);
 
 if (problems.length) {
   console.error(`Registry check failed:\n${problems.map(problem => `  - ${problem}`).join("\n")}`);

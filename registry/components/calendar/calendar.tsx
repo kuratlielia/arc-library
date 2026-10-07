@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { animate, AnimatePresence, motion, useMotionValue, useMotionValueEvent, useReducedMotion, useTransform } from "motion/react";
 import type { AnimationPlaybackControls, MotionValue, Variants } from "motion/react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { useToday } from "@/lib/use-today";
 import styles from "./calendar.module.css";
 
 export type CalendarDateMatcher = (date: Date) => boolean;
@@ -35,33 +36,17 @@ const shiftMonths = (date: Date, amount: number) => new Date(date.getFullYear(),
 const isBefore = (a: Date, b?: Date) => Boolean(b && startOfDay(a).getTime() < startOfDay(b).getTime());
 const isAfter = (a: Date, b?: Date) => Boolean(b && startOfDay(a).getTime() > startOfDay(b).getTime());
 const dateKey = (date: Date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-const fromKey = (key: string) => { const [year, month, day] = key.split("-").map(Number); return new Date(year, month - 1, day); };
 /** Every month shows six weeks, so the grid keeps one height and never jumps while months change. */
 const makeWeeks = (month: Date) => {
   const start = addDays(month, -month.getDay());
   return Array.from({ length: 6 }, (_, week) => Array.from({ length: 7 }, (_, day) => addDays(start, week * 7 + day)));
 };
 
-/** Today turns over at local midnight; returning to the tab or waking the device reads it again. */
-const subscribeToday = (notify: () => void) => {
-  let timer = 0;
-  const schedule = () => { const now = new Date(); timer = window.setTimeout(() => { notify(); schedule(); }, addDays(now, 1).getTime() - now.getTime() + 1000); };
-  const onVisible = () => { if (document.visibilityState === "visible") notify(); };
-  schedule();
-  document.addEventListener("visibilitychange", onVisible);
-  window.addEventListener("focus", notify);
-  return () => { window.clearTimeout(timer); document.removeEventListener("visibilitychange", onVisible); window.removeEventListener("focus", notify); };
-};
-const readToday = () => dateKey(new Date());
-const serverToday = () => "";
 const subscribeNothing = () => () => {};
 const clientSnapshot = () => true;
 const serverSnapshot = () => false;
-/** The viewer's local date. Undefined on the server and during hydration, so markup never depends on the server clock or time zone; afterwards it follows the real date across midnight. */
-export function useToday() {
-  const key = useSyncExternalStore(subscribeToday, readToday, serverToday);
-  return useMemo(() => (key ? fromKey(key) : undefined), [key]);
-}
+/** The viewer's local date (lib/use-today.ts, shared with date-range-picker). Re-exported so existing imports from calendar keep working. */
+export { useToday } from "@/lib/use-today";
 
 const { spring, duration, ease } = motionTokens;
 /** Months sit side by side on one strip. Rapid clicks retarget the same spring, so the strip never queues or stacks panes. */
@@ -274,7 +259,7 @@ export function Calendar({
   const renderMonth = (paneMonth: Date, present: boolean) => <>
     <SelectionDisc cell={cellOf(paneMonth)} reduced={reducedMotion} />
     <div className={styles.grid} role="grid" aria-label={formatter.format(paneMonth)}>
-    {makeWeeks(paneMonth).map((week) => <div key={dateKey(week[0])} className={styles.week} role="row">
+    {makeWeeks(paneMonth).map((week) => <div key={dateKey(week[0]!)} className={styles.week} role="row">
       {week.map((date) => {
         const key = dateKey(date);
         const selected = sameDay(date, value);

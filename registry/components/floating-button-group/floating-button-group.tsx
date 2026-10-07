@@ -221,7 +221,7 @@ export function FloatingButtonGroup({ items, label, variant = "muted", size = "m
     else if (event.key === next || event.key === previous) {
       const step = event.key === next ? 1 : -1;
       for (let offset = 1; offset <= all.length; offset += 1) {
-        const candidate = all[(index + step * offset + all.length * offset) % all.length];
+        const candidate = all[(index + step * offset + all.length * offset) % all.length]!;
         if (usable(candidate)) { target = candidate; break; }
       }
     } else return;

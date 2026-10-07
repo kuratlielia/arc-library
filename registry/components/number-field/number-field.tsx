@@ -130,7 +130,7 @@ function Digits({ value, format, direction, instant }: { value: number; format: 
 }
 
 /** Prefix and suffix characters are keyed by position, so "seat" → "seats" only opens the new "s" and the rest holds still. */
-function AffixText({ text, direction, className }: { text: string; direction: number; className: string }) {
+function AffixText({ text, direction, className }: { text: string; direction: number; className?: string }) {
   const reduced = useReducedMotion();
   return <span className={className}><AnimatePresence initial={false} custom={direction}>{[...text].map((char, index) => <motion.span key={`${index}:${char}`} className={styles.char} custom={direction} variants={reduced ? still : slot} initial="enter" animate="center" exit="exit">{char}</motion.span>)}</AnimatePresence></span>;
 }
@@ -181,19 +181,19 @@ function MotionText({ text }: { text: string }) {
 }
 
 /** Helper copy: the row opens its height on a spring, then the words settle in. */
-function FieldMessage({ id, text, className }: { id?: string; text?: string; className: string }) {
+function FieldMessage({ id, text, className }: { id?: string; text?: string; className?: string }) {
   return <AnimatePresence initial={false}>{text ? <MessageRow key="message" id={id} text={text} className={className} /> : null}</AnimatePresence>;
 }
 
 /** The row tracks the measured copy, so a longer message that wraps opens its next line instead of snapping. */
-function MessageRow({ id, text, className }: { id?: string; text: string; className: string }) {
+function MessageRow({ id, text, className }: { id?: string; text: string; className?: string }) {
   const reduced = useReducedMotion();
   const copyRef = useRef<HTMLSpanElement>(null);
   const [height, setHeight] = useState<number | "auto">("auto");
   useLayoutEffect(() => {
     const node = copyRef.current;
     if (!node || typeof ResizeObserver === "undefined") return;
-    const observer = new ResizeObserver(([entry]) => setHeight(entry.borderBoxSize?.[0]?.blockSize ?? node.offsetHeight));
+    const observer = new ResizeObserver(([entry]) => setHeight(entry?.borderBoxSize?.[0]?.blockSize ?? node.offsetHeight));
     observer.observe(node);
     return () => observer.disconnect();
   }, []);

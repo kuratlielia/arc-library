@@ -266,7 +266,7 @@ export function ChangelogFeed({
   const reduce = useReducedMotion() ?? false;
   const [filters, setFilters] = useState<Kind[]>([]);
   const [open, setOpen] = useState<string[]>(() => defaultOpen ?? (entries[0] ? [entries[0].id] : []));
-  const [active, setActive] = useState({ key: months[0].key, direction: 1 });
+  const [active, setActive] = useState({ key: months[0]?.key ?? "", direction: 1 });
   const scrollRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const groupRefs = useRef(new Map<string, HTMLElement>());
@@ -280,12 +280,12 @@ export function ChangelogFeed({
     const scroller = scrollRef.current;
     if (!scroller || groups.length === 0) return;
     const line = scroller.getBoundingClientRect().top + 28;
-    let key = groups[0].key;
+    let key = groups[0]!.key;
     for (const group of groups) {
       const element = groupRefs.current.get(group.key);
       if (element && element.getBoundingClientRect().top <= line) key = group.key;
     }
-    if (scroller.scrollTop > 0 && scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 2) key = groups[groups.length - 1].key;
+    if (scroller.scrollTop > 0 && scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 2) key = groups[groups.length - 1]!.key;
     setActive((previous) => previous.key === key ? previous : { key, direction: monthOrder(key) > monthOrder(previous.key) ? 1 : -1 });
   }, [groups, monthOrder]);
 

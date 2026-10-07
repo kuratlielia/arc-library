@@ -55,7 +55,7 @@ const NUDGE = [.03, .015, 0, .02, .035, .05, .02, .04, .05, .07];
 const DRIFT = 2.5;
 
 const first = FRAMES.search.idle;
-const INITIAL = first.prims.map((p, i) => ({ ...shapePath(KINDS[i], p.geo, p.fx[1], 0, 0), o: String(p.fx[0]) }));
+const INITIAL = first.prims.map((p, i) => ({ ...shapePath(KINDS[i]!, p.geo, p.fx[1], 0, 0), o: String(p.fx[0]) }));
 
 const enter = [...motionTokens.ease.enter] as [number, number, number, number];
 const standard = [...motionTokens.ease.standard] as [number, number, number, number];
@@ -73,15 +73,15 @@ const channel = (values: number[], spring: { k: number; c: number }): Channel =>
 
 /** Integrates one spring vector. A new target keeps the current velocity, so shapes retarget mid-flight without a hitch. */
 function advance(ch: Channel, now: number, dt: number) {
-  while (ch.queue.length && ch.queue[0].at <= now) {
+  while (ch.queue.length && ch.queue[0]!.at <= now) {
     const next = ch.queue.shift();
     if (next) { ch.target.set(next.values); ch.still = false; }
   }
   if (!ch.still) {
     const steps = Math.max(1, Math.ceil(dt * 240)), h = dt / steps, { pos, vel, target, k, c } = ch;
-    for (let s = 0; s < steps; s++) for (let i = 0; i < pos.length; i++) { vel[i] += (-k * (pos[i] - target[i]) - c * vel[i]) * h; pos[i] += vel[i] * h; }
+    for (let s = 0; s < steps; s++) for (let i = 0; i < pos.length; i++) { vel[i]! += (-k * (pos[i]! - target[i]!) - c * vel[i]!) * h; pos[i]! += vel[i]! * h; }
     let settled = true;
-    for (let i = 0; i < pos.length; i++) if (Math.abs(pos[i] - target[i]) > .004 || Math.abs(vel[i]) > .02) { settled = false; break; }
+    for (let i = 0; i < pos.length; i++) if (Math.abs(pos[i]! - target[i]!) > .004 || Math.abs(vel[i]!) > .02) { settled = false; break; }
     if (settled) { pos.set(target); vel.fill(0); ch.still = true; }
   }
   return !ch.still || ch.queue.length > 0;
@@ -98,13 +98,14 @@ function createEngine(nodes: Nodes, start: Frame) {
   let frame = start, raf = 0, last = 0, parallax = false;
 
   const paint = () => {
-    const ox = sway.pos[0] * DRIFT, oy = sway.pos[1] * DRIFT;
+    const ox = sway.pos[0]! * DRIFT, oy = sway.pos[1]! * DRIFT;
     nodes.paths.forEach((node, i) => {
-      const { d, dash } = shapePath(KINDS[i], geo[i].pos, fx[i].pos[1], ox, oy);
-      const o = String(Math.round(Math.min(1, Math.max(0, fx[i].pos[0])) * 1000) / 1000);
-      if (d !== written[i].d) { node.setAttribute("d", d); written[i].d = d; }
-      if (o !== written[i].o) { node.setAttribute("opacity", o); written[i].o = o; }
-      if (dash !== written[i].dash) { node.setAttribute("stroke-dasharray", dash); written[i].dash = dash; }
+      const g = geo[i]!.pos, f = fx[i]!.pos, w = written[i]!;
+      const { d, dash } = shapePath(KINDS[i]!, g, f[1]!, ox, oy);
+      const o = String(Math.round(Math.min(1, Math.max(0, f[0]!)) * 1000) / 1000);
+      if (d !== w.d) { node.setAttribute("d", d); w.d = d; }
+      if (o !== w.o) { node.setAttribute("opacity", o); w.o = o; }
+      if (dash !== w.dash) { node.setAttribute("stroke-dasharray", dash); w.dash = dash; }
     });
   };
   const tick = (time: number) => {
@@ -112,8 +113,8 @@ function createEngine(nodes: Nodes, start: Frame) {
     const now = time / 1000, dt = last ? Math.min(.034, Math.max(0, now - last)) : 1 / 60;
     last = now;
     let busy = advance(sway, now, dt);
-    for (let i = 0; i < geo.length; i++) busy = advance(geo[i], now, dt) || busy;
-    for (let i = 0; i < fx.length; i++) busy = advance(fx[i], now, dt) || busy;
+    for (let i = 0; i < geo.length; i++) busy = advance(geo[i]!, now, dt) || busy;
+    for (let i = 0; i < fx.length; i++) busy = advance(fx[i]!, now, dt) || busy;
     paint();
     if (busy) raf = requestAnimationFrame(tick); else last = 0;
   };
@@ -132,14 +133,14 @@ function createEngine(nodes: Nodes, start: Frame) {
       if (reduced) {
         // Crossfade without travel: freeze the old drawing in a ghost layer, snap to the new one, and fade between them.
         nodes.paths.forEach((node, i) => {
-          const ghost = nodes.ghosts[i];
+          const ghost = nodes.ghosts[i]!;
           ghost.setAttribute("d", node.getAttribute("d") ?? "");
           ghost.setAttribute("opacity", node.getAttribute("opacity") ?? "1");
           ghost.setAttribute("stroke-dasharray", node.getAttribute("stroke-dasharray") ?? "none");
-          ghost.dataset.tone = frame.prims[i].tone;
+          ghost.dataset.tone = frame.prims[i]!.tone;
         });
         next.prims.forEach((p, i) => {
-          for (const [ch, values] of [[geo[i], p.geo], [fx[i], p.fx]] as const) { ch.queue = []; ch.target.set(values); ch.pos.set(values); ch.vel.fill(0); ch.still = true; }
+          for (const [ch, values] of [[geo[i]!, p.geo], [fx[i]!, p.fx]] as const) { ch.queue = []; ch.target.set(values); ch.pos.set(values); ch.vel.fill(0); ch.still = true; }
         });
         frame = next;
         paint();
@@ -149,9 +150,10 @@ function createEngine(nodes: Nodes, start: Frame) {
       }
       const now = performance.now() / 1000, delays = sceneChanged ? DELAY : NUDGE;
       next.prims.forEach((p, i) => {
-        geo[i].queue = [{ at: now + delays[i], values: p.geo }];
-        if (sceneChanged && p.redraw) fx[i].queue = [{ at: now, values: [p.fx[0], 0] }, { at: now + delays[i] + .18, values: p.fx }];
-        else fx[i].queue = [{ at: now + delays[i] + (p.fx[1] > fx[i].target[1] + .01 ? .12 : 0), values: p.fx }];
+        const delay = delays[i]!, f = fx[i]!;
+        geo[i]!.queue = [{ at: now + delay, values: p.geo }];
+        if (sceneChanged && p.redraw) f.queue = [{ at: now, values: [p.fx[0], 0] }, { at: now + delay + .18, values: p.fx }];
+        else f.queue = [{ at: now + delay + (p.fx[1] > f.target[1]! + .01 ? .12 : 0), values: p.fx }];
       });
       frame = next;
       kick();
@@ -212,6 +214,7 @@ export function EmptyStates() {
     if (!node || typeof ResizeObserver === "undefined") return;
     let measured = false;
     const observer = new ResizeObserver(([entry]) => {
+      if (!entry) return;
       const next = entry.borderBoxSize?.[0]?.blockSize ?? entry.contentRect.height;
       if (!measured || reduced || performance.now() > armedUntil.current) { measured = true; copyHeight.jump(next); return; }
       animate(copyHeight, next, motionTokens.spring.smooth);
@@ -251,7 +254,7 @@ export function EmptyStates() {
     const next = event.key === "ArrowRight" ? (index + 1) % SCENES.length : event.key === "ArrowLeft" ? (index + SCENES.length - 1) % SCENES.length : event.key === "Home" ? 0 : event.key === "End" ? SCENES.length - 1 : -1;
     if (next < 0) return;
     event.preventDefault();
-    choose(SCENES[next].id);
+    choose(SCENES[next]!.id);
     tabs.current[next]?.focus();
   }
 
@@ -290,7 +293,7 @@ export function EmptyStates() {
               </g>
               <g ref={mainLayer}>
                 {INITIAL.map((item, i) => (
-                  <path key={i} ref={node => { paths.current[i] = node; }} className={styles.shape} data-kind={KINDS[i]} data-tone={frame.prims[i].tone} d={item.d} opacity={item.o} strokeDasharray={item.dash} style={{ transitionDelay: `${DELAY[i]}s` }} />
+                  <path key={i} ref={node => { paths.current[i] = node; }} className={styles.shape} data-kind={KINDS[i]} data-tone={frame.prims[i]!.tone} d={item.d} opacity={item.o} strokeDasharray={item.dash} style={{ transitionDelay: `${DELAY[i]}s` }} />
                 ))}
               </g>
             </svg>

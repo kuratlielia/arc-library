@@ -165,7 +165,7 @@ function fittingLabels(data: BarChartDatum[], width: number, sizes: Record<strin
   }).reverse();
   for (let stride = 1; stride <= labels.length; stride++) {
     const picked = labels.filter((_, rank) => rank % stride === 0);
-    if (stride === labels.length || picked.every((label, rank) => rank === 0 || label.left + label.size + 10 <= picked[rank - 1].left)) {
+    if (stride === labels.length || picked.every((label, rank) => rank === 0 || label.left + label.size + 10 <= picked[rank - 1]!.left)) {
       picked.forEach(label => fitting.set(label.key, label.left - label.natural));
       break;
     }
@@ -251,7 +251,7 @@ export function BarChart({ data, label, period, unit = "", averageLabel = "Daily
   const revealStep = Math.min(stagger.item, .36 / count);
   const index = active === null ? null : Math.min(active, last);
   const scrubbing = index !== null && last >= 0;
-  const shownValue = scrubbing ? data[index].value : average;
+  const shownValue = scrubbing ? data[index]!.value : average;
   // Headline copy moves the way the data did: a larger value rises from below, a later day arrives from below too.
   const [trend, setTrend] = useState({ value: shownValue, index, valueWay: 1, indexWay: 1 });
   if (trend.value !== shownValue || trend.index !== index) setTrend({ value: shownValue, index, valueWay: shownValue === trend.value ? trend.valueWay : shownValue > trend.value ? 1 : -1, indexWay: index === null || trend.index === null ? 1 : Math.sign(index - trend.index) || 1 });
@@ -352,7 +352,7 @@ export function BarChart({ data, label, period, unit = "", averageLabel = "Daily
     <figcaption id={titleId} className={styles.srOnly}>{label}, {period}</figcaption>
     <div className={styles.header} aria-hidden="true">
       <span className={styles.kind}><Swap text={scrubbing ? valueLabel : averageLabel} direction={1} reduced={reduced} /></span>
-      <span className={styles.value}><Roll text={formatValue(scrubbing ? data[index].value : Math.round(average))} direction={trend.valueWay} reduced={reduced} />{unit && <span className={styles.unit}>{unit}</span>}</span>
+      <span className={styles.value}><Roll text={formatValue(scrubbing ? data[index]!.value : Math.round(average))} direction={trend.valueWay} reduced={reduced} />{unit && <span className={styles.unit}>{unit}</span>}</span>
       <span className={styles.when}><Swap text={scrubbed ? scrubbed.label : period} direction={scrubbing ? trend.indexWay : 1} reduced={reduced} /></span>
     </div>
     <div className={styles.chart} data-scrubbing={scrubbing || undefined}>

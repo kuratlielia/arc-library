@@ -13,7 +13,7 @@
 /* The plot is the scrubber: hover or drag across it, or focus it and use the arrow keys. Vertical swipes still scroll the page. */
 .plot { position: relative; min-width: 0; border-radius: calc(var(--radius-control) / 2); outline: none; -webkit-tap-highlight-color: transparent; }
 .plot[data-interactive] { touch-action: pan-y; cursor: default; user-select: none; }
-.plot:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 8px; }
+.plot:focus-visible { --focus-outline-offset: 8px; }
 .chart { display: block; width: 100%; height: auto; overflow: visible; }
 .baseline { stroke: var(--border); stroke-width: 1; }
 /* The area under the line carries a faint wash of the line tone. */

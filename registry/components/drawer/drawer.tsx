@@ -9,6 +9,16 @@ import { X } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
 import styles from "./drawer.module.css";
 
+/**
+ * The last item a drawer showed. Pass the selected item (or null when nothing is open) and render the drawer's content
+ * from the result, so the content stays on screen while the panel slides out instead of vanishing the moment it closes.
+ */
+export function useDrawerItem<T>(item: T | null | undefined): T | null | undefined {
+  const [last, setLast] = useState(item);
+  if (item != null && item !== last) setLast(item);
+  return item ?? last;
+}
+
 /** Mirrors the open state so the panel can stay mounted while it slides out, retarget mid-flight, and close itself after a drag. */
 const DrawerContext = createContext<{ open: boolean; flung: boolean; setOpen: (open: boolean) => void; fling: () => void; openedAt: RefObject<number> } | null>(null);
 

@@ -199,7 +199,7 @@ const find = (list: ThreadComment[], id: string): ThreadComment | null => {
   return null;
 };
 /** Wraps the first `part` inside `text`, so a translated sentence keeps its highlighted name wherever the language puts it. */
-const highlight = (text: string, part: string, className: string): ReactNode => {
+const highlight = (text: string, part: string, className?: string): ReactNode => {
   const at = part ? text.indexOf(part) : -1;
   return at < 0 ? text : <>{text.slice(0, at)}<span className={className}>{part}</span>{text.slice(at + part.length)}</>;
 };
@@ -315,7 +315,7 @@ function Composer({ people, initial = "", placeholder, submitLabel, autoFocus, f
 
   const readQuery = (value: string, caret: number) => {
     const match = /(^|\s)@([\p{L}]*)$/u.exec(value.slice(0, caret));
-    setQuery(match ? { start: caret - match[2].length - 1, term: match[2] } : null);
+    setQuery(match ? { start: caret - match[2]!.length - 1, term: match[2]! } : null);
     setActive(0);
   };
 
@@ -341,7 +341,7 @@ function Composer({ people, initial = "", placeholder, submitLabel, autoFocus, f
   const onKeyDown = (event: ReactKeyboardEvent<HTMLTextAreaElement>) => {
     if (open) {
       if (event.key === "ArrowDown" || event.key === "ArrowUp") { event.preventDefault(); setActive(index => (index + (event.key === "ArrowDown" ? 1 : -1) + suggestions.length) % suggestions.length); return; }
-      if (event.key === "Enter" || event.key === "Tab") { event.preventDefault(); insert(suggestions[active]); return; }
+      if (event.key === "Enter" || event.key === "Tab") { event.preventDefault(); insert(suggestions[active]!); return; }
       if (event.key === "Escape") { event.preventDefault(); event.stopPropagation(); setQuery(null); return; }
     }
     if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) { event.preventDefault(); send(); return; }

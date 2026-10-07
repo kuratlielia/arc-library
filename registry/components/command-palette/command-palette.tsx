@@ -77,7 +77,7 @@ export function CommandPalette({ items, placeholder = "Search commands", onSelec
   useLayoutEffect(() => {
     const list = listRef.current;
     if (!list) return;
-    const observer = new ResizeObserver(([entry]) => setListHeight(Math.round(entry.borderBoxSize?.[0]?.blockSize ?? list.offsetHeight)));
+    const observer = new ResizeObserver(([entry]) => setListHeight(Math.round(entry?.borderBoxSize?.[0]?.blockSize ?? list.offsetHeight)));
     observer.observe(list);
     return () => observer.disconnect();
   }, []);

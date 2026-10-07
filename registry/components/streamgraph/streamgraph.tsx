@@ -87,15 +87,15 @@ function resample(raw: number[]): number[] {
   const values = raw.map(value => Math.max(0, value || 0));
   const out = new Array<number>(N);
   if (!values.length) return out.fill(0);
-  if (values.length === 1) return out.fill(values[0]);
+  if (values.length === 1) return out.fill(values[0]!);
   const last = values.length - 1;
-  const slopes = values.slice(1).map((value, index) => value - values[index]);
-  const tangents = values.map((_, index) => index === 0 || index === last ? 0 : (Math.sign(slopes[index - 1]) + Math.sign(slopes[index])) * Math.min(Math.abs(slopes[index - 1]), Math.abs(slopes[index]), Math.abs(slopes[index - 1] + slopes[index]) / 4) || 0);
-  if (last > 1) { tangents[0] = (3 * slopes[0] - tangents[1]) / 2; tangents[last] = (3 * slopes[last - 1] - tangents[last - 1]) / 2; } else { tangents[0] = tangents[1] = slopes[0]; }
+  const slopes = values.slice(1).map((value, index) => value - values[index]!);
+  const tangents = values.map((_, index) => index === 0 || index === last ? 0 : (Math.sign(slopes[index - 1]!) + Math.sign(slopes[index]!)) * Math.min(Math.abs(slopes[index - 1]!), Math.abs(slopes[index]!), Math.abs(slopes[index - 1]! + slopes[index]!) / 4) || 0);
+  if (last > 1) { tangents[0] = (3 * slopes[0]! - tangents[1]!) / 2; tangents[last] = (3 * slopes[last - 1]! - tangents[last - 1]!) / 2; } else { tangents[0] = tangents[1] = slopes[0]!; }
   for (let k = 0; k < N; k++) {
     const at = (k / (N - 1)) * last, seg = Math.min(last - 1, Math.floor(at)), t = at - seg, t2 = t * t, t3 = t2 * t;
-    const a = values[seg], b = values[seg + 1];
-    const value = (2 * t3 - 3 * t2 + 1) * a + (t3 - 2 * t2 + t) * tangents[seg] + (3 * t2 - 2 * t3) * b + (t3 - t2) * tangents[seg + 1];
+    const a = values[seg]!, b = values[seg + 1]!;
+    const value = (2 * t3 - 3 * t2 + 1) * a + (t3 - 2 * t2 + t) * tangents[seg]! + (3 * t2 - 2 * t3) * b + (t3 - t2) * tangents[seg + 1]!;
     out[k] = clamp(value, Math.min(a, b), Math.max(a, b));
   }
   return out;
@@ -104,21 +104,21 @@ function resample(raw: number[]): number[] {
 /** The baseline under the stack. Wiggle follows Byron and Wattenberg, then removes its linear drift so the stream stays level. */
 function baseline(layers: number[][], mode: StreamgraphProps["offset"]): number[] {
   const g = new Array<number>(N).fill(0);
-  const totals = g.map((_, j) => layers.reduce((sum, layer) => sum + layer[j], 0));
+  const totals = g.map((_, j) => layers.reduce((sum, layer) => sum + layer[j]!, 0));
   if (mode === "zero" || !layers.length) return g;
   if (mode === "silhouette") return totals.map(total => -total / 2);
   for (let j = 1; j < N; j++) {
     let s1 = 0, s2 = 0, below = 0;
     for (const layer of layers) {
-      const change = layer[j] - layer[j - 1];
-      s1 += layer[j];
-      s2 += (below + change / 2) * layer[j];
+      const change = layer[j]! - layer[j - 1]!;
+      s1 += layer[j]!;
+      s2 += (below + change / 2) * layer[j]!;
       below += change;
     }
-    g[j] = g[j - 1] - (s1 ? s2 / s1 : 0);
+    g[j] = g[j - 1]! - (s1 ? s2 / s1 : 0);
   }
   // Least squares line through the centre of the stream, subtracted so it never tilts off the plot.
-  const centers = g.map((value, j) => value + totals[j] / 2);
+  const centers = g.map((value, j) => value + totals[j]! / 2);
   const mx = (N - 1) / 2, my = centers.reduce((sum, value) => sum + value, 0) / N;
   let num = 0, den = 0;
   centers.forEach((value, j) => { num += (j - mx) * (value - my); den += (j - mx) ** 2; });
@@ -190,40 +190,41 @@ export function Streamgraph({ data, series, label, unit = "", height = 260, offs
     const { series: order, offset: mode } = live.current;
     const layers = order.map(line => { const shape = shapes.current.get(line.key); const p = presence.current.get(line.key)?.value ?? 1; return shape ? shape.map(value => value * p) : new Array<number>(N).fill(0); });
     const stack = stackOrder(order.length, mode);
-    const g = baseline(stack.map(i => layers[i]), mode);
+    const g = baseline(stack.map(i => layers[i]!), mode);
     const lower: number[][] = new Array(order.length), upper: number[][] = new Array(order.length);
     let running = g.slice();
-    for (const i of stack) { lower[i] = running; running = running.map((value, j) => value + layers[i][j]); upper[i] = running; }
+    for (const i of stack) { const layer = layers[i]!; lower[i] = running; running = running.map((value, j) => value + layer[j]!); upper[i] = running; }
     let lo = Infinity, hi = -Infinity;
-    for (let j = 0; j < N; j++) { lo = Math.min(lo, g[j]); hi = Math.max(hi, running[j]); }
+    for (let j = 0; j < N; j++) { lo = Math.min(lo, g[j]!); hi = Math.max(hi, running[j]!); }
     if (!Number.isFinite(lo) || hi - lo < 1e-9) { lo = -1; hi = 1; }
     const span = hi - lo, s = grow.get();
-    const center = g.map((value, j) => (value + running[j]) / 2);
+    const center = g.map((value, j) => (value + running[j]!) / 2);
     const toY = (value: number) => PAD + (1 - (value - lo) / span) * (height - PAD * 2);
-    const yAt = (value: number, j: number) => toY(center[j] + (value - center[j]) * s);
+    const yAt = (value: number, j: number) => toY(center[j]! + (value - center[j]!) * s);
     frame.current = { lower, upper, toY, center };
     const xs = Array.from({ length: N }, (_, j) => (j / (N - 1)) * w);
     order.forEach((line, i) => {
+      const top = upper[i]!, bottom = lower[i]!;
       const node = paths.current.get(line.key);
       if (node) {
         let d = "";
-        for (let j = 0; j < N; j++) d += `${j ? "L" : "M"}${xs[j].toFixed(1)},${yAt(upper[i][j], j).toFixed(1)}`;
-        for (let j = N - 1; j >= 0; j--) d += `L${xs[j].toFixed(1)},${yAt(lower[i][j], j).toFixed(1)}`;
+        for (let j = 0; j < N; j++) d += `${j ? "L" : "M"}${xs[j]!.toFixed(1)},${yAt(top[j]!, j).toFixed(1)}`;
+        for (let j = N - 1; j >= 0; j--) d += `L${xs[j]!.toFixed(1)},${yAt(bottom[j]!, j).toFixed(1)}`;
         node.setAttribute("d", `${d}Z`);
       }
       // The label sits where its layer is thickest, and holds its spot until another stretch is clearly thicker.
       const text = labels.current.get(line.key);
       if (!text) return;
       let best = 4;
-      for (let j = 4; j < N - 4; j++) if (upper[i][j] - lower[i][j] > upper[i][best] - lower[i][best]) best = j;
+      for (let j = 4; j < N - 4; j++) if (top[j]! - bottom[j]! > top[best]! - bottom[best]!) best = j;
       const held = spots.current.get(line.key);
-      const j = held !== undefined && upper[i][held] - lower[i][held] >= (upper[i][best] - lower[i][best]) * .8 ? held : best;
+      const j = held !== undefined && top[held]! - bottom[held]! >= (top[best]! - bottom[best]!) * .8 ? held : best;
       spots.current.set(line.key, j);
-      const thickness = (upper[i][j] - lower[i][j]) / span * (height - PAD * 2) * s;
+      const thickness = (top[j]! - bottom[j]!) / span * (height - PAD * 2) * s;
       const room = text.getComputedTextLength?.() ?? 60;
-      const x = clamp(xs[j], room / 2 + 6, w - room / 2 - 6);
+      const x = clamp(xs[j]!, room / 2 + 6, w - room / 2 - 6);
       text.setAttribute("x", x.toFixed(1));
-      text.setAttribute("y", yAt((upper[i][j] + lower[i][j]) / 2, j).toFixed(1));
+      text.setAttribute("y", yAt((top[j]! + bottom[j]!) / 2, j).toFixed(1));
       text.style.opacity = thickness >= 19 && room + 16 < w ? "1" : "0";
     });
   }, [grow, height]);
@@ -251,7 +252,7 @@ export function Streamgraph({ data, series, label, unit = "", height = 260, offs
     for (const key of [...shapes.current.keys()]) if (!targets.has(key)) shapes.current.delete(key);
     morph.current?.stop();
     if (!moves.length) { paint(); return; }
-    morph.current = animate(0, 1, { ...settle, onUpdate: t => { for (const move of moves) shapes.current.set(move.key, move.from.map((value, j) => value + (move.to[j] - value) * t)); paint(); }, onComplete: () => { for (const move of moves) shapes.current.set(move.key, move.to); paint(); } });
+    morph.current = animate(0, 1, { ...settle, onUpdate: t => { for (const move of moves) shapes.current.set(move.key, move.from.map((value, j) => value + (move.to[j]! - value) * t)); paint(); }, onComplete: () => { for (const move of moves) shapes.current.set(move.key, move.to); paint(); } });
     return () => morph.current?.stop();
   }, [paint, reduced, targets]);
 
@@ -294,7 +295,7 @@ export function Streamgraph({ data, series, label, unit = "", height = 260, offs
     const f = frame.current;
     if (y === null && f && activeKey) {
       const i = series.findIndex(line => line.key === activeKey), j = Math.round((x / w) * (N - 1));
-      if (i >= 0) y = f.toY((f.upper[i][j] + f.lower[i][j]) / 2);
+      if (i >= 0) y = f.toY((f.upper[i]![j]! + f.lower[i]![j]!) / 2);
     }
     const tw = bubble.offsetWidth, th = bubble.offsetHeight;
     let left = x + GAP;
@@ -317,7 +318,7 @@ export function Streamgraph({ data, series, label, unit = "", height = 260, offs
     const share = clamp((clientX - rect.left) / rect.width, 0, 1), y = clientY - rect.top;
     const at = last > 0 ? Math.round(share * last) : 0, j = Math.round(share * (N - 1));
     let key: string | null = null;
-    if (f) series.forEach((line, i) => { if (hidden.includes(line.key)) return; const top = f.toY(f.upper[i][j]), bottom = f.toY(f.lower[i][j]); if (y >= top - 1 && y <= bottom + 1) key = line.key; });
+    if (f) series.forEach((line, i) => { if (hidden.includes(line.key)) return; const top = f.toY(f.upper[i]![j]!), bottom = f.toY(f.lower[i]![j]!); if (y >= top - 1 && y <= bottom + 1) key = line.key; });
     return { index: at, key, y };
   };
   const onPointerMove = (event: PointerEvent<HTMLDivElement>) => { if (event.pointerType === "mouse" || event.buttons) setHover(read(event.clientX, event.clientY)); };
@@ -348,7 +349,7 @@ export function Streamgraph({ data, series, label, unit = "", height = 260, offs
   const reading = index === null ? null : data[index];
   const total = (datum: StreamgraphDatum) => visible.reduce((sum, line) => sum + Math.max(0, datum.values[line.key] ?? 0), 0);
   const announce = reading ? `${reading.label}. ${activeKey ? `${series.find(line => line.key === activeKey)?.label} ${format(reading.values[activeKey] ?? 0, series.find(line => line.key === activeKey)!)}, ` : ""}${visible.length} layers, ${grouped.format(total(reading))}${unit ? ` ${unit}` : ""} in total` : "";
-  const summary = empty ? `${label}. ${emptyLabel}.` : `${label}, ${data[0].label} to ${data[last].label}. ${visible.map(line => `${line.label}, latest ${format(data[last].values[line.key] ?? 0, line)}`).join(". ")}.`;
+  const summary = empty ? `${label}. ${emptyLabel}.` : `${label}, ${data[0]!.label} to ${data[last]!.label}. ${visible.map(line => `${line.label}, latest ${format(data[last]!.values[line.key] ?? 0, line)}`).join(". ")}.`;
   const picks = axisPicks(data, plotWidth);
   const tipLeft = reduced ? tipX : tipSpringX, tipTop = reduced ? tipY : tipSpringY;
 
@@ -372,7 +373,7 @@ export function Streamgraph({ data, series, label, unit = "", height = 260, offs
         </svg>
         <motion.div ref={tip} className={styles.tooltip} style={{ x: tipLeft, y: tipTop }} aria-hidden="true">
           <p className={styles.tipTitle}>{reading?.label ?? ""}</p>
-          {stackOrder(series.length, offset).reverse().map(at => series[at]).filter(line => !hidden.includes(line.key)).map(line => <p key={line.key} className={styles.tipRow} data-active={activeKey === line.key || undefined} data-dim={(activeKey !== null && activeKey !== line.key) || undefined} style={{ "--series": colorOf(line, series.indexOf(line)) } as CSSProperties}>
+          {stackOrder(series.length, offset).reverse().map(at => series[at]!).filter(line => !hidden.includes(line.key)).map(line => <p key={line.key} className={styles.tipRow} data-active={activeKey === line.key || undefined} data-dim={(activeKey !== null && activeKey !== line.key) || undefined} style={{ "--series": colorOf(line, series.indexOf(line)) } as CSSProperties}>
             <span className={styles.tipSwatch} />
             <span className={styles.tipName}>{line.label}</span>
             <span className={styles.tipValue}>{reading ? format(reading.values[line.key] ?? 0, line) : ""}</span>
@@ -381,7 +382,7 @@ export function Streamgraph({ data, series, label, unit = "", height = 260, offs
         {(empty || visible.length === 0) && <p className={styles.message}>{empty ? emptyLabel : "Choose a layer to show"}</p>}
       </div>
       <div className={styles.axis} aria-hidden="true">
-        {picks.map(at => { const share = last > 0 ? at / last : .5; return <span key={`${data[at].key}`} className={styles.axisLabel} style={{ left: `${share * 100}%`, translate: `${-share * 100}% 0` }}>{data[at].axisLabel}</span>; })}
+        {picks.map(at => { const share = last > 0 ? at / last : .5; const item = data[at]!; return <span key={`${item.key}`} className={styles.axisLabel} style={{ left: `${share * 100}%`, translate: `${-share * 100}% 0` }}>{item.axisLabel}</span>; })}
       </div>
     </div>
     <p className={styles.srOnly} aria-live="polite" aria-atomic="true">{announce}</p>

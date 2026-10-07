@@ -67,3 +67,27 @@ export async function withRelativeImports(file, content, specifiers, resolve) {
   }
   return next;
 }
+
+/**
+ * The names a script file exports (values and types), without `export default`. Used to keep every public export name unique
+ * across registry items, so a project can re-export Arc from one index.ts (kuratlielia/arc-library#12). An alias that
+ * re-exports the same binding under another name counts as its own name.
+ */
+export function exportedNames(file, content) {
+  if (!/\.tsx?$/.test(file)) return [];
+  const source = ts.createSourceFile(file, content, ts.ScriptTarget.Latest, false, file.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS);
+  const names = [];
+  for (const statement of source.statements) {
+    const modifiers = ts.canHaveModifiers(statement) ? ts.getModifiers(statement) ?? [] : [];
+    if (modifiers.some(modifier => modifier.kind === ts.SyntaxKind.ExportKeyword) && !modifiers.some(modifier => modifier.kind === ts.SyntaxKind.DefaultKeyword)) {
+      if (ts.isVariableStatement(statement)) {
+        for (const declaration of statement.declarationList.declarations) if (ts.isIdentifier(declaration.name)) names.push(declaration.name.text);
+      } else if (statement.name && ts.isIdentifier(statement.name)) names.push(statement.name.text);
+    }
+    // Local `export { a, b as c }` lists; `export … from` re-exports of another Arc file are that file's names, not new ones.
+    if (ts.isExportDeclaration(statement) && !statement.moduleSpecifier && statement.exportClause && ts.isNamedExports(statement.exportClause)) {
+      for (const element of statement.exportClause.elements) names.push(element.name.text);
+    }
+  }
+  return [...new Set(names)];
+}

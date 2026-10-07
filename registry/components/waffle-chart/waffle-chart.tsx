@@ -68,7 +68,7 @@ function allocate(data: WaffleCategory[], total: number, cells: number): number[
   const counts = exact.map(Math.floor);
   let left = cells - counts.reduce((sum, count) => sum + count, 0);
   const order = exact.map((value, index) => ({ index, rest: value - Math.floor(value) })).sort((a, b) => b.rest - a.rest);
-  for (let k = 0; left > 0 && k < order.length; k++, left--) counts[order[k].index]++;
+  for (let k = 0; left > 0 && k < order.length; k++, left--) counts[order[k]!.index]!++;
   return counts;
 }
 
@@ -89,7 +89,7 @@ function reassign(previous: Cell[], data: WaffleCategory[], counts: number[]): C
   let slot = 0;
   data.forEach((item, index) => {
     const own = kept.get(item.key) ?? [];
-    while (own.length < counts[index] && pool.length) own.push(pool.shift()!);
+    while (own.length < counts[index]! && pool.length) own.push(pool.shift()!);
     own.sort((a, b) => a.slot - b.slot).forEach(cell => next.push({ id: cell.id, key: item.key, slot: slot++ }));
   });
   pool.forEach(cell => next.push({ id: cell.id, key: null, slot: slot++ }));
@@ -129,7 +129,7 @@ export function WaffleChart({ data, label, unit = "", formatValue, rows = 10, co
     setSeen(signature);
     const base = Array.from({ length: count }, (_, id) => layout.cells[id] ?? { id, key: null, slot: id });
     const next = reassign(base, data, counts);
-    setLayout({ cells: next, moved: new Set(next.filter(cell => base[cell.id].slot !== cell.slot || base[cell.id].key !== cell.key).map(cell => cell.id)), version: layout.version + 1 });
+    setLayout({ cells: next, moved: new Set(next.filter(cell => base[cell.id]!.slot !== cell.slot || base[cell.id]!.key !== cell.key).map(cell => cell.id)), version: layout.version + 1 });
   }
   const { cells, moved, version } = layout;
 
@@ -222,8 +222,8 @@ export function WaffleChart({ data, label, unit = "", formatValue, rows = 10, co
       ArrowDown: () => col * rows + Math.max(0, row - 1),
       ArrowRight: () => Math.min(columns - 1, col + 1) * rows + row,
       ArrowLeft: () => Math.max(0, col - 1) * rows + row,
-      PageDown: () => blocks[Math.min(blocks.length - 1, block + 1)].start,
-      PageUp: () => at > blocks[block].start ? blocks[block].start : blocks[Math.max(0, block - 1)].start,
+      PageDown: () => blocks[Math.min(blocks.length - 1, block + 1)]!.start,
+      PageUp: () => at > blocks[block]!.start ? blocks[block]!.start : blocks[Math.max(0, block - 1)]!.start,
       Home: () => 0,
       End: () => filled - 1,
     };

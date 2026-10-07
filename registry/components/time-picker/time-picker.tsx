@@ -21,7 +21,7 @@ export interface TimePickerProps {
 }
 
 const pad = (value: number) => String(value).padStart(2, "0");
-const toMinutes = (value: string) => { const [h, m] = value.split(":").map(Number); return Number.isFinite(h) && Number.isFinite(m) ? h * 60 + m : 0; };
+const toMinutes = (value: string) => { const [h = NaN, m = NaN] = value.split(":").map(Number); return Number.isFinite(h) && Number.isFinite(m) ? h * 60 + m : 0; };
 const enter = motionTokens.ease.enter;
 const standard = motionTokens.ease.standard;
 /** The shown time rolls like a clock face: a later time rises from below, an earlier one drops from above. */
@@ -75,7 +75,7 @@ export function TimePicker({ label, value, defaultValue = "09:00", onChange, des
     if (event.key === "Escape") { event.preventDefault(); setOpen(false); return; }
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
-      if (open && activeIndex >= 0) choose(options[activeIndex]);
+      if (open && activeIndex >= 0) choose(options[activeIndex]!);
       else openMenu();
       return;
     }

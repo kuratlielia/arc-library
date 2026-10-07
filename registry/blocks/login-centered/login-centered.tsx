@@ -106,6 +106,7 @@ function useViewHeight(view: string, reduce: boolean) {
     const node = track.current;
     if (!node || typeof ResizeObserver === "undefined") return;
     const observer = new ResizeObserver(([entry]) => {
+      if (!entry) return;
       measured.current = entry.borderBoxSize?.[0]?.blockSize ?? node.offsetHeight;
       if (gliding.current) glide(measured.current);
     });

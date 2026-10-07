@@ -101,6 +101,7 @@ function HeightFrame({ morphKey, reduce, children }: { morphKey: string; reduce:
     // The minimum follows the moving height, so a flex parent short on room cannot squeeze the frame mid-morph and snap it when the morph ends.
     const unfollow = height.on("change", value => { if (frame.current) frame.current.style.minHeight = typeof value === "number" ? `${value}px` : ""; });
     const observer = new ResizeObserver(([entry]) => {
+      if (!entry) return;
       const next = entry.borderBoxSize?.[0]?.blockSize ?? node.offsetHeight;
       const current = height.get();
       const from = typeof current === "number" ? current : last.current;
@@ -236,7 +237,7 @@ export function ChipGroup({ options, value, onValueChange, label, multiple = tru
     const moves: Record<string, number> = { ArrowRight: index === last ? 0 : index + 1, ArrowDown: index === last ? 0 : index + 1, ArrowLeft: index === 0 ? last : index - 1, ArrowUp: index === 0 ? last : index - 1, Home: 0, End: last };
     if (!(event.key in moves)) return;
     event.preventDefault();
-    buttons[moves[event.key]].focus();
+    buttons[moves[event.key]!]!.focus();
   }
 
   return <LayoutGroup id={id}>

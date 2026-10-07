@@ -41,12 +41,12 @@ function inlineMarkdown(text: string) {
 function listMarkdown(lines: string[]) {
   const items = lines.map(line => {
     const match = /^(\s*)([-*+]|\d+[.)])\s+(.*)$/.exec(line)!;
-    return { indent: match[1].replace(/\t/g, "  ").length, tag: /\d/.test(match[2]) ? "ol" : "ul", text: match[3] };
+    return { indent: match[1]!.replace(/\t/g, "  ").length, tag: /\d/.test(match[2]!) ? "ol" : "ul", text: match[3]! };
   });
   let html = "";
   const stack: { indent: number; tag: string }[] = [];
   for (const item of items) {
-    while (stack.length > 1 && item.indent < stack[stack.length - 1].indent) html += `</li></${stack.pop()!.tag}>`;
+    while (stack.length > 1 && item.indent < stack[stack.length - 1]!.indent) html += `</li></${stack.pop()!.tag}>`;
     const top = stack[stack.length - 1];
     if (!top || item.indent > top.indent) { html += `<${item.tag}><li>`; stack.push({ indent: item.indent, tag: item.tag }); }
     else if (top.tag !== item.tag) { html += `</li></${top.tag}><${item.tag}><li>`; top.tag = item.tag; }
@@ -65,31 +65,31 @@ export function markdownToHtml(markdown: string) {
   const flush = () => { if (paragraph.length) { out.push(`<p>${inlineMarkdown(paragraph.join(" "))}</p>`); paragraph.length = 0; } };
   const isItem = (line: string) => /^\s*([-*+]|\d+[.)])\s+/.test(line);
   for (let index = 0; index < lines.length;) {
-    const line = lines[index];
+    const line = lines[index]!;
     if (/^\s*```/.test(line)) {
       flush();
       const code: string[] = [];
       index++;
-      while (index < lines.length && !/^\s*```/.test(lines[index])) code.push(lines[index++]);
+      while (index < lines.length && !/^\s*```/.test(lines[index]!)) code.push(lines[index++]!);
       index++;
       out.push(`<pre>${escapeHtml(code.join("\n")) || "<br>"}</pre>`);
       continue;
     }
     if (!line.trim()) { flush(); index++; continue; }
     const heading = /^(#{1,6})\s+(.*)$/.exec(line);
-    if (heading) { flush(); const level = Math.min(3, heading[1].length); out.push(`<h${level}>${inlineMarkdown(heading[2])}</h${level}>`); index++; continue; }
+    if (heading) { flush(); const level = Math.min(3, heading[1]!.length); out.push(`<h${level}>${inlineMarkdown(heading[2]!)}</h${level}>`); index++; continue; }
     if (/^ {0,3}([-*_])( *\1){2,} *$/.test(line)) { flush(); out.push("<hr>"); index++; continue; }
     if (/^\s*>/.test(line)) {
       flush();
       const quote: string[] = [];
-      while (index < lines.length && /^\s*>/.test(lines[index])) quote.push(lines[index++].replace(/^\s*>\s?/, ""));
+      while (index < lines.length && /^\s*>/.test(lines[index]!)) quote.push(lines[index++]!.replace(/^\s*>\s?/, ""));
       out.push(`<blockquote>${quote.map(inlineMarkdown).join("<br>")}</blockquote>`);
       continue;
     }
     if (isItem(line)) {
       flush();
       const items: string[] = [];
-      while (index < lines.length && isItem(lines[index])) items.push(lines[index++]);
+      while (index < lines.length && isItem(lines[index]!)) items.push(lines[index++]!);
       out.push(listMarkdown(items));
       continue;
     }
@@ -243,7 +243,7 @@ function pointToOffset(root: Node, container: Node, offset: number) {
     const children = node.childNodes;
     for (let index = 0; index < children.length; index++) {
       if (node === container && index === offset) { found = count; return; }
-      visit(children[index]);
+      visit(children[index]!);
       if (found >= 0) return;
     }
     if (node === container) found = count;
@@ -729,7 +729,7 @@ export const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorPro
     if (state.index <= 0) return;
     state.index -= 1;
     setSlash(null);
-    restore(state.stack[state.index]);
+    restore(state.stack[state.index]!);
     setAnnounce("Undone");
   }, [restore]);
   const redo = useCallback(() => {
@@ -737,7 +737,7 @@ export const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorPro
     if (state.index >= state.stack.length - 1) return;
     state.index += 1;
     setSlash(null);
-    restore(state.stack[state.index]);
+    restore(state.stack[state.index]!);
     setAnnounce("Redone");
   }, [restore]);
 
@@ -789,7 +789,7 @@ export const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorPro
       return;
     }
     const rects = range.getClientRects();
-    const rect = rects.length ? rects[0] : range.getBoundingClientRect();
+    const rect = rects.length ? rects[0]! : range.getBoundingClientRect();
     const whole = range.getBoundingClientRect();
     const box = root.getBoundingClientRect();
     const below = rect.top - clipBand(root).top < 60;
@@ -884,8 +884,8 @@ export const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorPro
     for (const [pattern, tag] of inline) {
       const match = pattern.exec(text);
       if (!match) continue;
-      const whole = tag === "em" ? match[1] : match[0];
-      const inner = tag === "em" ? match[2] : tag === "code" ? match[1] : tag === "s" ? match[1] : match[2];
+      const whole = tag === "em" ? match[1]! : match[0];
+      const inner = tag === "em" ? match[2]! : tag === "code" ? match[1]! : tag === "s" ? match[1]! : match[2]!;
       const from = range.startOffset - whole.length;
       node.splitText(range.startOffset);
       const middle = node.splitText(from);
@@ -909,7 +909,7 @@ export const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorPro
     const node = range.startContainer;
     if (!range.collapsed || !isText(node) || node.parentElement?.closest("pre, code")) return;
     const offset = range.startOffset - 1;
-    if (node.data[offset] !== "/" || (offset > 0 && !/[\s\u00a0\u200b]/.test(node.data[offset - 1]))) return;
+    if (node.data[offset] !== "/" || (offset > 0 && !/[\s\u00a0\u200b]/.test(node.data[offset - 1]!))) return;
     const mark = document.createRange();
     mark.setStart(node, offset);
     mark.setEnd(node, offset + 1);

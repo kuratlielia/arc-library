@@ -133,7 +133,7 @@ A few favorites, recorded live from [uiarc.dev](https://uiarc.dev). Items marked
 
 ### Requirements
 
-- **React 19** with TypeScript
+- **React 19** with TypeScript. The source compiles under `strict`, `noUncheckedIndexedAccess` and `verbatimModuleSyntax`, and needs `lib` ES2023 or newer (a few items use `findLast`)
 - **Next.js** (App Router) or **Vite**
 - **[motion](https://www.npmjs.com/package/motion)** for animation. Some items also use [lucide-react](https://lucide.dev) or a [Radix UI](https://www.radix-ui.com) primitive; the CLI installs whatever an item needs.
 - The `@/*` import alias (Next.js and shadcn set it up by default)
@@ -164,7 +164,7 @@ Every item also installs from its full URL, without touching `components.json`:
 npx shadcn@latest add https://uiarc.dev/r/button.json
 ```
 
-Your first install adds `arc-foundation` (design and motion tokens). Import it once at the root of your app:
+Install the design tokens once per app with `npx shadcn@latest add @uiarc/arc-foundation`, then import them at the root of your app. Components only pull in the motion presets (`arc-motion-tokens`) and never reinstall `foundation.css`, so you can also keep the tokens in your own theme package.
 
 ```tsx
 // app/layout.tsx (Next.js) or src/main.tsx (Vite)
@@ -633,11 +633,26 @@ Arc follows the `data-theme` attribute on `<html>`, not the `dark` class. Set `d
 </details>
 
 <details>
-<summary><b>Using Vite: an item imports <code>next/image</code> or <code>next/link</code></b></summary>
+<summary><b>Links and images: using next/link, next/image or your own components</b></summary>
 
 <br>
 
-A few items use Next.js primitives: [`avatar`](https://uiarc.dev/components/avatar), [`breadcrumb`](https://uiarc.dev/components/breadcrumb), [`changelog-feed`](https://uiarc.dev/components/blocks/changelog-feed), [`site-header`](https://uiarc.dev/components/blocks/site-header), [`newsletter-signup`](https://uiarc.dev/components/blocks/newsletter-signup). In Vite, replace `Image` with `<img>` and `Link` with `<a>`; the props map one to one for these uses.
+Components render a plain `<a>` and `<img>`, so they work in Vite, Remix, Astro or plain React. To route them through Next.js, or through your own `Link` (for example a locale-aware one), wrap the app once with `ArcProvider`. It installs with the components that use it.
+
+```tsx
+"use client";
+import Image from "next/image";
+import Link from "next/link";
+import { ArcProvider } from "@/components/arc/lib/arc-provider";
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  return <ArcProvider link={Link} image={Image}>{children}</ArcProvider>;
+}
+```
+
+`link` receives `href` plus anchor attributes, and `image` receives `src`, `alt`, `width` and `height` or `fill`, `sizes` and `priority`, the same props next/image takes.
+
+A few blocks are Next.js page examples and still import `next/image` or `next/link` directly: [`changelog-feed`](https://uiarc.dev/components/blocks/changelog-feed), [`site-header`](https://uiarc.dev/components/blocks/site-header), [`newsletter-signup`](https://uiarc.dev/components/blocks/newsletter-signup). In another framework, replace `Image` with `<img>` (or `ArcImage` from `arc-provider`) and `Link` with `<a>`.
 
 </details>
 
@@ -655,7 +670,7 @@ Arc honors the reduced motion setting of your operating system and swaps movemen
 
 <br>
 
-Every item lists the foundation as a dependency. If you have customized your tokens, answer no; the existing file keeps working.
+Only `arc-foundation` writes `foundation.css`; components and blocks depend on `arc-motion-tokens` instead. If you re-run `add @uiarc/arc-foundation` after customizing your tokens, answer no to keep your file, or keep your overrides in a separate stylesheet loaded after it.
 
 </details>
 

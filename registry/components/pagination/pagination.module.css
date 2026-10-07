@@ -9,7 +9,6 @@
 .nav .step { transition: background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard), opacity var(--duration-fast) var(--ease-standard), transform var(--duration-spring) var(--ease-spring); }
 .nav .step:active:not(:disabled) { transform: scale(.96); transition-duration: var(--duration-fast), var(--duration-fast), var(--duration-fast), 100ms; transition-timing-function: var(--ease-standard), var(--ease-standard), var(--ease-standard), ease-out; }
 .nav button:disabled { opacity: .4; cursor: not-allowed; }
-.nav button:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 @media (hover: hover) and (pointer: fine) {
   .nav button:hover:not(:disabled) { background: var(--surface-muted); color: var(--foreground); }
   .nav[data-mark-ready] button[aria-current="page"]:hover { background: transparent; }

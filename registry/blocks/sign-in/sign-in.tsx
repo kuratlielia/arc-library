@@ -56,10 +56,10 @@ function suggestionFor(value: string) {
 /** Known teammates keep their photo; anyone else gets a name from their address and an initials avatar. */
 function accountFor(value: string): SignInAccount {
   const email = value.trim().toLowerCase();
-  const parts = email.split("@")[0].split(/[._+-]+/).filter(Boolean);
+  const parts = email.split("@")[0]!.split(/[._+-]+/).filter(Boolean);
   const known = people.find(person => person.name.toLowerCase().split(" ")[0] === parts[0]);
   if (known) return { ...known, email };
-  return { name: parts.slice(0, 2).map(part => part[0].toUpperCase() + part.slice(1)).join(" ") || "Arc member", email };
+  return { name: parts.slice(0, 2).map(part => part[0]!.toUpperCase() + part.slice(1)).join(" ") || "Arc member", email };
 }
 
 const stepMotion: Variants = {
@@ -99,6 +99,7 @@ function useStepHeight(step: Step, reduce: boolean) {
     const node = track.current;
     if (!node || typeof ResizeObserver === "undefined") return;
     const observer = new ResizeObserver(([entry]) => {
+      if (!entry) return;
       measured.current = entry.borderBoxSize?.[0]?.blockSize ?? node.offsetHeight;
       if (gliding.current) glide(measured.current);
     });
@@ -130,7 +131,7 @@ export function SignIn({ demoCode = "123456", onSignIn }: SignInProps) {
   const [codeError, setCodeError] = useState("");
   const [resendIn, setResendIn] = useState(RESEND_SECONDS);
   const [busy, setBusy] = useState<null | "email" | "code" | "passkey" | Provider>(null);
-  const [account, setAccount] = useState<SignInAccount>(people[0]);
+  const [account, setAccount] = useState<SignInAccount>(people[0]!);
   const [method, setMethod] = useState<SignInMethod>("Email code");
   const [status, setStatus] = useState("");
   const emailRef = useRef<HTMLInputElement>(null);
@@ -242,7 +243,7 @@ export function SignIn({ demoCode = "123456", onSignIn }: SignInProps) {
     if (busy) return;
     setBusy(how);
     setStatus(how === "passkey" ? "Waiting for your passkey" : `Opening ${how}`);
-    later(() => complete(people[0], how === "passkey" ? "Passkey" : how), how === "passkey" ? 1100 : 900);
+    later(() => complete(people[0]!, how === "passkey" ? "Passkey" : how), how === "passkey" ? 1100 : 900);
   }
 
   function signOut() {

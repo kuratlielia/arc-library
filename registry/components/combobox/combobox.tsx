@@ -173,7 +173,7 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
       const nextPosition = event.key === "ArrowDown"
         ? (currentPosition + 1) % enabledIndices.length
         : (currentPosition - 1 + enabledIndices.length) % enabledIndices.length;
-      setActiveIndex(enabledIndices[nextPosition]);
+      setActiveIndex(enabledIndices[nextPosition]!);
       return;
     }
     if (event.key === "Enter" && open && activeIndex >= 0) {

@@ -57,7 +57,7 @@ const glyphRest = { opacity: 1, scale: 1, filter: blur(0) };
 
 /** Text that rises in with a small blur when it changes. Its slot springs to the new height, so a message that wraps
  *  eases the steps below it down instead of pushing them; unrelated resizes (fonts, container width) follow exactly. */
-function SwapText({ text, className, reduced }: { text?: string; className: string; reduced: boolean }) {
+function SwapText({ text, className, reduced }: { text?: string; className?: string; reduced: boolean }) {
   const inner = useRef<HTMLSpanElement>(null);
   const armedUntil = useRef(0);
   const height = useMotionValue<number | "auto">("auto");

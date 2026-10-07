@@ -61,7 +61,7 @@ function rank(items: ExpandingSearchItem[], query: string, limit: number) {
     const title = item.title.toLocaleLowerCase();
     const at = title.indexOf(q);
     const extra = [item.meta ?? "", ...(item.keywords ?? [])].some(word => word.toLocaleLowerCase().includes(q));
-    const score = at === 0 ? 0 : at > 0 && /[\s\-/]/.test(title[at - 1]) ? 1 : at > 0 ? 2 : extra ? 3 : -1;
+    const score = at === 0 ? 0 : at > 0 && /[\s\-/]/.test(title[at - 1]!) ? 1 : at > 0 ? 2 : extra ? 3 : -1;
     if (score >= 0) scored.push({ item, score, order });
   });
   return scored.sort((a, b) => a.score - b.score || a.order - b.order).slice(0, limit).map(entry => entry.item);

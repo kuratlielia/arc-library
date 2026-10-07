@@ -7,17 +7,32 @@
       "name": "arc-foundation",
       "type": "registry:item",
       "title": "Arc foundation",
-      "description": "Arc design tokens (color, surface, radius, shadow, accent, light and dark themes) and the shared motion presets every Arc component uses.",
+      "description": "Arc design tokens (color, surface, radius, shadow, accent, focus, light and dark themes), plus the shared motion presets. Install once per app.",
       "categories": [
         "foundation"
       ],
       "dependencies": [],
+      "registryDependencies": [
+        "https://uiarc.dev/r/arc-motion-tokens.json"
+      ],
       "files": [
         {
           "path": "registry/foundation.css",
           "type": "registry:component",
           "target": "@components/arc/foundation.css"
-        },
+        }
+      ]
+    },
+    {
+      "name": "arc-motion-tokens",
+      "type": "registry:item",
+      "title": "Arc motion tokens",
+      "description": "The shared motion presets (durations, easings, springs, staggers) Arc components import. Installed automatically with any item that uses them.",
+      "categories": [
+        "foundation"
+      ],
+      "dependencies": [],
+      "files": [
         {
           "path": "registry/motion-tokens.ts",
           "type": "registry:component",
@@ -42,7 +57,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -81,7 +96,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -121,7 +136,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -161,7 +176,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -202,7 +217,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json",
+        "https://uiarc.dev/r/arc-motion-tokens.json",
         "https://uiarc.dev/r/tooltip.json"
       ],
       "files": [
@@ -253,7 +268,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -295,7 +310,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -334,7 +349,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -373,7 +388,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -418,7 +433,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -457,7 +472,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json",
+        "https://uiarc.dev/r/arc-motion-tokens.json",
         "https://uiarc.dev/r/button.json"
       ],
       "files": [
@@ -508,7 +523,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json",
+        "https://uiarc.dev/r/arc-motion-tokens.json",
         "https://uiarc.dev/r/button.json"
       ],
       "files": [
@@ -559,7 +574,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json",
+        "https://uiarc.dev/r/arc-motion-tokens.json",
         "https://uiarc.dev/r/button.json"
       ],
       "files": [
@@ -610,7 +625,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json",
+        "https://uiarc.dev/r/arc-motion-tokens.json",
         "https://uiarc.dev/r/button.json"
       ],
       "files": [
@@ -660,7 +675,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -672,6 +687,11 @@
           "path": "registry/components/avatar/avatar.module.css",
           "type": "registry:component",
           "target": "@components/arc/avatar/avatar.module.css"
+        },
+        {
+          "path": "lib/arc-provider.tsx",
+          "type": "registry:lib",
+          "target": "@components/arc/lib/arc-provider.tsx"
         }
       ],
       "docs": "Docs and live preview: https://uiarc.dev/components/avatar",
@@ -698,7 +718,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json",
+        "https://uiarc.dev/r/arc-motion-tokens.json",
         "https://uiarc.dev/r/avatar.json"
       ],
       "files": [
@@ -721,6 +741,11 @@
           "path": "registry/components/avatar/avatar.module.css",
           "type": "registry:component",
           "target": "@components/arc/avatar/avatar.module.css"
+        },
+        {
+          "path": "lib/arc-provider.tsx",
+          "type": "registry:lib",
+          "target": "@components/arc/lib/arc-provider.tsx"
         }
       ],
       "docs": "Docs and live preview: https://uiarc.dev/components/avatar-group",
@@ -747,7 +772,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -785,7 +810,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -825,7 +850,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -864,7 +889,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -903,7 +928,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -942,7 +967,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -981,7 +1006,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -1020,7 +1045,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -1058,7 +1083,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -1097,7 +1122,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -1136,7 +1161,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -1175,7 +1200,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -1213,7 +1238,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -1251,7 +1276,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -1290,13 +1315,18 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
           "path": "registry/components/calendar/calendar.tsx",
           "type": "registry:component",
           "target": "@components/arc/calendar/calendar.tsx"
+        },
+        {
+          "path": "lib/use-today.ts",
+          "type": "registry:lib",
+          "target": "@components/arc/lib/use-today.ts"
         },
         {
           "path": "registry/components/calendar/calendar.module.css",
@@ -1329,7 +1359,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json",
+        "https://uiarc.dev/r/arc-motion-tokens.json",
         "https://uiarc.dev/r/calendar.json"
       ],
       "files": [
@@ -1347,6 +1377,11 @@
           "path": "registry/components/calendar/calendar.tsx",
           "type": "registry:component",
           "target": "@components/arc/calendar/calendar.tsx"
+        },
+        {
+          "path": "lib/use-today.ts",
+          "type": "registry:lib",
+          "target": "@components/arc/lib/use-today.ts"
         },
         {
           "path": "registry/components/calendar/calendar.module.css",
@@ -1379,7 +1414,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -1419,7 +1454,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -1459,7 +1494,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -1496,9 +1531,7 @@
       "dependencies": [
         "@radix-ui/react-popover"
       ],
-      "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
-      ],
+      "registryDependencies": [],
       "files": [
         {
           "path": "registry/components/popover/popover.tsx",
@@ -1536,7 +1569,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -1576,7 +1609,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -1615,7 +1648,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -1654,7 +1687,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -1666,6 +1699,11 @@
           "path": "registry/components/breadcrumb/breadcrumb.module.css",
           "type": "registry:component",
           "target": "@components/arc/breadcrumb/breadcrumb.module.css"
+        },
+        {
+          "path": "lib/arc-provider.tsx",
+          "type": "registry:lib",
+          "target": "@components/arc/lib/arc-provider.tsx"
         }
       ],
       "docs": "Docs and live preview: https://uiarc.dev/components/breadcrumb",
@@ -1693,7 +1731,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -1732,7 +1770,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -1771,7 +1809,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -1809,7 +1847,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -1847,7 +1885,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -1887,7 +1925,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -1925,7 +1963,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json",
+        "https://uiarc.dev/r/arc-motion-tokens.json",
         "https://uiarc.dev/r/animated-counter.json"
       ],
       "files": [
@@ -1975,7 +2013,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -2014,7 +2052,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -2053,7 +2091,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -2092,7 +2130,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -2131,7 +2169,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -2169,7 +2207,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -2207,7 +2245,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -2245,7 +2283,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -2284,7 +2322,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json",
+        "https://uiarc.dev/r/arc-motion-tokens.json",
         "https://uiarc.dev/r/copy-button.json"
       ],
       "files": [
@@ -2336,7 +2374,7 @@
       ],
       "dependencies": [],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -2375,7 +2413,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -2414,7 +2452,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -2453,7 +2491,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -2493,7 +2531,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -2534,7 +2572,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -2573,7 +2611,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -2613,7 +2651,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -2653,7 +2691,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -2692,7 +2730,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -2731,7 +2769,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -2772,7 +2810,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -2812,7 +2850,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -2852,7 +2890,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -2892,7 +2930,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -2932,7 +2970,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -2972,7 +3010,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -3012,7 +3050,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -3052,7 +3090,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -3091,7 +3129,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -3130,7 +3168,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -3170,7 +3208,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -3210,7 +3248,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -3248,7 +3286,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -3287,7 +3325,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -3326,13 +3364,18 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
           "path": "registry/components/date-range-picker/date-range-picker.tsx",
           "type": "registry:component",
           "target": "@components/arc/date-range-picker/date-range-picker.tsx"
+        },
+        {
+          "path": "lib/use-today.ts",
+          "type": "registry:lib",
+          "target": "@components/arc/lib/use-today.ts"
         },
         {
           "path": "registry/components/date-range-picker/date-range-picker.module.css",
@@ -3365,7 +3408,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json",
+        "https://uiarc.dev/r/arc-motion-tokens.json",
         "https://uiarc.dev/r/text-morph.json"
       ],
       "files": [
@@ -3415,7 +3458,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -3453,7 +3496,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -3491,7 +3534,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -3529,7 +3572,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -3568,7 +3611,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -3607,7 +3650,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -3646,7 +3689,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -3685,7 +3728,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -3724,7 +3767,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -3763,7 +3806,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -3802,7 +3845,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -3841,7 +3884,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -3880,7 +3923,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -3919,7 +3962,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -3958,7 +4001,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -3997,7 +4040,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -4036,7 +4079,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -4075,7 +4118,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -4114,7 +4157,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -4152,7 +4195,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json",
+        "https://uiarc.dev/r/arc-motion-tokens.json",
         "https://uiarc.dev/r/animated-counter.json"
       ],
       "files": [
@@ -4198,9 +4241,7 @@
         "disclosure"
       ],
       "dependencies": [],
-      "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
-      ],
+      "registryDependencies": [],
       "files": [
         {
           "path": "registry/components/scroll-area/scroll-area.tsx",
@@ -4237,7 +4278,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -4276,7 +4317,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -4313,9 +4354,7 @@
       "dependencies": [
         "motion"
       ],
-      "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
-      ],
+      "registryDependencies": [],
       "files": [
         {
           "path": "registry/components/slot-text/slot-text.tsx",
@@ -4355,7 +4394,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json",
+        "https://uiarc.dev/r/arc-motion-tokens.json",
         "https://uiarc.dev/r/button.json",
         "https://uiarc.dev/r/checkbox.json",
         "https://uiarc.dev/r/input.json",
@@ -4434,7 +4473,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json",
+        "https://uiarc.dev/r/arc-motion-tokens.json",
         "https://uiarc.dev/r/button.json"
       ],
       "files": [
@@ -4481,7 +4520,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json",
+        "https://uiarc.dev/r/arc-motion-tokens.json",
         "https://uiarc.dev/r/button.json",
         "https://uiarc.dev/r/segmented-control.json",
         "https://uiarc.dev/r/switch.json"
@@ -4549,7 +4588,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -4585,7 +4624,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json",
+        "https://uiarc.dev/r/arc-motion-tokens.json",
         "https://uiarc.dev/r/avatar.json"
       ],
       "files": [
@@ -4608,6 +4647,11 @@
           "path": "registry/components/avatar/avatar.module.css",
           "type": "registry:component",
           "target": "@components/arc/avatar/avatar.module.css"
+        },
+        {
+          "path": "lib/arc-provider.tsx",
+          "type": "registry:lib",
+          "target": "@components/arc/lib/arc-provider.tsx"
         }
       ],
       "docs": "Docs and live preview: https://uiarc.dev/components/blocks/notification-center",
@@ -4631,7 +4675,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -4665,7 +4709,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -4700,7 +4744,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json",
+        "https://uiarc.dev/r/arc-motion-tokens.json",
         "https://uiarc.dev/r/copy-button.json"
       ],
       "files": [
@@ -4756,7 +4800,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json",
+        "https://uiarc.dev/r/arc-motion-tokens.json",
         "https://uiarc.dev/r/avatar.json",
         "https://uiarc.dev/r/button.json",
         "https://uiarc.dev/r/input.json",
@@ -4817,6 +4861,11 @@
           "path": "registry/components/avatar/avatar.module.css",
           "type": "registry:component",
           "target": "@components/arc/avatar/avatar.module.css"
+        },
+        {
+          "path": "lib/arc-provider.tsx",
+          "type": "registry:lib",
+          "target": "@components/arc/lib/arc-provider.tsx"
         }
       ],
       "docs": "Docs and live preview: https://uiarc.dev/components/blocks/sign-in",
@@ -4842,7 +4891,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json",
+        "https://uiarc.dev/r/arc-motion-tokens.json",
         "https://uiarc.dev/r/animated-counter.json",
         "https://uiarc.dev/r/avatar.json",
         "https://uiarc.dev/r/avatar-group.json",
@@ -4912,6 +4961,11 @@
           "target": "@components/arc/avatar/avatar.module.css"
         },
         {
+          "path": "lib/arc-provider.tsx",
+          "type": "registry:lib",
+          "target": "@components/arc/lib/arc-provider.tsx"
+        },
+        {
           "path": "registry/components/animated-counter/animated-counter.tsx",
           "type": "registry:component",
           "target": "@components/arc/animated-counter/animated-counter.tsx"
@@ -4942,7 +4996,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json",
+        "https://uiarc.dev/r/arc-motion-tokens.json",
         "https://uiarc.dev/r/button.json"
       ],
       "files": [
@@ -4993,7 +5047,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json",
+        "https://uiarc.dev/r/arc-motion-tokens.json",
         "https://uiarc.dev/r/button.json",
         "https://uiarc.dev/r/input.json",
         "https://uiarc.dev/r/otp-input.json"
@@ -5061,7 +5115,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json",
+        "https://uiarc.dev/r/arc-motion-tokens.json",
         "https://uiarc.dev/r/segmented-control.json"
       ],
       "files": [
@@ -5112,7 +5166,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json",
+        "https://uiarc.dev/r/arc-motion-tokens.json",
         "https://uiarc.dev/r/button.json",
         "https://uiarc.dev/r/segmented-control.json"
       ],
@@ -5169,7 +5223,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json",
+        "https://uiarc.dev/r/arc-motion-tokens.json",
         "https://uiarc.dev/r/avatar.json",
         "https://uiarc.dev/r/button.json",
         "https://uiarc.dev/r/copy-button.json",
@@ -5299,6 +5353,11 @@
           "target": "@components/arc/avatar/avatar.module.css"
         },
         {
+          "path": "lib/arc-provider.tsx",
+          "type": "registry:lib",
+          "target": "@components/arc/lib/arc-provider.tsx"
+        },
+        {
           "path": "registry/components/segmented-control/segmented-control.tsx",
           "type": "registry:component",
           "target": "@components/arc/segmented-control/segmented-control.tsx"
@@ -5340,7 +5399,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json",
+        "https://uiarc.dev/r/arc-motion-tokens.json",
         "https://uiarc.dev/r/search-field.json",
         "https://uiarc.dev/r/segmented-control.json"
       ],
@@ -5397,7 +5456,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json",
+        "https://uiarc.dev/r/arc-motion-tokens.json",
         "https://uiarc.dev/r/avatar.json",
         "https://uiarc.dev/r/button.json",
         "https://uiarc.dev/r/copy-button.json",
@@ -5485,6 +5544,11 @@
           "path": "registry/components/avatar/avatar.module.css",
           "type": "registry:component",
           "target": "@components/arc/avatar/avatar.module.css"
+        },
+        {
+          "path": "lib/arc-provider.tsx",
+          "type": "registry:lib",
+          "target": "@components/arc/lib/arc-provider.tsx"
         }
       ],
       "docs": "Docs and live preview: https://uiarc.dev/components/blocks/contact-section",
@@ -5508,7 +5572,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -5548,7 +5612,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json"
+        "https://uiarc.dev/r/arc-motion-tokens.json"
       ],
       "files": [
         {
@@ -5587,7 +5651,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json",
+        "https://uiarc.dev/r/arc-motion-tokens.json",
         "https://uiarc.dev/r/segmented-control.json"
       ],
       "files": [
@@ -5643,7 +5707,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json",
+        "https://uiarc.dev/r/arc-motion-tokens.json",
         "https://uiarc.dev/r/button.json",
         "https://uiarc.dev/r/segmented-control.json"
       ],
@@ -5711,7 +5775,7 @@
         "motion"
       ],
       "registryDependencies": [
-        "https://uiarc.dev/r/arc-foundation.json",
+        "https://uiarc.dev/r/arc-motion-tokens.json",
         "https://uiarc.dev/r/animated-counter.json",
         "https://uiarc.dev/r/segmented-control.json",
         "https://uiarc.dev/r/switch.json"

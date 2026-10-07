@@ -114,7 +114,7 @@ function settle(draft: string, digits: number) { return draft ? fromMinor(toMino
 /** Carries an amount across currencies with different minor units, keeping the major amount. */
 function convertDraft(draft: string, digits: number) {
   if (!draft) return "";
-  const [whole, fraction] = draft.split(".");
+  const [whole = "", fraction] = draft.split(".");
   if (!digits) return whole || "0";
   return fraction === undefined ? whole : `${whole}.${fraction.slice(0, digits)}`;
 }
@@ -122,7 +122,7 @@ function convertDraft(draft: string, digits: number) {
 function groupInteger(whole: string, group: string) { return whole.replace(/\B(?=(\d{3})+(?!\d))/g, group); }
 function displayOf(draft: string, symbols: { group: string; decimal: string }) {
   if (!draft) return "";
-  const [whole, fraction] = draft.split(".");
+  const [whole = "", fraction] = draft.split(".");
   return groupInteger(whole, symbols.group) + (fraction !== undefined ? symbols.decimal + fraction : "");
 }
 
@@ -201,7 +201,7 @@ const isSignificant = (char: string, decimal: string) => /\d/.test(char) || char
 function positionAfter(text: string, count: number, decimal: string) {
   if (count <= 0) return 0;
   let seen = 0;
-  for (let index = 0; index < text.length; index++) if (isSignificant(text[index], decimal) && ++seen === count) return index + 1;
+  for (let index = 0; index < text.length; index++) if (isSignificant(text[index]!, decimal) && ++seen === count) return index + 1;
   return text.length;
 }
 
@@ -290,7 +290,7 @@ export const MoneyInput = forwardRef<HTMLInputElement, MoneyInputProps>(function
   function sanitize(raw: string, caret: number) {
     let out = "", before = 0, dot = false;
     for (let index = 0; index < raw.length; index++) {
-      const char = raw[index];
+      const char = raw[index]!;
       let kept = "";
       if (/\d/.test(char)) kept = char;
       else if ((char === symbols.decimal || (char === "." && symbols.group !== ".")) && info.digits > 0 && !dot) { kept = "."; dot = true; }
@@ -299,7 +299,7 @@ export const MoneyInput = forwardRef<HTMLInputElement, MoneyInputProps>(function
       if (index < caret) before++;
     }
     const pieces = out.split(".");
-    let whole = pieces[0];
+    let whole = pieces[0]!;
     const fraction = pieces[1];
     const stripped = whole.length - (whole.replace(/^0+/, "").length);
     whole = whole.replace(/^0+/, "");
@@ -339,7 +339,7 @@ export const MoneyInput = forwardRef<HTMLInputElement, MoneyInputProps>(function
     const moves: Record<string, number> = { ArrowUp: 1, ArrowDown: -1, PageUp: 10, PageDown: -10 };
     if (event.key in moves) {
       event.preventDefault();
-      const amount = moves[event.key] * step * (event.shiftKey && Math.abs(moves[event.key]) === 1 ? 10 : 1);
+      const amount = moves[event.key]! * step * (event.shiftKey && Math.abs(moves[event.key]!) === 1 ? 10 : 1);
       nudge(amount, "key");
       return;
     }
@@ -447,7 +447,7 @@ export const MoneyInput = forwardRef<HTMLInputElement, MoneyInputProps>(function
   const typeahead = useRef({ buffer: "", at: 0 });
   function onMenuKeyDown(event: ReactKeyboardEvent<HTMLDivElement>) {
     const at = options.findIndex(option => option.code === activeCode);
-    const go = (index: number) => { event.preventDefault(); setActiveCode(options[Math.max(0, Math.min(options.length - 1, index))].code); };
+    const go = (index: number) => { event.preventDefault(); setActiveCode(options[Math.max(0, Math.min(options.length - 1, index))]!.code); };
     switch (event.key) {
       case "ArrowDown": go(at + 1); return;
       case "ArrowUp": go(at - 1); return;

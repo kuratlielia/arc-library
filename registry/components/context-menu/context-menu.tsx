@@ -121,7 +121,7 @@ export function ContextMenu({ children, items, label = "Context menu" }: Context
     if (event.key === "End") nextPosition = enabled.length - 1;
     if (nextPosition !== undefined && enabled.length) {
       event.preventDefault();
-      event.currentTarget.querySelector<HTMLElement>(`[data-index="${enabled[nextPosition].index}"]`)?.focus();
+      event.currentTarget.querySelector<HTMLElement>(`[data-index="${enabled[nextPosition]!.index}"]`)?.focus();
     }
     if (event.key === "Escape") { event.preventDefault(); setOpen(false); targetRef.current?.focus(); }
   }

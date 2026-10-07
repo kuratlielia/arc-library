@@ -288,7 +288,7 @@ export function MorphSelect({ label, hideLabel = false, items, value, defaultVal
     state.at = now;
     const buffer = state.buffer.toLowerCase();
     const repeated = buffer.split("").every(letter => letter === buffer[0]);
-    const search = repeated ? buffer[0] : buffer;
+    const search = repeated ? buffer[0]! : buffer;
     const pool = all.filter(option => !option.disabled);
     const from = open ? current : selected;
     const at = pool.findIndex(option => option.value === from);

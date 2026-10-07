@@ -3,7 +3,6 @@
 /* The trigger anchors the menu, so press feedback stays in color. A scaled rect would be measured on pointerdown and shift the menu. */
 .trigger[data-state="open"] { border-color: var(--border-strong); background: var(--surface-muted); box-shadow: none; }
 .trigger:active { border-color: var(--border-strong); background: color-mix(in oklab, var(--surface-muted), var(--border) 55%); box-shadow: none; }
-.trigger:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .item:focus-visible { outline: none; }
 .triggerIcon { display: inline-flex; flex: none; color: var(--text-secondary); }
 .label { position: relative; display: inline-flex; min-width: 0; flex: 0 1 auto; overflow-x: clip; }

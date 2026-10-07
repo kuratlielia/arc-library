@@ -10,7 +10,7 @@ import styles from "./tooltip.module.css";
 export interface TooltipProps {
   content: ReactNode;
   children: ReactElement;
-  side?: "top" | "bottom";
+  side?: "top" | "bottom" | "left" | "right";
 }
 
 const DELAY = 250;
@@ -39,6 +39,7 @@ function TooltipText({ text }: { text: string }) {
     const node = measure.current;
     if (!node) return;
     const observer = new ResizeObserver(([entry]) => {
+      if (!entry) return;
       const box = entry.borderBoxSize?.[0];
       const current = node.textContent;
       const animate = measured.current !== null && measured.current !== current;

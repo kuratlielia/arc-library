@@ -107,7 +107,7 @@ function StackCard({ id, depth, decision, returnFrom, interactive, zIndex, label
   const y = useMotionValue(travel?.y ?? 0);
   const tilt = useMotionValue(travel?.tilt ?? 1);
   const opacity = useMotionValue(returnFrom ? 0 : 1);
-  const rotate = useTransform([x, tilt], ([offset, sign]: number[]) => offset * ROTATE * sign);
+  const rotate = useTransform([x, tilt], ([offset = 0, sign = 0]: number[]) => offset * ROTATE * sign);
   // Depth springs toward its slot; while the top card is dragged away, the cards behind already start to rise.
   const depthTarget = useTransform(lift, value => depth - (depth > 0 ? value * LIFT : 0));
   const depthSpring = useSpring(depthTarget, motionTokens.spring.smooth);

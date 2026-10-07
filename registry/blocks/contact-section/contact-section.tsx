@@ -127,7 +127,7 @@ function TopicPicker({ topics, value, onChange, reduced }: { topics: string[]; v
     if (!delta) return;
     event.preventDefault();
     const next = (topics.indexOf(value) + delta + topics.length) % topics.length;
-    onChange(topics[next]);
+    onChange(topics[next]!);
     refs.current[next]?.focus();
   }
   return <div className={styles.topicField}>
@@ -190,7 +190,7 @@ function ContactForm({ topics, onSubmit, reduced }: { topics: string[]; onSubmit
     const payload = { name: values.name.trim(), email: values.email.trim(), topic, message: values.message.trim() };
     try {
       await (onSubmit ? onSubmit(payload) : new Promise(resolve => setTimeout(resolve, 1100)));
-      setSentTo({ name: payload.name.split(/\s+/)[0], email: payload.email });
+      setSentTo({ name: payload.name.split(/\s+/)[0]!, email: payload.email });
       setPhase("sent");
     } catch {
       setPhase("editing");
@@ -354,7 +354,7 @@ function Channels({ channels, value, onChange, reduced }: { channels: ContactCha
   const id = useId();
   const [direction, setDirection] = useState(1);
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
-  const active = channels.find(channel => channel.value === value) ?? channels[0];
+  const active = channels.find(channel => channel.value === value) ?? channels[0]!;
   const choose = (next: string) => {
     if (next === active.value) return;
     setDirection(Math.sign(channels.findIndex(channel => channel.value === next) - channels.indexOf(active)) || 1);
@@ -366,7 +366,7 @@ function Channels({ channels, value, onChange, reduced }: { channels: ContactCha
     if (!delta && edge < 0) return;
     event.preventDefault();
     const next = edge >= 0 ? edge : (channels.indexOf(active) + delta + channels.length) % channels.length;
-    choose(channels[next].value);
+    choose(channels[next]!.value);
     refs.current[next]?.focus();
   }
   return <div className={styles.channels}>

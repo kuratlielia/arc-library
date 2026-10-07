@@ -95,6 +95,7 @@ function useMorphWidth(content: RefObject<HTMLElement | null>, key: string, redu
     if (!node || !slot || typeof ResizeObserver === "undefined") return;
     let measured = false;
     const observer = new ResizeObserver(([entry]) => {
+      if (!entry) return;
       const next = entry.contentRect.width;
       if (!next || !measured || reduced || performance.now() > armedUntil.current) { measured = next > 0; width.jump(next || "auto"); delete slot.dataset.morphing; return; }
       slot.dataset.morphing = "";
@@ -180,10 +181,10 @@ export function ButtonGroup({ items, menu, label, variant = "outline", size = "m
     const values = [x, y, width, height];
     if (!shown.current || reduced) {
       // Arriving from nowhere, it appears in place; only moves between segments travel.
-      values.forEach((value, index) => value.jump(target[index]));
+      values.forEach((value, index) => value.jump(target[index]!));
       animate(opacity, 1, { duration: reduced ? motionTokens.duration.instant : motionTokens.duration.fast, ease: [...motionTokens.ease.standard] });
     } else {
-      values.forEach((value, index) => animate(value, target[index], motionTokens.spring.snappy));
+      values.forEach((value, index) => animate(value, target[index]!, motionTokens.spring.snappy));
       animate(opacity, 1, { duration: motionTokens.duration.fast });
     }
     shown.current = active;
@@ -201,8 +202,8 @@ export function ButtonGroup({ items, menu, label, variant = "outline", size = "m
       if (!node) return;
       const target = boxOf(group, node);
       [x, y, width, height].forEach((value, index) => {
-        if (Math.abs(value.get() - target[index]) < .01) return;
-        if (value.isAnimating() && !reduced) animate(value, target[index], motionTokens.spring.snappy); else value.jump(target[index]);
+        if (Math.abs(value.get() - target[index]!) < .01) return;
+        if (value.isAnimating() && !reduced) animate(value, target[index]!, motionTokens.spring.snappy); else value.jump(target[index]!);
       });
     });
     observer.observe(group);
@@ -273,7 +274,7 @@ export function ButtonGroup({ items, menu, label, variant = "outline", size = "m
     const target = event.key === forward ? (index === last ? 0 : index + 1) : event.key === backward ? (index === 0 ? last : index - 1) : event.key === "Home" ? 0 : event.key === "End" ? last : -1;
     if (target < 0) return;
     event.preventDefault();
-    list[target].focus();
+    list[target]!.focus();
   };
 
   // A label that changes right after its segment is pressed, such as "Copied", is announced once; the quiet revert is not.

@@ -55,6 +55,7 @@ function Roll({ text, direction, whole = false, morph = false, tone }: { text: s
     let measured: string | null = null;
     // Layout size, not the transformed rect, so a scaling parent never leaves the text clipped. Only a new text springs; font loads jump.
     const observer = new ResizeObserver(([entry]) => {
+      if (!entry) return;
       const next = entry.borderBoxSize?.[0]?.inlineSize ?? node.offsetWidth;
       if (measured !== null && measured !== node.textContent && !reduceMotion) animate(width, next, motionTokens.spring.morph);
       else width.jump(next);
@@ -89,27 +90,27 @@ function curveFor(data: number[]): Point[] {
   const min = Math.min(...data), span = Math.max(...data) - min;
   const ys = data.map(value => span ? (value - min) / span : .5);
   const last = ys.length - 1, step = 1 / last;
-  const slopes = ys.slice(1).map((y, index) => (y - ys[index]) / step);
-  const tangents = ys.map((_, index) => index === 0 || index === last ? slopes[0] : (Math.sign(slopes[index - 1]) + Math.sign(slopes[index])) * Math.min(Math.abs(slopes[index - 1]), Math.abs(slopes[index]), Math.abs(slopes[index - 1] + slopes[index]) / 4) || 0);
-  if (last > 1) { tangents[0] = (3 * slopes[0] - tangents[1]) / 2; tangents[last] = (3 * slopes[last - 1] - tangents[last - 1]) / 2; }
+  const slopes = ys.slice(1).map((y, index) => (y - ys[index]!) / step);
+  const tangents = ys.map((_, index) => index === 0 || index === last ? slopes[0]! : (Math.sign(slopes[index - 1]!) + Math.sign(slopes[index]!)) * Math.min(Math.abs(slopes[index - 1]!), Math.abs(slopes[index]!), Math.abs(slopes[index - 1]! + slopes[index]!) / 4) || 0);
+  if (last > 1) { tangents[0] = (3 * slopes[0]! - tangents[1]!) / 2; tangents[last] = (3 * slopes[last - 1]! - tangents[last - 1]!) / 2; }
   const samples = Math.max(1, Math.min(16, Math.round(128 / last)));
   const points: Point[] = [];
   for (let index = 0; index < last; index++) for (let sample = 0; sample < samples; sample++) {
     const t = sample / samples, t2 = t * t, t3 = t2 * t;
-    const y = (2 * t3 - 3 * t2 + 1) * ys[index] + (t3 - 2 * t2 + t) * step * tangents[index] + (3 * t2 - 2 * t3) * ys[index + 1] + (t3 - t2) * step * tangents[index + 1];
+    const y = (2 * t3 - 3 * t2 + 1) * ys[index]! + (t3 - 2 * t2 + t) * step * tangents[index]! + (3 * t2 - 2 * t3) * ys[index + 1]! + (t3 - t2) * step * tangents[index + 1]!;
     points.push([(index + t) * step, Math.min(1, Math.max(0, y))]);
   }
-  points.push([1, ys[last]]);
+  points.push([1, ys[last]!]);
   return points;
 }
 
 /** Height of the sampled line at x, straight between samples. */
 function heightAt(shape: Point[], x: number) {
   let low = 0, high = shape.length - 1;
-  if (x <= shape[low][0]) return shape[low][1];
-  if (x >= shape[high][0]) return shape[high][1];
-  while (high - low > 1) { const middle = (low + high) >> 1; if (shape[middle][0] < x) low = middle; else high = middle; }
-  const [x0, y0] = shape[low], [x1, y1] = shape[high];
+  if (x <= shape[low]![0]) return shape[low]![1];
+  if (x >= shape[high]![0]) return shape[high]![1];
+  while (high - low > 1) { const middle = (low + high) >> 1; if (shape[middle]![0] < x) low = middle; else high = middle; }
+  const [x0, y0] = shape[low]!, [x1, y1] = shape[high]!;
   return x1 === x0 ? y1 : y0 + ((y1 - y0) * (x - x0)) / (x1 - x0);
 }
 
@@ -124,13 +125,14 @@ function geometryOf(shape: Point[], w: number, h: number, at: number) {
 
 /** Where the pen is along the line once `progress` of its length is drawn, so the fill follows the tip. */
 function tipAt(points: Point[], progress: number) {
-  const steps = points.slice(1).map(([x, y], index) => Math.hypot(x - points[index][0], y - points[index][1]));
+  const steps = points.slice(1).map(([x, y], index) => Math.hypot(x - points[index]![0], y - points[index]![1]));
   let left = progress * steps.reduce((sum, step) => sum + step, 0);
   for (let index = 0; index < steps.length; index++) {
-    if (left <= steps[index]) return points[index][0] + (points[index + 1][0] - points[index][0]) * (steps[index] ? left / steps[index] : 1);
-    left -= steps[index];
+    const step = steps[index]!, from = points[index]![0];
+    if (left <= step) return from + (points[index + 1]![0] - from) * (step ? left / step : 1);
+    left -= step;
   }
-  return points[points.length - 1][0];
+  return points[points.length - 1]![0];
 }
 
 export function Sparkline({ data, label, value, change, tone = "accent", width = 160, height = 52, labels, formatValue, area = true, interactive = true }: SparklineProps) {
@@ -196,7 +198,7 @@ export function Sparkline({ data, label, value, change, tone = "accent", width =
     if (reduceMotion) { shape.current = target; paint(); return; }
     const xs = [...new Set([...grid, ...target.map(([x]) => x)])].sort((a, b) => a - b);
     const start = xs.map(x => heightAt(from, x)), goal = xs.map(x => heightAt(target, x));
-    const controls = animate(0, 1, { ...motionTokens.spring.smooth, onUpdate: progress => { shape.current = xs.map((x, at): Point => [x, start[at] + (goal[at] - start[at]) * progress]); paint(); }, onComplete: () => { shape.current = target; paint(); } });
+    const controls = animate(0, 1, { ...motionTokens.spring.smooth, onUpdate: progress => { shape.current = xs.map((x, at): Point => [x, start[at]! + (goal[at]! - start[at]!) * progress]); paint(); }, onComplete: () => { shape.current = target; paint(); } });
     return () => controls.stop();
   }, [paint, reduceMotion, target]);
 
@@ -209,7 +211,7 @@ export function Sparkline({ data, label, value, change, tone = "accent", width =
   }, [cursor, index, last, reduceMotion]);
 
   const scrubbing = index !== null;
-  const format = (at: number) => formatValue ? formatValue(safeData[at], at) : grouped.format(safeData[at]);
+  const format = (at: number) => formatValue ? formatValue(safeData[at]!, at) : grouped.format(safeData[at]!);
   const point = format(index ?? last), when = labels?.[index ?? last];
   const headline = value === undefined ? undefined : scrubbing ? point : value;
   const aside = index === null ? change ?? "" : value === undefined ? [point, when].filter(Boolean).join(" · ") : when ?? `${index + 1} of ${last + 1}`;

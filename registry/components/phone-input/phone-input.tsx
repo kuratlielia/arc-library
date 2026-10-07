@@ -112,7 +112,7 @@ function applyPattern(digits: string, pattern: string) {
 }
 
 function patternFor(entry: PhoneCountry, length: number) {
-  return entry.patterns.find(pattern => capacity(pattern) >= length) ?? entry.patterns[entry.patterns.length - 1];
+  return entry.patterns.find(pattern => capacity(pattern) >= length) ?? entry.patterns[entry.patterns.length - 1]!;
 }
 
 /** Formats national digits as typed, keeping a typed trunk prefix: "07911123456" in the UK reads "07911 123456". */
@@ -147,7 +147,7 @@ export function parsePhoneNumber(input: string, pool: PhoneCountry[] = PHONE_COU
     const matches = pool.filter(entry => entry.dial === dial);
     if (!matches.length) continue;
     let rest = digits.slice(size);
-    const entry = matches.find(item => item.areaCodes?.some(code => rest.startsWith(code))) ?? matches.find(item => !item.areaCodes) ?? matches[0];
+    const entry = matches.find(item => item.areaCodes?.some(code => rest.startsWith(code))) ?? matches.find(item => !item.areaCodes) ?? matches[0]!;
     // "+44 (0)7911…" carries a trunk zero it should not; drop it when the rest is still a full number without it.
     if (entry.trunk && rest.startsWith(entry.trunk) && rest.length - entry.trunk.length >= Math.min(...lengthsOf(entry))) rest = rest.slice(entry.trunk.length);
     return { country: entry, national: capDigits(entry, rest) };
@@ -240,7 +240,7 @@ function matchesQuery(entry: PhoneCountry, needle: string) {
 function caretAfterDigits(text: string, count: number) {
   if (count <= 0) { const first = text.search(/\d/); return first < 0 ? text.length : Math.min(first, text.length); }
   let seen = 0;
-  for (let index = 0; index < text.length; index++) if (/\d/.test(text[index]) && ++seen === count) return index + 1;
+  for (let index = 0; index < text.length; index++) if (/\d/.test(text[index]!) && ++seen === count) return index + 1;
   return text.length;
 }
 
@@ -277,7 +277,7 @@ export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(function
   const optionId = (key: string) => `${uid}-opt-${key}`;
 
   const pool = useMemo(() => countries?.length ? PHONE_COUNTRIES.filter(entry => countries.includes(entry.iso)) : PHONE_COUNTRIES, [countries]);
-  const fallback = BY_ISO.get(defaultCountry) ?? PHONE_COUNTRIES[0];
+  const fallback = BY_ISO.get(defaultCountry) ?? PHONE_COUNTRIES[0]!;
 
   const [state, setState] = useState(() => {
     const parsed = parsePhoneNumber(value ?? defaultValue ?? "", pool);
@@ -368,12 +368,12 @@ export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(function
     const start = input.selectionStart ?? 0, end = input.selectionEnd ?? 0;
     if (start !== end || event.metaKey || event.ctrlKey || event.altKey) return;
     // Deleting a separator deletes the digit beside it instead of doing nothing.
-    if (event.key === "Backspace" && start > 0 && !/\d/.test(input.value[start - 1])) {
+    if (event.key === "Backspace" && start > 0 && !/\d/.test(input.value[start - 1]!)) {
       event.preventDefault();
       const index = onlyDigits(input.value.slice(0, start)).length;
       if (index > 0) setNumber(digits.slice(0, index - 1) + digits.slice(index), index - 1);
     }
-    if (event.key === "Delete" && start < input.value.length && !/\d/.test(input.value[start])) {
+    if (event.key === "Delete" && start < input.value.length && !/\d/.test(input.value[start]!)) {
       event.preventDefault();
       const index = onlyDigits(input.value.slice(0, start)).length;
       setNumber(digits.slice(0, index) + digits.slice(index + 1), index);

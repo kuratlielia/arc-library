@@ -1,8 +1,8 @@
 "use client";
-import Link from "next/link";
 import type { MouseEvent } from "react";
 import { ChevronRight as NavArrowRight } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { ArcLink } from "@/lib/arc-provider";
 import { motionTokens } from "@/lib/motion-tokens";
 import styles from "./breadcrumb.module.css";
 export interface BreadcrumbItem {
@@ -25,7 +25,7 @@ export function Breadcrumb({ items, ariaLabel = "Breadcrumb" }: BreadcrumbProps)
       exit={reduced ? { opacity: 0, transition: still } : { opacity: 0, x: -4, filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: motionTokens.duration.instant, ease: [...motionTokens.ease.standard] } }}
       transition={reduced ? still : { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter], layout: motionTokens.spring.smooth }}>
       {index > 0 && <NavArrowRight width={14} height={14} aria-hidden="true"/>}
-      {!current && item.href ? <Link href={item.href} data-label={item.label} onClick={item.onClick}>{item.label}</Link>
+      {!current && item.href ? <ArcLink href={item.href} data-label={item.label} onClick={item.onClick}>{item.label}</ArcLink>
         : !current && item.onClick ? <button type="button" data-label={item.label} onClick={item.onClick}>{item.label}</button>
         : <span aria-current={current ? "page" : undefined} data-label={item.label}>{item.label}</span>}
     </motion.li>;

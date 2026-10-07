@@ -13,7 +13,7 @@
 .open .chevron { transform: rotate(180deg); }
 .clear { display: grid; width: 22px; height: 22px; flex: 0 0 auto; place-items: center; border: 0; border-radius: var(--radius-control); background: transparent; color: var(--text-muted); cursor: pointer; transition: background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard); }
 @media (hover: hover) and (pointer: fine) { .clear:hover { background: var(--surface-muted); color: var(--foreground); } }
-.clear:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 1px; }
+.clear:focus-visible { --focus-outline-offset: 1px; }
 .hint { color: var(--text-muted); font-size: var(--text-xs); }
 .popover { position: absolute; z-index: 80; top: calc(100% + 8px); right: 0; left: 0; overflow: hidden; transform-origin: top center; border: 1px solid var(--border); border-radius: var(--radius-panel); padding: 5px; background: var(--surface-raised); color: var(--foreground); box-shadow: var(--shadow-floating); will-change: transform, opacity; }
 .autoHeight { overflow: hidden; }

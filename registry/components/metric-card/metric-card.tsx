@@ -25,6 +25,7 @@ function Swap({ text, morph = false, block = false }: { text: string; morph?: bo
     let measured: string | null = null;
     // Layout size, not the transformed rect, so a scaling parent never leaves the text clipped. Only a new text springs; font loads jump.
     const observer = new ResizeObserver(([entry]) => {
+      if (!entry) return;
       const next = entry.borderBoxSize?.[0]?.inlineSize ?? node.offsetWidth;
       if (next && measured !== null && measured !== node.textContent && !reduceMotion) animate(width, next, motionTokens.spring.morph);
       else width.jump(next || "auto");

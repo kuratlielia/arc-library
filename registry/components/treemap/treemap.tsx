@@ -81,12 +81,12 @@ function squarify(items: { id: string; value: number }[], rect: Rect, out: Map<s
   let { x, y, w, h } = rect, i = 0;
   const worst = (row: number[], side: number) => { const sum = row.reduce((a, b) => a + b, 0), max = Math.max(...row), min = Math.min(...row); return Math.max((side * side * max) / (sum * sum), (sum * sum) / (side * side * min)); };
   while (i < list.length) {
-    const side = Math.min(w, h), row: number[] = [list[i].value * scale];
+    const side = Math.min(w, h), row: number[] = [list[i]!.value * scale];
     let j = i + 1;
-    while (j < list.length) { const next = [...row, list[j].value * scale]; if (worst(next, side) > worst(row, side)) break; row.push(list[j].value * scale); j++; }
+    while (j < list.length) { const next = [...row, list[j]!.value * scale]; if (worst(next, side) > worst(row, side)) break; row.push(list[j]!.value * scale); j++; }
     const sum = row.reduce((a, b) => a + b, 0);
-    if (w >= h) { const cw = sum / h; let cy = y; for (let k = i; k < j; k++) { const th = (list[k].value * scale) / cw; out.set(list[k].id, { x, y: cy, w: cw, h: th }); cy += th; } x += cw; w -= cw; }
-    else { const rh = sum / w; let cx = x; for (let k = i; k < j; k++) { const tw = (list[k].value * scale) / rh; out.set(list[k].id, { x: cx, y, w: tw, h: rh }); cx += tw; } y += rh; h -= rh; }
+    if (w >= h) { const cw = sum / h; let cy = y; for (let k = i; k < j; k++) { const th = (list[k]!.value * scale) / cw; out.set(list[k]!.id, { x, y: cy, w: cw, h: th }); cy += th; } x += cw; w -= cw; }
+    else { const rh = sum / w; let cx = x; for (let k = i; k < j; k++) { const tw = (list[k]!.value * scale) / rh; out.set(list[k]!.id, { x: cx, y, w: tw, h: rh }); cx += tw; } y += rh; h -= rh; }
     i = j;
   }
   for (const item of items) if (!out.has(item.id)) out.set(item.id, { x: rect.x, y: rect.y, w: 0, h: 0 });
@@ -257,12 +257,12 @@ export function Treemap({ data, label, formatValue = value => grouped.format(val
     if (event.key in dirs) {
       event.preventDefault(); setPointer(null);
       if (!current) { setActive(topTiles[0]?.id ?? null); return; }
-      const [dx, dy] = dirs[event.key], o = target.get(current.id)!, ox = o.x + o.w / 2, oy = o.y + o.h / 2;
+      const [dx, dy] = dirs[event.key]!, o = target.get(current.id)!, ox = o.x + o.w / 2, oy = o.y + o.h / 2;
       let best: Flat | null = null, score = Infinity;
       for (const node of topTiles) { if (node.id === current.id) continue; const r = target.get(node.id); if (!r) continue; const vx = r.x + r.w / 2 - ox, vy = r.y + r.h / 2 - oy, along = vx * dx + vy * dy, across = Math.abs(vx * dy - vy * dx); if (along <= 1) continue; const s = along + across * 1.5; if (s < score) { score = s; best = node; } }
       if (best) setActive(best.id);
     } else if (event.key === "Home" || event.key === "End") { event.preventDefault(); setPointer(null); setActive((event.key === "Home" ? topTiles[0] : topTiles[topTiles.length - 1])?.id ?? null); }
-    else if (event.key === "Enter" || event.key === " ") { if (current?.children.length) { event.preventDefault(); zoomTo(current.id); setActive(current.children[0]); } }
+    else if (event.key === "Enter" || event.key === " ") { if (current?.children.length) { event.preventDefault(); zoomTo(current.id); setActive(current.children[0]!); } }
     else if (event.key === "Escape" || event.key === "Backspace") { if (center.parent) { event.preventDefault(); zoomTo(center.parent); setActive(center.id); } else if (active) { event.preventDefault(); setActive(null); } }
   };
   const onPointerMove = (event: PointerEvent<HTMLDivElement>, id: string) => {

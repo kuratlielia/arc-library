@@ -187,7 +187,7 @@ export const SiteFooter = forwardRef<HTMLElement, SiteFooterProps>(function Site
   </nav>;
 
   if (variant === "minimal") {
-    const rowLinks = links ?? columns.map(column => column.links[0]).filter(Boolean).concat(legal.slice(0, 2));
+    const rowLinks = links ?? columns.map(column => column.links[0]).filter((link): link is SiteFooterLink => Boolean(link)).concat(legal.slice(0, 2));
     return <footer ref={ref} className={[styles.footer, styles.minimal, className].filter(Boolean).join(" ")}>
       <div className={styles.minimalRow}>
         {brandWithMark}

@@ -108,7 +108,7 @@ function Trend({ values }: { values: number[] }) {
   const span = max - min || 1;
   const points = values.map((value, index) => [values.length > 1 ? index / (values.length - 1) * 100 : 100, 36 - (value - min) / span * 32] as const);
   const line = points.map(([x, y], index) => `${index ? "L" : "M"}${x.toFixed(2)} ${y.toFixed(2)}`).join(" ");
-  const [endX, endY] = points[points.length - 1];
+  const [endX, endY] = points[points.length - 1]!;
   return <div className={styles.trend}>
     <svg className={styles.draw} viewBox="0 0 100 40" preserveAspectRatio="none">
       <path className={styles.area} d={`${line} L100 40 L0 40 Z`} />

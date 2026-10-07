@@ -90,7 +90,7 @@ export function BillingToggle({ value, onValueChange, options = DEFAULT_OPTIONS,
     const target = event.key === "Home" ? 0 : event.key === "End" ? options.length - 1 : step ? (index + step + options.length) % options.length : -1;
     if (target < 0) return;
     event.preventDefault();
-    onValueChange(options[target].value);
+    onValueChange(options[target]!.value);
     refs.current[target]?.focus();
   };
 

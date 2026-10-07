@@ -215,7 +215,7 @@ export function Timeline({ events, now, label, timeZone = "UTC", locale = "en-US
       const day = dayKey(event.time, timeZone);
       byDay.set(day, [...(byDay.get(day) ?? []), { ...event, day }]);
     });
-    return [...byDay].map(([day, rows]) => ({ day, rows, label: day === today ? "Today" : day === yesterday ? "Yesterday" : heading.format(new Date(rows[0].time)) }));
+    return [...byDay].map(([day, rows]) => ({ day, rows, label: day === today ? "Today" : day === yesterday ? "Yesterday" : heading.format(new Date(rows[0]!.time)) }));
   }, [events, now, timeZone, locale]);
   const formats = useMemo(() => ({
     clock: new Intl.DateTimeFormat(locale, { hour: "numeric", minute: "2-digit", timeZone }),

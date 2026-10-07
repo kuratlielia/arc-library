@@ -82,6 +82,7 @@ function MorphWidth({ reduce, morphKey, children }: { reduce: boolean | null; mo
     let controls: AnimationPlaybackControls | undefined;
     const settle = () => { width.jump("auto"); if (frame.current) frame.current.style.width = "auto"; };
     const observer = new ResizeObserver(([entry]) => {
+      if (!entry) return;
       const next = entry.borderBoxSize?.[0]?.inlineSize ?? node.offsetWidth;
       const current = width.get();
       const from = typeof current === "number" ? current : last;

@@ -6,6 +6,7 @@ import { AnimatePresence, animate, motion, useIsPresent, useMotionValue, useRedu
 import type { Transition, Variants } from "motion/react";
 import { CalendarDays, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { motionTokens } from "@/lib/motion-tokens";
+import { useToday } from "@/lib/use-today";
 import styles from "./date-range-picker.module.css";
 
 /** An inclusive range of whole days. */
@@ -64,7 +65,7 @@ const dayDiff = (a: Date, b: Date) => Math.round((startOfDay(a).getTime() - star
 const monthDiff = (a: Date, b: Date) => (a.getFullYear() - b.getFullYear()) * 12 + a.getMonth() - b.getMonth();
 const sameDay = (a?: Date | null, b?: Date | null) => Boolean(a && b && dayDiff(a, b) === 0);
 const keyOf = (date: Date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-const fromKey = (key: string) => { const [year, month, day] = key.split("-").map(Number); return new Date(year, month - 1, day); };
+const fromKey = (key: string) => { const [year, month, day] = key.split("-").map(Number); return new Date(year!, month! - 1, day!); };
 const ordered = (a: Date, b: Date): DateRange => dayDiff(a, b) <= 0 ? { start: a, end: b } : { start: b, end: a };
 const sameRange = (a?: DateRange | null, b?: DateRange | null) => Boolean(a && b && sameDay(a.start, b.start) && sameDay(a.end, b.end));
 const clampDate = (date: Date, min?: Date, max?: Date) => min && dayDiff(date, min) < 0 ? startOfDay(min) : max && dayDiff(date, max) > 0 ? startOfDay(max) : date;
@@ -80,22 +81,8 @@ export const defaultDateRangePresets: DateRangePreset[] = [
   { label: "Year to date", range: today => ({ start: new Date(today.getFullYear(), 0, 1), end: today }) },
 ];
 
-/** Today turns over at local midnight; returning to the tab reads it again. Empty on the server so markup never depends on its clock. */
-const subscribeToday = (notify: () => void) => {
-  let timer = 0;
-  const schedule = () => { const now = new Date(); timer = window.setTimeout(() => { notify(); schedule(); }, addDays(now, 1).getTime() - now.getTime() + 1000); };
-  const onVisible = () => { if (document.visibilityState === "visible") notify(); };
-  schedule();
-  document.addEventListener("visibilitychange", onVisible);
-  return () => { window.clearTimeout(timer); document.removeEventListener("visibilitychange", onVisible); };
-};
-const readToday = () => keyOf(new Date());
-const serverToday = () => "";
-/** The viewer's local date, or undefined during server render and hydration. */
-export function useToday() {
-  const key = useSyncExternalStore(subscribeToday, readToday, serverToday);
-  return useMemo(() => (key ? fromKey(key) : undefined), [key]);
-}
+/** The viewer's local date (lib/use-today.ts, shared with calendar). Re-exported so existing imports from date-range-picker keep working. */
+export { useToday } from "@/lib/use-today";
 
 const noop = () => () => {};
 function useReducedFlag() {
@@ -222,7 +209,7 @@ function Month({ month, range, tabbable, today, minDate, maxDate, weekStartsOn, 
     return rows.map(row => {
       const days = row.filter(date => monthDiff(date, month) === 0);
       if (!days.length) return null;
-      const rowFirst = days[0], rowLast = days[days.length - 1];
+      const rowFirst = days[0]!, rowLast = days[days.length - 1]!;
       const from = dayDiff(start, rowFirst) > 0 ? start : rowFirst, to = dayDiff(end, rowLast) < 0 ? end : rowLast;
       if (dayDiff(from, to) <= 0) { const a = colOf(from), b = colOf(to); return { left: a * unit, width: (b - a + 1) * unit }; }
       // The week sits wholly before or after the range: collapse at the edge the range would grow in from.
@@ -237,7 +224,7 @@ function Month({ month, range, tabbable, today, minDate, maxDate, weekStartsOn, 
     <p id={titleId} className={styles.monthTitle}>{formatters.title.format(month)}</p>
     <div role="grid" aria-labelledby={titleId} className={styles.grid}>
       <div role="row" className={styles.weekdays}>
-        {rows[0].map(date => <span key={date.getDay()} role="columnheader" aria-label={formatters.weekdayLong.format(date)}>{formatters.weekday.format(date).slice(0, 2)}</span>)}
+        {rows[0]!.map(date => <span key={date.getDay()} role="columnheader" aria-label={formatters.weekdayLong.format(date)}>{formatters.weekday.format(date).slice(0, 2)}</span>)}
       </div>
       <div className={styles.weeks}>
         <span className={styles.layer} aria-hidden="true">
@@ -386,6 +373,29 @@ export function DateRangePicker({ value, defaultValue = null, onChange, label = 
     return () => observer.disconnect();
   }, [open, schedule]);
 
+  // On a short screen (a phone, a trigger low on the page) the panel can open below the fold, with Apply out of reach.
+  // Once it has its size, scroll just enough to bring its bottom into view, never past its top. After closing, the
+  // trigger comes back into view if that scroll left it off screen.
+  useEffect(() => {
+    if (!open) return;
+    const frame = requestAnimationFrame(() => {
+      const node = panelRef.current;
+      if (!node) return;
+      const rect = node.getBoundingClientRect();
+      const overflow = rect.bottom - (window.innerHeight - EDGE);
+      if (overflow <= 0) return;
+      window.scrollBy({ top: Math.min(overflow, Math.max(0, rect.top - EDGE)), behavior: reduced ? "instant" : "smooth" });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [open, reduced]);
+  useEffect(() => {
+    if (open) return;
+    const trigger = triggerRef.current;
+    if (!trigger) return;
+    const rect = trigger.getBoundingClientRect();
+    if (rect.bottom < 0 || rect.top > window.innerHeight) trigger.scrollIntoView({ block: "center", behavior: reduced ? "instant" : "smooth" });
+  }, [open, reduced]);
+
   /* ---------- Layout: two months when there is room, one compact month otherwise ---------- */
   const measureLayout = useCallback(() => {
     const box = bounds();
@@ -530,7 +540,7 @@ export function DateRangePicker({ value, defaultValue = null, onChange, label = 
     const onScreen = (date: Date) => visible.some(month => monthDiff(date, month) === 0);
     if (focusKey && onScreen(fromKey(focusKey))) return focusKey;
     if (shown && onScreen(shown.start)) return keyOf(shown.start);
-    return keyOf(visible[0]);
+    return keyOf(visible[0]!);
   }, [focusKey, shown, visible]);
 
   /* ---------- Preset highlight glides between presets ---------- */
@@ -539,7 +549,7 @@ export function DateRangePicker({ value, defaultValue = null, onChange, label = 
     const rail = railRef.current;
     const node = activePreset < 0 ? null : rail?.querySelector<HTMLElement>(`[data-preset="${activePreset}"]`);
     if (!rail || !node) { animate(go, 0, { duration: reduced ? 0 : .14 }); return; }
-    const place = [node.offsetLeft, node.offsetTop, node.offsetWidth, node.offsetHeight];
+    const place = [node.offsetLeft, node.offsetTop, node.offsetWidth, node.offsetHeight] as const;
     if (go.get() < .05 || reduced) { gx.jump(place[0]); gy.jump(place[1]); gw.jump(place[2]); gh.jump(place[3]); }
     else { animate(gx, place[0], GLIDE); animate(gy, place[1], GLIDE); animate(gw, place[2], GLIDE); animate(gh, place[3], GLIDE); }
     animate(go, 1, { duration: reduced ? 0 : .16 });

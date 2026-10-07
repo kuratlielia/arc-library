@@ -59,7 +59,7 @@ const mix = (a: number, b: number, t: number) => a + (b - a) * t;
 function quantile(sorted: number[], q: number) {
   if (!sorted.length) return 0;
   const at = (sorted.length - 1) * q, low = Math.floor(at), high = Math.ceil(at);
-  return sorted[low] + (sorted[high] - sorted[low]) * (at - low);
+  return sorted[low]! + (sorted[high]! - sorted[low]!) * (at - low);
 }
 function statsOf(values: number[]): Stats {
   const sorted = values.filter(Number.isFinite).sort((a, b) => a - b);
@@ -90,11 +90,11 @@ function density(stats: Stats, lo: number, hi: number, bandwidth: number) {
 }
 const heightAt = (shape: Shape, x: number) => {
   const { xs, ys } = shape;
-  if (x <= xs[0] || x >= xs[xs.length - 1]) return 0;
+  if (x <= xs[0]! || x >= xs[xs.length - 1]!) return 0;
   let i = 1;
-  while (i < xs.length - 1 && xs[i] < x) i++;
-  const t = (x - xs[i - 1]) / (xs[i] - xs[i - 1] || 1);
-  return mix(ys[i - 1], ys[i], t);
+  while (i < xs.length - 1 && xs[i]! < x) i++;
+  const t = (x - xs[i - 1]!) / (xs[i]! - xs[i - 1]! || 1);
+  return mix(ys[i - 1]!, ys[i]!, t);
 };
 
 const subscribeNothing = () => () => {};
@@ -134,15 +134,15 @@ export function Ridgeline({ series, label, unit = "", formatValue, domain, overl
   const model = useMemo(() => {
     const stats = series.map(entry => statsOf(entry.values));
     const widths = stats.map(entry => bandwidth ?? silverman(entry));
-    const filled = stats.map((entry, index) => ({ entry, room: 2.5 * widths[index] })).filter(({ entry }) => entry.n);
+    const filled = stats.map((entry, index) => ({ entry, room: 2.5 * widths[index]! })).filter(({ entry }) => entry.n);
     let lo = domain?.[0] ?? Math.min(...filled.map(({ entry, room }) => entry.min - room));
     let hi = domain?.[1] ?? Math.max(...filled.map(({ entry, room }) => entry.max + room));
     if (!Number.isFinite(lo) || !Number.isFinite(hi) || lo === hi) { lo = 0; hi = 1; }
     if (!domain) { const step = niceStep(hi - lo, 5); lo = Math.floor(lo / step) * step; hi = Math.ceil(hi / step) * step; }
-    const curves = stats.map((entry, index) => entry.n ? density(entry, lo, hi, widths[index]) : { xs: Array.from({ length: SAMPLES }, (_, i) => lo + ((hi - lo) * i) / (SAMPLES - 1)), ys: new Array(SAMPLES).fill(0) });
+    const curves = stats.map((entry, index) => entry.n ? density(entry, lo, hi, widths[index]!) : { xs: Array.from({ length: SAMPLES }, (_, i) => lo + ((hi - lo) * i) / (SAMPLES - 1)), ys: new Array(SAMPLES).fill(0) });
     const peak = Math.max(1e-9, ...curves.flatMap(curve => curve.ys));
-    const shapes = new Map<string, Shape>(series.map((entry, index) => [entry.id, { xs: curves[index].xs, ys: curves[index].ys.map(y => y / peak), row: index, q1: stats[index].q1, median: stats[index].median, q3: stats[index].q3 }]));
-    return { stats: new Map(series.map((entry, index) => [entry.id, stats[index]])), shapes, lo, hi };
+    const shapes = new Map<string, Shape>(series.map((entry, index) => { const curve = curves[index]!, stat = stats[index]!; return [entry.id, { xs: curve.xs, ys: curve.ys.map(y => y / peak), row: index, q1: stat.q1, median: stat.median, q3: stat.q3 }]; }));
+    return { stats: new Map(series.map((entry, index) => [entry.id, stats[index]!])), shapes, lo, hi };
   }, [signature]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const [ownActive, setOwnActive] = useState<string | null>(defaultActive);
@@ -172,10 +172,10 @@ export function Ridgeline({ series, label, unit = "", formatValue, domain, overl
       const points: string[] = [];
       const push = (x: number, y: number) => points.push(`${sx(x).toFixed(2)},${(base - y * lift).toFixed(2)}`);
       if (from > -Infinity) push(from, heightAt(shape, from));
-      shape.xs.forEach((x, i) => { if (x > from && x < to) push(x, shape.ys[i]); });
+      shape.xs.forEach((x, i) => { if (x > from && x < to) push(x, shape.ys[i]!); });
       if (to < Infinity) push(to, heightAt(shape, to));
       if (!points.length) return "";
-      const first = from > -Infinity ? from : shape.xs[0], last = to < Infinity ? to : shape.xs[shape.xs.length - 1];
+      const first = from > -Infinity ? from : shape.xs[0]!, last = to < Infinity ? to : shape.xs[shape.xs.length - 1]!;
       return closed ? `M${sx(first).toFixed(2)},${base}L${points.join("L")}L${sx(last).toFixed(2)},${base}Z` : `M${points.join("L")}`;
     };
     for (const [id, shape] of d.shapes) {
@@ -217,7 +217,7 @@ export function Ridgeline({ series, label, unit = "", formatValue, domain, overl
         const f = from.get(id)!, out = d.shapes.get(id)!;
         // Stagger the reveal a little from the top row down, so the ridges roll in like a wave.
         const local = first ? clamp((t - to.row * .025) / (1 - Math.min(.5, model.shapes.size * .025)), 0, 1) : t;
-        for (let i = 0; i < SAMPLES; i++) { out.xs[i] = mix(f.xs[i], to.xs[i], local); out.ys[i] = mix(f.ys[i], to.ys[i], local); }
+        for (let i = 0; i < SAMPLES; i++) { out.xs[i] = mix(f.xs[i]!, to.xs[i]!, local); out.ys[i] = mix(f.ys[i]!, to.ys[i]!, local); }
         out.row = mix(f.row, to.row, local); out.q1 = mix(f.q1, to.q1, local); out.median = mix(f.median, to.median, local); out.q3 = mix(f.q3, to.q3, local);
       }
       paintRef.current();

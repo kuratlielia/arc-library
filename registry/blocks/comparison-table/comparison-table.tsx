@@ -91,7 +91,7 @@ export function ComparisonTable({
   const rootRef = useRef<HTMLElement>(null);
   const [narrow, setNarrow] = useState(false);
   const [differencesOnly, setDifferencesOnly] = useControllable(differencesProp, defaultDifferencesOnly, onDifferencesOnlyChange);
-  const own = columns.find(column => column.highlight) ?? columns[0];
+  const own = columns.find(column => column.highlight) ?? columns[0]!;
   const others = columns.filter(column => column !== own);
   const [compareWith, setCompareWith] = useControllable(compareProp, others[0]?.id ?? own.id, onCompareWithChange);
   const [ctaDone, setCtaDone] = useState(false);
@@ -99,7 +99,7 @@ export function ComparisonTable({
   useEffect(() => {
     const node = rootRef.current;
     if (!node) return;
-    const observer = new ResizeObserver(([entry]) => setNarrow(entry.contentRect.width < stackBelow));
+    const observer = new ResizeObserver(([entry]) => { if (entry) setNarrow(entry.contentRect.width < stackBelow); });
     observer.observe(node);
     return () => observer.disconnect();
   }, [stackBelow]);

@@ -49,11 +49,11 @@ const fade = (room: number) => clamp(room / 28, 0, 1);
 /** The before side of a line through `center` at `angle`, cut from the frame: the clip while the divider turns. */
 function halfPlane(w: number, h: number, center: [number, number], angle: number) {
   const nx = -Math.cos(angle), ny = -Math.sin(angle);
-  const side = ([x, y]: number[]) => (x - center[0]) * nx + (y - center[1]) * ny;
-  const corners = [[0, 0], [w, 0], [w, h], [0, h]];
-  const points: number[][] = [];
+  const side = ([x, y]: [number, number]) => (x - center[0]) * nx + (y - center[1]) * ny;
+  const corners: [number, number][] = [[0, 0], [w, 0], [w, h], [0, h]];
+  const points: [number, number][] = [];
   corners.forEach((corner, index) => {
-    const next = corners[(index + 1) % 4], a = side(corner), b = side(next);
+    const next = corners[(index + 1) % 4]!, a = side(corner), b = side(next);
     if (a >= 0) points.push(corner);
     if ((a >= 0) !== (b >= 0)) { const t = a / (a - b); points.push([corner[0] + (next[0] - corner[0]) * t, corner[1] + (next[1] - corner[1]) * t]); }
   });
@@ -235,7 +235,7 @@ export function ImageCompare({ before, after, position, defaultPosition = 50, on
     let next: number;
     if (event.key === "Home") next = 100;
     else if (event.key === "End") next = 0;
-    else if (event.key in toward) next = Math.round(latest.current) + toward[event.key];
+    else if (event.key in toward) next = Math.round(latest.current) + toward[event.key]!;
     else return;
     event.preventDefault();
     setQuiet(false);

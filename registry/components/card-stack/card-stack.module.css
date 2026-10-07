@@ -23,7 +23,9 @@
 /* Cards returning to the back of the stack carry no verdict. */
 .card:not([data-top]):not([data-flying]) .stamp { visibility: hidden; }
 
-.stage:focus-visible .card[data-top], .stage:focus-visible .empty { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
+/* Keyboard focus on the stage outlines the top card instead of the whole stage. */
+.stage:focus-visible { --focus-outline-width: 0px; }
+.stage:focus-visible .card[data-top], .stage:focus-visible .empty { outline: 2px solid var(--focus-outline, color-mix(in oklab, var(--accent-strong) 72%, transparent)); outline-offset: 3px; }
 
 .empty { position: absolute; top: 0; right: 0; left: 0; display: grid; height: var(--card-height); place-content: center; justify-items: center; gap: var(--space-3); padding: var(--space-6); border: 1px solid var(--border); border-radius: var(--radius-surface); background: var(--surface); text-align: center; }
 .emptyTitle { margin: 0; font-size: var(--text-base); font-weight: 500; }
@@ -42,7 +44,6 @@
 .control:not([aria-disabled]):active { background: var(--surface-muted); }
 .control[data-tone="primary"]:not([aria-disabled]):active { border-color: var(--accent-strong); background: var(--accent-strong); }
 .control[aria-disabled] { cursor: default; opacity: .42; }
-.control:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 
 .srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 

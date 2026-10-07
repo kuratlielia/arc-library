@@ -164,11 +164,11 @@ function StatusBadge({ status, text, reduced }: { status: Status; text: string; 
 
 function Segment({ index, amounts, span, width, highlight }: { index: number; amounts: MotionValue<number>[]; span: MotionValue<number>; width: MotionValue<number>; highlight: "on" | "off" | undefined }) {
   // Each segment starts where the ones before it end, so growth in any of them pushes the rest along in the same frame.
-  const x = useTransform(() => { let start = 0; for (let at = 0; at < index; at++) start += amounts[at].get(); return (start / span.get()) * width.get(); });
+  const x = useTransform(() => { let start = 0; for (let at = 0; at < index; at++) start += amounts[at]!.get(); return (start / span.get()) * width.get(); });
   const scaleX = useTransform(() => {
     const w = width.get();
     if (!w) return 0;
-    const size = (amounts[index].get() / span.get()) * w, rest = w - x.get() - size;
+    const size = (amounts[index]!.get() / span.get()) * w, rest = w - x.get() - size;
     return Math.max(0, size - Math.min(GAP, size, Math.max(0, rest))) / w;
   });
   return <motion.span className={styles.segment} data-index={index} data-highlight={highlight} style={{ x, scaleX, originX: 0 }} />;
