@@ -2639,6 +2639,44 @@
       }
     },
     {
+      "name": "elastic-slider",
+      "type": "registry:ui",
+      "title": "Elastic slider",
+      "description": "A slider that stretches like rubber past its ends, with a swaying value tag and detents the thumb clicks into.",
+      "categories": [
+        "inputs"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "registryDependencies": [
+        "https://uiarc.dev/r/arc-motion-tokens.json"
+      ],
+      "files": [
+        {
+          "path": "registry/components/elastic-slider/elastic-slider.tsx",
+          "type": "registry:component",
+          "target": "@components/arc/elastic-slider/elastic-slider.tsx"
+        },
+        {
+          "path": "registry/components/elastic-slider/elastic-slider.module.css",
+          "type": "registry:component",
+          "target": "@components/arc/elastic-slider/elastic-slider.module.css"
+        }
+      ],
+      "docs": "Docs and live preview: https://uiarc.dev/components/elastic-slider",
+      "meta": {
+        "tier": "free",
+        "kind": "component",
+        "docs": "https://uiarc.dev/components/elastic-slider",
+        "markdown": "https://uiarc.dev/components/elastic-slider/markdown",
+        "tags": [
+          "inputs",
+          "new"
+        ]
+      }
+    },
+    {
       "name": "inline-edit",
       "type": "registry:ui",
       "title": "Inline edit",

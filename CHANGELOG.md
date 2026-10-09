@@ -2,6 +2,12 @@
 
 New free components and blocks ship regularly. Every entry links to its live preview on uiarc.dev.
 
+## 2026-10-09
+
+### Added
+
+- [Elastic slider](https://uiarc.dev/components/elastic-slider) (component): A slider that stretches like rubber past its ends, with a swaying value tag and detents the thumb clicks into.
+
 ## 2026-10-06
 
 ### Added
