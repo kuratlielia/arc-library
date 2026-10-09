@@ -693,7 +693,7 @@ public/r/<id>.json           prebuilt registry items, one per component or block
 
 ## Arc Pro
 
-[Arc Pro](https://uiarc.dev/pro) adds 109 more components and blocks on top of this library: galleries like the Cover flow above, wallet and finance surfaces, richer charts, and complete product screens. They follow the same rules as everything here: plain source you own, both themes, keyboard support and a reduced motion path.
+[Arc Pro](https://uiarc.dev/pro) adds 113 more components and blocks on top of this library: galleries like the Cover flow above, wallet and finance surfaces, richer charts, and complete product screens. They follow the same rules as everything here: plain source you own, both themes, keyboard support and a reduced motion path.
 
 - Source for every Pro component and block, installed with the same shadcn CLI through a personal token, or through the MCP server
 - Every new Pro release, plus fixes and updates to the pieces you already have
