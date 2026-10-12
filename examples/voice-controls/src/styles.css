@@ -45,7 +45,7 @@ h1 em { font-style: normal; background: var(--arc-gradient-ink); -webkit-backgro
 .dictation-text { max-width: 390px; }
 .caret { display: inline-block; width: 1px; height: 1em; margin-left: 3px; background: var(--foreground); vertical-align: -.15em; animation: blink .9s step-end infinite; }
 @keyframes blink { 50% { opacity: 0; } }
-.composer-bottom { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 46px; border-top: 1px solid var(--border-subtle); }
+.composer-bottom { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 46px; padding-top: 8px; border-top: 1px solid var(--border-subtle); }
 .composer-status { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 11px; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .status-light { width: 6px; height: 6px; border-radius: 50%; background: var(--border-strong); }
 .status-light[data-active] { background: var(--accent); box-shadow: 0 0 0 3px var(--accent-subtle); }

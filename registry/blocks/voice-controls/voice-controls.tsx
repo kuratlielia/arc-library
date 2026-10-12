@@ -95,7 +95,7 @@ export function VoiceInput({ recording, starting = false, level, onStart, onStop
   return <motion.span className={[styles.voice, compact && styles.compact, className].filter(Boolean).join(" ")} data-recording={recording || undefined} data-starting={starting || undefined}
     initial={false} animate={{ width: expanded ? 150 : touch ? 44 : compact ? 32 : 40 }} transition={reduced ? { duration: 0 } : motionTokens.spring.smooth}>
     <span className={styles.voiceSurface} aria-hidden="true" />
-    <span className={styles.waveClip}>{starting ? <span className={styles.starting}>Starting mic…</span> : <Waveform recording={recording} level={level} />}</span>
+    <span className={styles.waveClip}><Waveform recording={expanded} level={level} /></span>
     <button type="button" className={styles.mic} aria-label={expanded ? "Stop voice input" : "Start voice input"} aria-pressed={expanded}
       onPointerDown={event => {
         if (!event.isPrimary || event.button !== 0) return;

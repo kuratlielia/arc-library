@@ -140,7 +140,7 @@ export function App() {
                 <div className="composer-content" aria-live="polite">
                   {dictationText ? <p className="dictation-text">{dictationText}{micActive && <span className="caret" aria-hidden="true" />}</p> : <span className="placeholder">Your words will appear here…</span>}
                 </div>
-                <div className="composer-bottom"><span className="composer-status"><span className="status-light" data-active={micActive || undefined} />{capture.phase === "starting" ? "Starting…" : micActive ? `Listening · ${timeLabel(capture.elapsed)}` : capture.phase === "captured" ? "Draft captured" : "Ready when you are"}</span><VoiceInput recording={micActive} starting={capture.phase === "starting"} level={micLevel} onStart={startCapture} onStop={stopCapture} /></div>
+                <div className="composer-bottom"><span className="composer-status"><span className="status-light" data-active={capture.phase === "starting" || micActive || undefined} />{capture.phase === "starting" ? "Voice input" : micActive ? `Listening · ${timeLabel(capture.elapsed)}` : capture.phase === "captured" ? "Draft captured" : "Ready when you are"}</span><VoiceInput recording={micActive} starting={capture.phase === "starting"} level={micLevel} onStart={startCapture} onStop={stopCapture} /></div>
               </div>
               {capture.phase === "captured" && <button className="text-button" type="button" onClick={() => updateCapture(initialCapture)}><RotateCcw size={13} /> Try again</button>}
             </div>
