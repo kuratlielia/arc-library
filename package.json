@@ -18,8 +18,10 @@
     "node": ">=20"
   },
   "scripts": {
+    "preview:voice": "vite --config examples/voice-controls/vite.config.ts",
+    "build:preview:voice": "vite build --config examples/voice-controls/vite.config.ts",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint .",
+    "lint": "eslint . --ignore-pattern \"examples/voice-controls/dist/**\"",
     "check:registry": "node scripts/check-registry.mjs",
     "check": "npm run typecheck && npm run lint && npm run check:registry"
   },
@@ -43,6 +45,7 @@
     "next": "^16.3.5",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vite": "^7.3.1"
   }
 }
