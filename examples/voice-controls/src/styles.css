@@ -19,16 +19,11 @@ a { color: inherit; text-decoration: none; }
 .eyebrow-divider { color: var(--border-strong); }
 h1, h2, h3, p { margin: 0; }
 h1 { max-width: 890px; font-family: var(--font-display); font-size: clamp(3.65rem, 6.6vw, 7.3rem); font-weight: 480; line-height: .99; letter-spacing: -.073em; }
-h1 em { font-style: normal; background: var(--arc-gradient-ink); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .intro > p { max-width: 585px; margin-top: 29px; color: var(--text-secondary); font-size: clamp(15px, 1.2vw, 18px); line-height: 1.6; }
-.simulated-label { display: inline-flex; align-items: center; gap: 8px; margin-top: 28px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-pill); background: var(--surface-muted); color: var(--text-secondary); font-size: 11px; line-height: 1; }
-.simulated-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
-.label-separator { color: var(--border-strong); }
 .showcase { padding-bottom: 90px; }
 .showcase-heading { display: flex; align-items: end; justify-content: space-between; gap: 20px; padding-bottom: 25px; }
 .section-number, .card-kicker, .card-index, .card-foot, .site-footer { color: var(--text-muted); font-size: 10px; font-weight: 600; letter-spacing: .1em; }
 .showcase-heading h2 { margin-top: 7px; font-family: var(--font-display); font-size: clamp(22px, 2.2vw, 30px); font-weight: 520; letter-spacing: -.045em; }
-.showcase-subtitle { padding-bottom: 3px; color: var(--text-muted); font-size: 12px; }
 .demo-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .demo-card { display: flex; min-width: 0; min-height: 476px; flex-direction: column; overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-surface); background: var(--surface); box-shadow: var(--shadow-resting); }
 .card-top { display: flex; align-items: center; justify-content: space-between; padding: 28px 31px 0; }
@@ -66,14 +61,12 @@ h1 em { font-style: normal; background: var(--arc-gradient-ink); -webkit-backgro
 .card-foot { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 31px; border-top: 1px solid var(--border-subtle); letter-spacing: .02em; }
 .card-foot span:first-child { color: var(--foreground); font-variant-numeric: tabular-nums; }
 .card-foot span:last-child { margin-left: auto; }
-.demo-note { display: flex; align-items: center; gap: 8px; margin-top: 19px; color: var(--text-muted); font-size: 11px; line-height: 1.5; }
-.note-asterisk { color: var(--accent); font-size: 14px; }
 .site-footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 78px; border-top: 1px solid var(--border-subtle); }
 .footer-muted { color: var(--border-strong); }
 .site-footer a { display: inline-flex; align-items: center; gap: 5px; color: var(--text-secondary); font-size: 11px; letter-spacing: 0; }
 .site-footer a:hover { color: var(--foreground); }
 @media (max-width: 900px) { .demo-grid { grid-template-columns: 1fr; } .demo-card { min-height: 430px; } .card-main { padding-top: 36px; } }
-@media (max-width: 600px) { .page { padding: 0 19px; } .site-header { height: 71px; } .header-caption, .brand-light, .showcase-subtitle { display: none; } .intro { padding: 76px 0 78px; } h1 { font-size: clamp(3.3rem, 13vw, 5rem); } .intro > p { margin-top: 21px; } .simulated-label { flex-wrap: wrap; max-width: 100%; line-height: 1.4; } .showcase-heading { padding-bottom: 17px; } .demo-grid { gap: 13px; } .demo-card { min-height: 410px; border-radius: 24px; } .card-top { padding: 25px 22px 0; } .card-main { padding: 39px 22px 26px; } .card-main h3 { font-size: 25px; } .card-foot { padding: 0 22px; font-size: 9px; } .card-foot span:last-child { display: none; } .response { padding-right: 14px; padding-left: 14px; } .response-copy { font-size: 13px; } .response-time { font-size: 9px; } .generation-track { margin-right: -14px; margin-left: -14px; } .demo-note { align-items: start; } .showcase { padding-bottom: 55px; } }
+@media (max-width: 600px) { .page { padding: 0 19px; } .site-header { height: 71px; } .header-caption, .brand-light { display: none; } .intro { padding: 76px 0 78px; } h1 { font-size: clamp(3.3rem, 13vw, 5rem); } .intro > p { margin-top: 21px; } .showcase-heading { padding-bottom: 17px; } .demo-grid { gap: 13px; } .demo-card { min-height: 410px; border-radius: 24px; } .card-top { padding: 25px 22px 0; } .card-main { padding: 39px 22px 26px; } .card-main h3 { font-size: 25px; } .card-foot { padding: 0 22px; font-size: 9px; } .card-foot span:last-child { display: none; } .response { padding-right: 14px; padding-left: 14px; } .response-copy { font-size: 13px; } .response-time { font-size: 9px; } .generation-track { margin-right: -14px; margin-left: -14px; } .showcase { padding-bottom: 55px; } }
 @media (max-width: 400px) {
   .composer-bottom { flex-wrap: wrap; justify-content: flex-end; gap: 3px; padding-top: 9px; }
   .composer-status { flex: 1 0 100%; }

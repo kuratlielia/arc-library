@@ -123,13 +123,12 @@ export function App() {
     <main>
       <section className="intro" aria-labelledby="page-title">
         <div className="eyebrow"><span className="eyebrow-line" /> ARC BLOCKS <span className="eyebrow-divider">/</span> VOICE</div>
-        <h1 id="page-title">Let the conversation <em>flow.</em></h1>
+        <h1 id="page-title">Sandbox for voice controls</h1>
         <p>Two quiet controls for speaking and listening. Dictate a thought, then follow a response at your own pace.</p>
-        <span className="simulated-label"><span className="simulated-dot" /> Simulated preview <span className="label-separator">·</span> No microphone or audio service</span>
       </section>
 
       <section className="showcase" aria-label="Voice controls demo">
-        <div className="showcase-heading"><div><span className="section-number">01 / 02</span><h2>Voice controls</h2></div><span className="showcase-subtitle">A small interaction, thoughtfully made.</span></div>
+        <div className="showcase-heading"><div><span className="section-number">01 / 02</span><h2>Voice controls</h2></div></div>
         <div className="demo-grid">
           <article className="demo-card compose-card">
             <div className="card-top"><span className="card-kicker">INPUT <span>—</span> DICTATION</span><span className="card-index">01</span></div>
@@ -162,7 +161,6 @@ export function App() {
             <div className="card-foot"><span>02</span><span>SpeechControl + SpeechTranscript</span><span>Seek / follow</span></div>
           </article>
         </div>
-        <p className="demo-note"><span className="note-asterisk">✳</span> This preview uses sample text and a local clock. It never requests microphone access or produces sound.</p>
       </section>
     </main>
 
