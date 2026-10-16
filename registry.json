@@ -6057,6 +6057,32 @@
         "docs": "https://uiarc.dev/components/blocks/newsletter-signup",
         "markdown": "https://uiarc.dev/components/blocks/newsletter-signup/markdown"
       }
+    },
+    {
+      "name": "voice-controls",
+      "type": "registry:block",
+      "title": "Voice controls",
+      "description": "A compact dictation pill, expandable speech playback control, and word-following transcript for a voice-enabled interface.",
+      "categories": ["blocks"],
+      "dependencies": ["lucide-react", "motion"],
+      "registryDependencies": ["https://uiarc.dev/r/arc-motion-tokens.json"],
+      "files": [
+        {
+          "path": "registry/blocks/voice-controls/voice-controls.tsx",
+          "type": "registry:component",
+          "target": "@components/arc/blocks/voice-controls/voice-controls.tsx"
+        },
+        {
+          "path": "registry/blocks/voice-controls/voice-controls.module.css",
+          "type": "registry:component",
+          "target": "@components/arc/blocks/voice-controls/voice-controls.module.css"
+        }
+      ],
+      "meta": {
+        "tier": "free",
+        "kind": "block",
+        "tags": ["voice", "speech", "input"]
+      }
     }
   ]
 }
