@@ -1,0 +1,34 @@
+.voice { --voice-size: 40px; position: relative; display: inline-block; flex: 0 0 auto; height: var(--voice-size); color: var(--text-muted); vertical-align: middle; }
+.compact { --voice-size: 32px; }
+.voiceSurface { position: absolute; inset: -4px 0; border: 1px solid var(--border); border-radius: var(--radius-pill); background: var(--surface-muted); pointer-events: none; opacity: 0; transition: opacity var(--duration-fast) var(--ease-standard); }
+.voice[data-recording] .voiceSurface, .voice[data-starting] .voiceSurface { opacity: 1; }
+.mic { position: absolute; top: 0; right: 0; display: grid; place-items: center; width: var(--voice-size); height: var(--voice-size); padding: 0; border: 0; border-radius: var(--radius-pill); background: transparent; color: var(--text-muted); font: inherit; cursor: pointer; touch-action: none; user-select: none; transition: background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard); }
+.voice[data-recording] .mic, .voice[data-starting] .mic { background: var(--border); color: var(--text-secondary); }
+.waveClip { position: absolute; top: calc((var(--voice-size) - 32px) / 2); right: calc(var(--voice-size) + 12px); left: 8px; height: 32px; overflow: hidden; pointer-events: none; opacity: 0; transition: opacity var(--duration-fast) var(--ease-standard); }
+.voice[data-recording] .waveClip, .voice[data-starting] .waveClip { opacity: 1; }
+.waveform { position: relative; display: block; width: 100%; height: 32px; overflow: hidden; mask-image: linear-gradient(to right, transparent, black 6px, black calc(100% - 6px), transparent); -webkit-mask-image: linear-gradient(to right, transparent, black 6px, black calc(100% - 6px), transparent); }
+.waveRail { position: absolute; top: 0; right: -3px; display: flex; align-items: center; gap: 4px; width: max-content; height: 32px; will-change: transform; }
+.waveRail > i { display: block; flex: 0 0 3px; width: 3px; height: 3px; border-radius: var(--radius-pill); background: var(--text-muted); opacity: 0; }
+.speech { display: inline-flex; align-items: center; flex: 0 0 auto; width: 32px; height: 32px; overflow: hidden; border-radius: var(--radius-pill); background: transparent; vertical-align: middle; transition: width calc(var(--duration-standard) + var(--duration-instant)) var(--ease-standard), background-color calc(var(--duration-standard) + var(--duration-instant)) var(--ease-standard); }
+.speech[data-expanded] { width: 230px; background: var(--surface-muted); }
+.speechToggle, .play { display: grid; flex: 0 0 32px; place-items: center; width: 32px; height: 32px; min-height: 32px; padding: 0; border: 0; border-radius: var(--radius-pill); background: transparent; color: var(--text-muted); font: inherit; cursor: pointer; transition: background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard); }
+.speech[data-enabled] .speechToggle { color: var(--accent); }
+.speech[data-enabled] .speechGlyph { animation: speech-pulse 1s infinite; }
+@keyframes speech-pulse { 0%, 50%, 100% { transform: scale(1); animation-timing-function: ease-out; } 25% { transform: scale(1.0625); animation-timing-function: ease-in; } 75% { transform: scale(.9375); animation-timing-function: ease-in; } }
+.speechExtras { display: flex; align-items: center; gap: 8px; flex: 0 0 198px; padding-right: 8px; opacity: 0; visibility: hidden; transition: opacity var(--duration-standard) var(--ease-standard), visibility 0s linear calc(var(--duration-standard) + var(--duration-instant)); }
+.speech[data-expanded] .speechExtras { opacity: 1; visibility: visible; transition-delay: 0s; }
+.play:disabled { opacity: .4; cursor: wait; }
+.track { position: relative; display: block; flex: 0 0 150px; width: 150px; height: 32px; cursor: pointer; touch-action: none; outline: none; }
+.track[aria-disabled="true"] { opacity: .4; cursor: default; }
+.rail, .fill { position: absolute; top: calc(50% - 1.5px); left: 0; height: 3px; border-radius: var(--radius-pill); }
+.rail { width: 100%; background: var(--border-strong); }
+.fill { background: var(--text-muted); }
+.thumb { position: absolute; top: 50%; width: 7px; height: 7px; border-radius: 50%; background: var(--text-secondary); transform: translate(-50%, -50%); opacity: 0; pointer-events: none; transition: opacity var(--duration-instant) var(--ease-standard); }
+.track[data-near] .thumb, .track[data-dragging] .thumb, .track:focus-visible .thumb { opacity: 1; }
+.track:focus-visible { outline: 2px solid var(--accent); outline-offset: -1px; border-radius: 6px; }
+.transcript { color: var(--foreground); }
+.transcript [data-spoken] { border-radius: 4px; background: var(--accent-subtle); color: var(--foreground); box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media (hover: hover) and (pointer: fine) { .mic:hover, .mic:focus-visible, .speechToggle:hover, .play:hover:not(:disabled) { background: var(--border); color: var(--foreground); } }
+@media (pointer: coarse) { .voice { --voice-size: 44px; } .speech { width: 44px; height: 44px; } .speech[data-expanded] { width: 254px; } .speechToggle, .play { flex-basis: 44px; width: 44px; height: 44px; min-height: 44px; } .speechExtras { flex-basis: 210px; } .track { height: 44px; } }
+@media (prefers-reduced-motion: reduce) { .voiceSurface, .mic, .waveClip, .speech, .speechToggle, .play, .speechExtras, .thumb { transition: none; } .speech[data-enabled] .speechGlyph { animation: none; } .waveRail { will-change: auto; } }
