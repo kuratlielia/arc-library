@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent, MouseEvent as ReactMouseEvent, ReactNode, RefObject } from "react";
 import { ArrowUp } from "lucide-react";
 import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion, type Transition, type Variants } from "motion/react";
@@ -125,6 +125,7 @@ function SelectBox({ checked, mixed = false, label, nav, reduced, onToggle, inpu
 
 export function SortableDataTable<T extends Record<string, unknown>>({ rows, columns, rowKey, caption = "Data table", emptyMessage = "No rows to show", defaultSort, onSortChange, selectable = false, selectedKeys, defaultSelectedKeys, onSelectionChange, itemName = { one: "row", other: "rows" } }: SortableDataTableProps<T>) {
   const reduced = useReducedMotion() ?? false;
+  const scrollerRef = useRef<HTMLDivElement>(null);
   const tableRef = useRef<HTMLTableElement>(null);
   const selectAllRef = useRef<HTMLInputElement>(null);
   const anchor = useRef<string | null>(null);
@@ -172,6 +173,18 @@ export function SortableDataTable<T extends Record<string, unknown>>({ rows, col
     observer.observe(table);
     return () => observer.disconnect();
   }, [signature, widths]);
+
+  // A table wider than its box joins the tab order, so a keyboard user can scroll to the hidden columns with the arrow keys.
+  const [scrolls, setScrolls] = useState(false);
+  useEffect(() => {
+    const scroller = scrollerRef.current;
+    const table = tableRef.current;
+    if (!scroller || !table || typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(() => setScrolls(scroller.scrollWidth > scroller.clientWidth));
+    observer.observe(scroller);
+    observer.observe(table);
+    return () => observer.disconnect();
+  }, []);
 
   // A still tint under the sorted column fills the gaps that open while rows pass each other.
   const [band, setBand] = useState<{ left: number; width: number } | null>(null);
@@ -267,7 +280,7 @@ export function SortableDataTable<T extends Record<string, unknown>>({ rows, col
   }
 
   return <div className={styles.wrapper} onKeyDown={onKeyDown}>
-    <div className={styles.scroller}>
+    <div ref={scrollerRef} className={styles.scroller} tabIndex={scrolls ? 0 : undefined} role={scrolls ? "region" : undefined} aria-label={scrolls ? caption : undefined}>
       {band ? <span className={styles.band} style={{ left: band.left, width: band.width }} aria-hidden="true" /> : null}
       <table ref={tableRef} role="table" className={styles.table} data-fixed={widths ? "" : undefined} data-selectable={selectable || undefined}>
         <caption>{caption}</caption>
