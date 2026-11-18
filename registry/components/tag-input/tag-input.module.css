@@ -4,7 +4,9 @@
 .field label { margin-bottom: var(--space-2); font-size: var(--text-sm); font-weight: 500; }
 /* The shell animates its height to .content, which carries the wrapping rows. The ring contracts onto the border on focus. */
 .control { box-sizing: content-box; overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--surface); box-shadow: 0 0 0 6px transparent; transition: border-color var(--duration-fast) var(--ease-standard), box-shadow var(--duration-standard) var(--ease-standard); }
-@media (hover: hover) and (pointer: fine) { .control:hover:not(:focus-within) { border-color: var(--border-strong); } }
+@media (hover: hover) and (pointer: fine) { .control:hover:not(:focus-within, [data-disabled]) { border-color: var(--border-strong); } }
+.control[data-disabled] { opacity: .5; }
+.control[data-disabled] .content, .control[data-disabled] .tag button { cursor: not-allowed; }
 .control:focus-within { border-color: var(--foreground); box-shadow: 0 0 0 3px var(--focus-ring); outline: 2px solid transparent; outline-offset: 2px; }
 /* Equal 7px padding makes one row fill the minimum height exactly, so existing tags hold their line when a second row opens. */
 .content { position: relative; display: flex; flex-wrap: wrap; align-items: center; align-content: flex-start; gap: 6px; min-height: calc(var(--control-height-md) - 2px); box-sizing: border-box; padding: 7px; cursor: text; }

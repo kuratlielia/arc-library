@@ -12,6 +12,10 @@ export interface TagInputProps {
   value?: string[];
   defaultValue?: string[];
   onValueChange?: (value: string[]) => void;
+  /** Return false to refuse a tag. The typed text stays, nothing is added, and nothing is announced, so the form can say why. */
+  canAdd?: (tag: string) => boolean;
+  /** Shows the tags but takes the field and its remove buttons out of use. */
+  disabled?: boolean;
   placeholder?: string;
   description?: string;
   id?: string;
@@ -55,7 +59,7 @@ function MessageRow({ id, text, className }: { id?: string; text: string; classN
  * leaves its slot and the rest glide in, and the shell follows wrapped rows on a spring. Backspace or the arrow keys
  * pick a tag first, a ring glides to it, and the next Backspace removes it.
  */
-export function TagInput({ label, value, defaultValue = [], onValueChange, placeholder = "Add a tag", description, id }: TagInputProps) {
+export function TagInput({ label, value, defaultValue = [], onValueChange, canAdd, disabled = false, placeholder = "Add a tag", description, id }: TagInputProps) {
   const generatedId = useId();
   const inputId = id ?? generatedId;
   const hintId = description ? `${inputId}-description` : undefined;
@@ -103,6 +107,7 @@ export function TagInput({ label, value, defaultValue = [], onValueChange, place
     const existing = tags.find(item => item.toLowerCase() === tag.toLowerCase());
     // A duplicate pulses the tag that already exists, so the ignored Enter still gets an answer.
     if (existing) { const node = scope.current?.querySelector(`[data-tag="${CSS.escape(existing)}"]`); if (node && !reduced) animate(node, { scale: [1, 1.06, 1] }, { duration: motionTokens.duration.standard + motionTokens.duration.instant, ease: [...motionTokens.ease.inOut] }); say(`${existing} is already added`); return; }
+    if (canAdd && !canAdd(tag)) return;
     update([...tags, tag]); setDraft(""); setPicked(null); say(`Added ${tag}`);
   }
   function remove(tag: string) { update(tags.filter(item => item !== tag)); setPicked(null); say(`Removed ${tag}`); inputRef.current?.focus(); }
@@ -122,6 +127,7 @@ export function TagInput({ label, value, defaultValue = [], onValueChange, place
   }
   // A click on a tag picks it without taking focus from the field. The remove button keeps its own press.
   function onTagPointer(event: MouseEvent<HTMLElement>, tag?: string) {
+    if (disabled) return;
     if ((event.target as HTMLElement).closest("button")) return;
     if (!tag) { event.preventDefault(); return; }
     pick(active === tag ? null : tag); inputRef.current?.focus();
@@ -130,7 +136,7 @@ export function TagInput({ label, value, defaultValue = [], onValueChange, place
   const glide = reduced ? { duration: 0 } : motionTokens.spring.smooth;
   return <div className={styles.field}>
     <label htmlFor={inputId}>{label}</label>
-    <motion.div ref={scope} className={styles.control} initial={false} animate={{ height }} transition={glide}>
+    <motion.div ref={scope} className={styles.control} data-disabled={disabled || undefined} initial={false} animate={{ height }} transition={glide}>
       <div ref={contentRef} className={styles.content} onClick={event => { if (event.target === event.currentTarget) inputRef.current?.focus(); }}>
         <span ref={ringRef} className={styles.ring} aria-hidden="true" />
         <AnimatePresence initial={false}>{!draft && !tags.length && <motion.span key="placeholder" className={styles.placeholder} aria-hidden="true"
@@ -140,8 +146,8 @@ export function TagInput({ label, value, defaultValue = [], onValueChange, place
           onMouseDown={event => onTagPointer(event)} onClick={event => onTagPointer(event, tag)}
           initial={reduced ? { opacity: 0 } : { opacity: 0, scale: .9, filter: `blur(${motionTokens.blur.soft}px)` }} animate={{ opacity: 1, scale: 1, filter: "blur(0px)", transitionEnd: { filter: "none" } }}
           exit={reduced ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, scale: .9, filter: `blur(${motionTokens.blur.subtle}px)`, transition: { duration: motionTokens.duration.instant, ease: [...motionTokens.ease.standard] } }}
-          transition={reduced ? { duration: motionTokens.duration.instant } : { ...motionTokens.spring.morph, layout: move, opacity: { duration: motionTokens.duration.fast, ease: [...motionTokens.ease.enter] }, filter: { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] } }}><span className={styles.tagLabel}>{tag}</span><button type="button" onClick={() => remove(tag)} aria-label={`Remove ${tag}`}><Xmark width={14} height={14} aria-hidden="true" /></button></motion.span>)}</AnimatePresence>
-        <motion.input layout={reduced ? false : "position"} transition={{ layout: move }} ref={inputRef} id={inputId} value={draft} onChange={event => { setDraft(event.currentTarget.value); setPicked(null); }} onKeyDown={onKeyDown} onBlur={() => { add(); setPicked(null); }} placeholder={tags.length ? "" : placeholder} aria-describedby={hintId} />
+          transition={reduced ? { duration: motionTokens.duration.instant } : { ...motionTokens.spring.morph, layout: move, opacity: { duration: motionTokens.duration.fast, ease: [...motionTokens.ease.enter] }, filter: { duration: motionTokens.duration.standard, ease: [...motionTokens.ease.enter] } }}><span className={styles.tagLabel}>{tag}</span><button type="button" onClick={() => remove(tag)} disabled={disabled} aria-label={`Remove ${tag}`}><Xmark width={14} height={14} aria-hidden="true" /></button></motion.span>)}</AnimatePresence>
+        <motion.input layout={reduced ? false : "position"} transition={{ layout: move }} ref={inputRef} id={inputId} value={draft} onChange={event => { setDraft(event.currentTarget.value); setPicked(null); }} onKeyDown={onKeyDown} onBlur={() => { add(); setPicked(null); }} disabled={disabled} placeholder={tags.length ? "" : placeholder} aria-describedby={hintId} />
       </div>
     </motion.div>
     <span className={styles.srOnly} aria-live="polite">{notice}</span>
