@@ -27,6 +27,16 @@ const valueRoll: Variants = {
 /** Reduced motion keeps a short crossfade; the resting state matches valueRoll so server and client markup agree. */
 const valueFade: Variants = { enter: { opacity: 0 }, center: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: motionTokens.duration.instant } }, exit: { opacity: 0, transition: { duration: motionTokens.duration.instant } } };
 
+/**
+ * Radix moves focus back to the trigger once the list has finished closing. If the person already moved focus to
+ * another field during the close animation, keep it there, so what they type next is not lost.
+ */
+function keepFocusThatMovedAway(event: Event) {
+  const focused = document.activeElement;
+  const content = event.currentTarget as Node;
+  if (focused && focused !== document.body && !content.contains(focused)) event.preventDefault();
+}
+
 export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select(
   { label, description, placeholder = "Select an option", options, id, className, disabled, onValueChange, ...rootProps },
   ref,
@@ -65,7 +75,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
           </SelectPrimitive.Icon>
         </SelectPrimitive.Trigger>
         <SelectPrimitive.Portal>
-          <SelectPrimitive.Content className={styles.content} position="popper" sideOffset={4} collisionPadding={12}>
+          <SelectPrimitive.Content className={styles.content} position="popper" sideOffset={4} collisionPadding={12} onCloseAutoFocus={keepFocusThatMovedAway}>
             <SelectPrimitive.ScrollUpButton className={styles.scrollButton}>
               <ChevronUp size={16} strokeWidth={1.75} aria-hidden="true" />
             </SelectPrimitive.ScrollUpButton>
