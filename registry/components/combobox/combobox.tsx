@@ -29,10 +29,24 @@ export interface ComboboxProps
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
+  /** Called after the typed text changes, including when it resets on a pick, Escape or close. Use it to load options from a server search. */
+  onQueryChange?: (query: string) => void;
+  /** Called after the list opens or closes. */
+  onOpenChange?: (open: boolean) => void;
   description?: string;
   placeholder?: string;
   emptyMessage?: string;
   className?: string;
+}
+
+/** Calls onChange once after each change of value, whichever path changed it. */
+function useReportChange<T>(value: T, onChange?: (value: T) => void) {
+  const reported = useRef(value);
+  useEffect(() => {
+    if (reported.current === value) return;
+    reported.current = value;
+    onChange?.(value);
+  }, [value, onChange]);
 }
 
 /** Follows the listbox height with a critically damped spring, so filtering never snaps the menu. */
@@ -56,6 +70,8 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
     value: controlledValue,
     defaultValue = "",
     onValueChange,
+    onQueryChange,
+    onOpenChange,
     description,
     placeholder = "Search or select…",
     emptyMessage = "No matches found",
@@ -63,6 +79,7 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
     className,
     disabled,
     onFocus,
+    onClick,
     ...inputProps
   },
   forwardedRef,
@@ -81,6 +98,8 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
   const [activeIndex, setActiveIndex] = useState(-1);
   const selectedValue = controlledValue ?? uncontrolledValue;
   const selectedOption = options.find((option) => option.value === selectedValue);
+  useReportChange(query, onQueryChange);
+  useReportChange(open, onOpenChange);
 
   useImperativeHandle(forwardedRef, () => inputRef.current as HTMLInputElement);
 
@@ -217,7 +236,10 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
             onFocus?.(event);
             openMenu();
           }}
-          onClick={openMenu}
+          onClick={(event) => {
+            onClick?.(event);
+            openMenu();
+          }}
           onChange={(event) => {
             setQuery(event.target.value);
             setOpen(true);
