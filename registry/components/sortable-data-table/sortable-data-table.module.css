@@ -1,8 +1,9 @@
 /* Cells are opaque so rows passing each other during a sort cover one another cleanly instead of blending text. */
 .wrapper { --column-tint: var(--surface-muted); position: relative; width: 100%; min-width: 0; max-width: 100%; overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--surface); color: var(--foreground); font-family: var(--font-body); }
 .scroller { position: relative; overflow-x: auto; overscroll-behavior-x: contain; }
-/* The wrapper clips its corners, so the keyboard outline sits inside the scroller. */
-.scroller:focus-visible { --focus-outline-offset: -2px; }
+/* The cells paint over the scroller's own outline, so the wrapper border marks keyboard focus instead. */
+.scroller:focus-visible { --focus-outline: transparent; }
+.wrapper:has(> .scroller:focus-visible) { border-color: var(--foreground); }
 .band { position: absolute; top: 0; bottom: 0; background: var(--column-tint); pointer-events: none; }
 .table { position: relative; z-index: 1; width: 100%; min-width: 560px; border-collapse: separate; border-spacing: 0; font-size: var(--text-sm); line-height: var(--leading-body); letter-spacing: var(--tracking-body); text-align: left; }
 .table[data-fixed] { table-layout: fixed; }
