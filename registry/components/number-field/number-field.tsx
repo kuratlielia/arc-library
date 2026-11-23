@@ -276,7 +276,7 @@ export function NumberField({ label, value, defaultValue = 0, onValueChange, min
   const maxFraction = Math.max(minFraction, formatOptions?.maximumFractionDigits ?? decimals);
   const grouping = formatOptions?.useGrouping ?? true;
   const format = useMemo(() => new Intl.NumberFormat(locale, { minimumFractionDigits: minFraction, maximumFractionDigits: maxFraction, useGrouping: grouping, numberingSystem: "latn" }), [locale, minFraction, maxFraction, grouping]);
-  const symbols = useMemo(() => { const parts = new Intl.NumberFormat(locale).formatToParts(-1234.5); return { group: parts.find(part => part.type === "group")?.value ?? ",", decimal: parts.find(part => part.type === "decimal")?.value ?? "." }; }, [locale]);
+  const symbols = useMemo(() => { const parts = new Intl.NumberFormat(locale, { numberingSystem: "latn" }).formatToParts(-1234567.8); return { group: parts.find(part => part.type === "group")?.value ?? ",", decimal: parts.find(part => part.type === "decimal")?.value ?? "." }; }, [locale]);
   const round = (next: number) => Number(next.toFixed(decimals)) || 0;
   const clamp = (next: number) => Math.min(max, Math.max(min, next));
   const snap = (next: number) => round(base + Math.round((next - base) / step) * step);
